@@ -1,9 +1,10 @@
 plugins {
     id 'java'
     id 'idea'
+    id "com.github.johnrengelman.shadow" version "4.0.1"
 }
 
-project.ext.lwjglVersion = "3.0.0a"
+project.ext.lwjglVersion = "3.2.0"
 
 group 'dont-die'
 version '1.0-SNAPSHOT'
@@ -15,9 +16,25 @@ repositories {
     maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
+shadowJar {
+    configurations = [project.configurations.compile]
+}
+
 dependencies {
+    // TODO: For now, only support Windows.
     compile "org.lwjgl:lwjgl:${lwjglVersion}"
-    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-windows"
-    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-linux"
-    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-osx"
+    compile "org.lwjgl:lwjgl:${lwjglVersion}:natives-windows"
+    compile "org.lwjgl:lwjgl-opengl:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-opengl:${lwjglVersion}:natives-windows"
+    compile "org.lwjgl:lwjgl-glfw:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-glfw:${lwjglVersion}:natives-windows"
+}
+
+jar {
+    manifest {
+        attributes(
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+                'Main-Class': 'me.dylancurzon.dontdie.Game'
+        )
+    }
 }
