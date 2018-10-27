@@ -1,6 +1,9 @@
 plugins {
     id 'java'
+    id 'idea'
 }
+
+project.ext.lwjglVersion = "3.0.0a"
 
 group 'dont-die'
 version '1.0-SNAPSHOT'
@@ -9,8 +12,12 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 dependencies {
-
+    compile "org.lwjgl:lwjgl:${lwjglVersion}"
+    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-windows"
+    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-linux"
+    compile "org.lwjgl:lwjgl-platform:${lwjglVersion}:natives-osx"
 }
