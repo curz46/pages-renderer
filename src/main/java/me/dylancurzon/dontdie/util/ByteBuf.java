@@ -1,6 +1,5 @@
 package me.dylancurzon.dontdie.util;
 
-import com.sun.istack.internal.NotNull;
 import jdk.nashorn.internal.ir.annotations.Immutable;
 
 import java.io.UnsupportedEncodingException;
@@ -13,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 @Immutable
 public class ByteBuf {
 
-    @NotNull
     private final ByteBuffer buffer;
 
     public ByteBuf(final ByteBuffer buffer) {
@@ -32,7 +30,7 @@ public class ByteBuf {
         this.buffer.flip();
     }
 
-    public void writeString(@NotNull final String value, @NotNull final int length) {
+    public void writeString(final String value, final int length) {
         final byte[] buf = new byte[length];
         final byte[] bytes;
         try {
@@ -44,27 +42,27 @@ public class ByteBuf {
         this.buffer.put(buf, 0, buf.length);
     }
 
-    public void writeInt(@NotNull final int value) {
+    public void writeInt(final int value) {
         this.buffer.putInt(value);
     }
 
-    public void writeDouble(@NotNull final double value) {
+    public void writeDouble(final double value) {
         this.buffer.putDouble(value);
     }
 
-    public void writeLong(@NotNull final long value) {
+    public void writeLong(final long value) {
         this.buffer.putLong(value);
     }
 
-    public void writeShort(@NotNull final short value) {
+    public void writeShort(final short value) {
         this.buffer.putShort(value);
     }
 
-    public void writeByte(@NotNull final byte value) {
+    public void writeByte(final byte value) {
         this.buffer.put(value);
     }
 
-    public String readString(@NotNull final int length) {
+    public String readString(final int length) {
         final byte[] buf = new byte[length];
         this.buffer.get(buf, 0, length);
         return new String(buf, StandardCharsets.UTF_8);

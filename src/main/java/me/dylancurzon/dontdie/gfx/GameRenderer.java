@@ -3,6 +3,7 @@ package me.dylancurzon.dontdie.gfx;
 import me.dylancurzon.dontdie.tile.Level;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GLUtil;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glViewport;
@@ -31,6 +32,9 @@ public class GameRenderer implements Renderer {
 
     private long window;
 
+    private long lastSecond;
+    private int frames;
+
     public GameRenderer(final Level level) {
         this.level = level;
     }
@@ -52,6 +56,7 @@ public class GameRenderer implements Renderer {
         glfwMakeContextCurrent(this.window);
         // TODO: I'm paranoid that making this true will result in terrifying errors in the future.
         GL.createCapabilities(true);
+        GLUtil.setupDebugMessageCallback();
 
         glfwSwapInterval(1);
         glClearColor(0, 0, 0, 0);
@@ -80,6 +85,13 @@ public class GameRenderer implements Renderer {
 
         if (this.gameState == GameState.LEVEL_STATE) {
             this.tileRenderer.render();
+        }
+
+        frames++;
+        if (System.currentTimeMillis() - this.lastSecond > 1000) {
+            this.lastSecond = System.currentTimeMillis();
+            System.out.println(frames);
+            frames = 0;
         }
 
         glfwSwapBuffers(this.window);

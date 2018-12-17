@@ -3,9 +3,6 @@ package me.dylancurzon.dontdie.gfx;
 import me.dylancurzon.dontdie.util.Vector2d;
 import me.dylancurzon.dontdie.util.Vector2i;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class GameCamera implements Camera {
 
     private static final double MAX_TILES_HORIZONTAL = 12;
@@ -53,22 +50,29 @@ public class GameCamera implements Camera {
     /**
      * @return The index positions of the visible tiles as calculated by this Camera.
      */
-    public Set<Vector2i> getVisibleTiles() {
-        final Set<Vector2i> tiles = new HashSet<>();
+//    public List<Vector2i> getVisibleTiles() {
+//        final List<Vector2i> tiles = new ArrayList<>();
+//
+//        final Vector2d size = this.getSize();
+//        int hTiles = (int) Math.ceil(size.getX());
+//        int vTiles = (int) Math.ceil(size.getY());
+//
+//        final int radius = 2;
+//        final Vector2i fixed = this.getFixedPosition().ceil().toInt();
+//        for (int x = fixed.getX() - radius; x < fixed.getX() + hTiles + radius; x++) {
+//            for (int y = fixed.getY() - radius; y < fixed.getY() + vTiles + radius; y++) {
+//                tiles.add(Vector2i.of(x, y));
+//            }
+//        }
+//
+//        return tiles;
+//    }
+    public Vector2i getVisibleA() {
+        return this.getFixedPosition().ceil().toInt();
+    }
 
-        final Vector2d size = this.getSize();
-        int hTiles = (int) Math.ceil(size.getX());
-        int vTiles = (int) Math.ceil(size.getY());
-
-        final int radius = 5;
-        final Vector2i fixed = this.getFixedPosition().toInt();
-        for (int x = fixed.getX() - radius; x < fixed.getX() + hTiles + radius; x++) {
-            for (int y = fixed.getY() - radius; y < fixed.getY() + vTiles + radius; y++) {
-                tiles.add(Vector2i.of(x, y));
-            }
-        }
-
-        return tiles;
+    public Vector2i getVisibleB() {
+        return this.getVisibleA().add(this.getSize().ceil().toInt());
     }
 
     /**
@@ -87,7 +91,7 @@ public class GameCamera implements Camera {
         return Vector2d.of(
             Math.round(this.position.getX() / TILEMAP_UPDATE_STRIDE) * TILEMAP_UPDATE_STRIDE,
             Math.round(this.position.getY() / TILEMAP_UPDATE_STRIDE) * TILEMAP_UPDATE_STRIDE
-        ).add(this.getSize().div(2));
+        );
     }
 
     @Override

@@ -7,7 +7,9 @@ import java.util.Optional;
 
 public enum TileType {
 
-    STONEBRICKS(0, Sprites.STONEBRICKS);
+    BLACK(0, Sprites.BLACK),
+    UNDEFINED(1, Sprites.UNDEFINED),
+    STONEBRICKS(2, Sprites.STONEBRICKS);
 
     public static Optional<TileType> forId(final int id) {
         for (TileType type : TileType.values()) {

@@ -8,6 +8,9 @@ import org.lwjgl.opengl.GL11;
 import java.util.Scanner;
 
 import static org.lwjgl.opengl.GL11C.GL_FALSE;
+import static org.lwjgl.opengl.GL20.GL_INFO_LOG_LENGTH;
+import static org.lwjgl.opengl.GL20.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20.glGetProgrami;
 
 public class ShaderUtil {
 
@@ -28,7 +31,8 @@ public class ShaderUtil {
         ARBShaderObjects.glLinkProgramARB(program);
         if (ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB)
             == GL_FALSE) {
-            throw new RuntimeException("Link failed for shader program: " + name);
+            final String log = glGetProgramInfoLog(program, glGetProgrami(program, GL_INFO_LOG_LENGTH));
+            throw new RuntimeException("Link failed for shader program: " + log);
         }
 
         ARBShaderObjects.glValidateProgramARB(program);

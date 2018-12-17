@@ -14,18 +14,13 @@ public class Game {
 
     public static void main(final String[] args) {
         final Level level = new Level();
-        for (int x = -200; x < 200; x++) {
-            for (int y = -200; y < 200; y++) {
-                level.setTile(Vector2i.of(x, y), TileType.STONEBRICKS);
+//        level.setTile(Vector2i.of(0, 0), TileType.UNDEFINED);
+        for (int x = 10; x < 20; x++) {
+            for (int y = 10; y < 20; y++) {
+                level.setTile(Vector2i.of(x, y), (x + y) % 2 == 0 ? TileType.UNDEFINED : TileType.STONEBRICKS);
             }
         }
-
-//        final RenderContext renderContext = new RenderContext();
-//        final long windowId = renderContext.init();
-//        while (!glfwWindowShouldClose(windowId)) {
-//            // game logic
-//            renderContext.render();
-//        }
+        level.setTile(Vector2i.of(10, 10), TileType.STONEBRICKS);
         final GameRenderer renderer = new GameRenderer(level);
         renderer.prepare();
         renderer.getTileRenderer().tilemapUpdate();
@@ -39,8 +34,8 @@ public class Game {
         while (!renderer.windowShouldClose()) {
             final double v = 0.05;
             final Vector2d delta = Vector2d.of(
-                Keys.isPressed(GLFW_KEY_A) ? v : Keys.isPressed(GLFW_KEY_D) ? -v : 0,
-                Keys.isPressed(GLFW_KEY_W) ? -v : Keys.isPressed(GLFW_KEY_S) ? v : 0
+                Keys.isPressed(GLFW_KEY_A) ? -v : Keys.isPressed(GLFW_KEY_D) ? v : 0,
+                Keys.isPressed(GLFW_KEY_W) ? v : Keys.isPressed(GLFW_KEY_S) ? -v : 0
             );
             if (delta.getX() != 0 || delta.getY() != 0) {
                 camera.transform(delta);

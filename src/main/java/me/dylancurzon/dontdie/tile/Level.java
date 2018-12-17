@@ -1,6 +1,5 @@
 package me.dylancurzon.dontdie.tile;
 
-import com.sun.istack.internal.NotNull;
 import me.dylancurzon.dontdie.util.ByteBuf;
 import me.dylancurzon.dontdie.util.Vector2i;
 
@@ -18,7 +17,7 @@ public class Level {
         this.tileMap = new HashMap<>();
     }
 
-    public Level(@NotNull final Map<Vector2i, TileType> tileMap) {
+    public Level(final Map<Vector2i, TileType> tileMap) {
         this.tileMap = tileMap;
     }
 
@@ -39,8 +38,7 @@ public class Level {
      * @param file the File to attempt to load the Level from.
      * @return the loaded Level.
      */
-    @NotNull
-    public static Level fromFile(@NotNull final File file) {
+    public static Level fromFile(final File file) {
         BufferedInputStream in = null;
         try {
             try {
@@ -90,8 +88,7 @@ public class Level {
      * @param newTile the Tile to set the position to. If this is null, the position is removed from the Tile map.
      * @return the Tile that was previously set at that position, if present.
      */
-    @NotNull
-    public Optional<TileType> setTile(@NotNull final Vector2i position, final TileType newTile) {
+    public Optional<TileType> setTile(final Vector2i position, final TileType newTile) {
         if (newTile == null) {
             final TileType tile = this.tileMap.remove(position);
             return Optional.ofNullable(tile);
@@ -101,15 +98,14 @@ public class Level {
         return Optional.ofNullable(tile);
     }
 
-    @NotNull
-    public Optional<TileType> getTile(@NotNull final Vector2i position) {
+        public Optional<TileType> getTile(final Vector2i position) {
         if (this.tileMap.containsKey(position)) {
             return Optional.of(this.tileMap.get(position));
         }
         return Optional.empty();
     }
 
-    public void save(@NotNull final File file) {
+    public void save(final File file) {
         if (!file.exists()) {
             file.getParentFile().mkdirs();
             try {
