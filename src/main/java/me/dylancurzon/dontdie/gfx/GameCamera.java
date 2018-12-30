@@ -11,7 +11,7 @@ public class GameCamera implements Camera {
 
     private final GameRenderer renderer;
 
-    private Vector2d position = Vector2d.of(0, 0);
+    private Vector2d position = Vector2d.of(0.5, 0.5);
     private double aspectRatio = 1;
     private double zoom = 1;
 
@@ -28,7 +28,6 @@ public class GameCamera implements Camera {
         if (!this.lastFixedPosition.equals(fixedPosition)) {
             this.lastFixedPosition = fixedPosition;
             this.renderer.getTileRenderer().tilemapUpdate();
-            System.out.println("tilemapUpdate");
         } else {
             this.renderer.getTileRenderer().deltaUpdate();
 //            System.out.println("deltaUpdate");
@@ -68,11 +67,11 @@ public class GameCamera implements Camera {
 //        return tiles;
 //    }
     public Vector2i getVisibleA() {
-        return this.getFixedPosition().ceil().toInt();
+        return this.getFixedPosition().sub(this.getSize().div(2)).ceil().toInt();
     }
 
     public Vector2i getVisibleB() {
-        return this.getVisibleA().add(this.getSize().ceil().toInt());
+        return this.getFixedPosition().add(this.getSize().div(2)).ceil().toInt();
     }
 
     /**

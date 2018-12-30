@@ -56,7 +56,7 @@ public class GameRenderer implements Renderer {
         glfwMakeContextCurrent(this.window);
         // TODO: I'm paranoid that making this true will result in terrifying errors in the future.
         GL.createCapabilities(true);
-        GLUtil.setupDebugMessageCallback();
+//        GLUtil.setupDebugMessageCallback();
 
         glfwSwapInterval(1);
         glClearColor(0, 0, 0, 0);

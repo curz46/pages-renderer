@@ -21,6 +21,7 @@ public class Game {
             }
         }
         level.setTile(Vector2i.of(10, 10), TileType.STONEBRICKS);
+        level.setTile(Vector2i.of(0, 0), TileType.STONEBRICKS);
         final GameRenderer renderer = new GameRenderer(level);
         renderer.prepare();
         renderer.getTileRenderer().tilemapUpdate();
