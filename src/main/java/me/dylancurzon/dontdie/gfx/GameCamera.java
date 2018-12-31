@@ -5,7 +5,7 @@ import me.dylancurzon.dontdie.util.Vector2i;
 
 public class GameCamera implements Camera {
 
-    private static final double MAX_TILES_HORIZONTAL = 12;
+    private static final double MAX_TILES_HORIZONTAL = 16;
     private static final double MAX_TILES_VERTICAL = MAX_TILES_HORIZONTAL;
     private static final int TILEMAP_UPDATE_STRIDE = 1;
 
@@ -27,9 +27,9 @@ public class GameCamera implements Camera {
         final Vector2d fixedPosition = this.getFixedPosition();
         if (!this.lastFixedPosition.equals(fixedPosition)) {
             this.lastFixedPosition = fixedPosition;
-            this.renderer.getTileRenderer().tilemapUpdate();
+//            this.renderer.getTileRenderer().tilemapUpdate();
         } else {
-            this.renderer.getTileRenderer().deltaUpdate();
+//            this.renderer.getTileRenderer().deltaUpdate();
 //            System.out.println("deltaUpdate");
         }
     }

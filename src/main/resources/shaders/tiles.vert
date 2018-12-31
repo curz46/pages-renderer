@@ -5,9 +5,9 @@ layout (location = 0) in vec2 in_Position;
 layout (location = 1) in vec2 in_TextureCoord;
 layout (location = 2) in float in_TextureIndex;
 
-uniform layout (location = 3) vec2 u_CameraFixed;
-uniform layout (location = 4) vec2 u_CameraSize;
-uniform layout (location = 5) vec2 u_CameraDelta;
+layout (location = 3) uniform vec2 u_CameraFixed;
+layout (location = 4) uniform vec2 u_CameraSize;
+layout (location = 5) uniform vec2 u_CameraDelta;
 
 out vec2 pass_TextureCoord;
 flat out float pass_TextureIndex;

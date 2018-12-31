@@ -15,16 +15,14 @@ public class Game {
     public static void main(final String[] args) {
         final Level level = new Level();
 //        level.setTile(Vector2i.of(0, 0), TileType.UNDEFINED);
-        for (int x = 10; x < 20; x++) {
-            for (int y = 10; y < 20; y++) {
+        for (int x = -200; x < 200; x++) {
+            for (int y = -200; y < 200; y++) {
                 level.setTile(Vector2i.of(x, y), (x + y) % 2 == 0 ? TileType.UNDEFINED : TileType.STONEBRICKS);
             }
         }
-        level.setTile(Vector2i.of(10, 10), TileType.STONEBRICKS);
-        level.setTile(Vector2i.of(0, 0), TileType.STONEBRICKS);
         final GameRenderer renderer = new GameRenderer(level);
         renderer.prepare();
-        renderer.getTileRenderer().tilemapUpdate();
+//        renderer.getTileRenderer().tilemapUpdate();
 
         glfwSetKeyCallback(renderer.getWindow(), (window, key, scancode, action, mods) -> {
             if (action == GLFW_PRESS) Keys.press(key);
@@ -32,6 +30,8 @@ public class Game {
         });
 
         final GameCamera camera = renderer.getCamera();
+
+        float lastTick = 0;
         while (!renderer.windowShouldClose()) {
             final double v = 0.05;
             final Vector2d delta = Vector2d.of(
@@ -40,6 +40,9 @@ public class Game {
             );
             if (delta.getX() != 0 || delta.getY() != 0) {
                 camera.transform(delta);
+            }
+            if (System.currentTimeMillis() - lastTick > (1000 / 60)) {
+                renderer.tick();
             }
             renderer.render();
         }

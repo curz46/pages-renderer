@@ -63,4 +63,5 @@ public class Sprite {
     public ByteBuffer getBuffer() {
         return this.buf;
     }
+
 }

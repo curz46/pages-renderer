@@ -15,7 +15,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL12.glTexSubImage3D;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.GL_TEXTURE_2D_ARRAY;
+import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL42.glTexStorage3D;
 
 /**
@@ -115,8 +115,6 @@ public class TileRenderer implements Renderer {
         this.cameraSize = this.camera.getSize();
         this.cameraFixed = this.camera.getFixedPosition();
         this.cameraDelta = this.camera.getDelta();
-
-//        System.out.println(this.cameraFixed);
     }
 
     public void deltaUpdate() {
@@ -174,6 +172,8 @@ public class TileRenderer implements Renderer {
 
     @Override
     public void render() {
+//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         ARBShaderObjects.glUseProgramObjectARB(shaderProgram);
         glBindTexture(GL_TEXTURE_2D_ARRAY, this.spritemapId);
 
@@ -195,6 +195,9 @@ public class TileRenderer implements Renderer {
         glUniform2fv(5, new float[] { (float) this.cameraDelta.getX(), (float) this.cameraDelta.getY() });
 
         glDrawArrays(GL_QUADS, 0, this.vertices);
+//        glDrawArrays(GL_QUADS, 0, 4);
+
+        ARBShaderObjects.glUseProgramObjectARB(0);
     }
 
 }
