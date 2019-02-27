@@ -1,51 +1,60 @@
 package me.dylancurzon.dontdie.gfx;
 
-import me.dylancurzon.dontdie.sprite.Sprite;
+import me.dylancurzon.dontdie.sprite.AnimatedSprite;
 import me.dylancurzon.dontdie.util.ShaderUtil;
-import me.dylancurzon.dontdie.util.Vector2d;
 import org.lwjgl.opengl.ARBShaderObjects;
 
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glUniform1i;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 public class ConsoleRenderer implements Renderer {
 
-    private final int BOUNCE_DURATION = 8; // seconds
-    private final int BOUNCE_FPS = 60;
-    private Vector2d[] bounceFrames;
-    private int currentFrame;
+    private int basicShader;
 
-    private int ticks;
-
-    private int startupShader;
-    private Texture startupTexture;
+    private TextureArray loadingTexture;
 
     private VertexBuffer startupPositions;
     private VertexBuffer startupTexCoords;
 
+    private int ticks;
+    private int currentFrame;
+
     public void tick() {
-        if (this.currentFrame == BOUNCE_FPS * BOUNCE_DURATION - 1) {
-            return;
-        }
-        if (ticks++ % ((float) 60 / BOUNCE_FPS) == 0) {
-            this.currentFrame++;
+        if (this.ticks++ % 20 == 0) {
+            if (++this.currentFrame >= 19) {
+                this.currentFrame = 0;
+            }
         }
     }
 
     @Override
     public void prepare() {
-        this.startupShader = ShaderUtil.createShaderProgram("startup");
-        this.startupTexture = Texture.make(
-            Sprite.loadSprite("textures/zarggames.png")
-        );
+//        this.startupShader = ShaderUtil.createShaderProgram("startup");
+//        this.startupTexture = Texture.make(
+//            Sprite.loadSprite("textures/zarggames.png")
+//        );
+        this.basicShader = ShaderUtil.createShaderProgram("loading");
 
+        // TODO: load AnimatedSprite
+        final AnimatedSprite sprite = AnimatedSprite.loadAnimatedSprite("loading", 20);
+        this.loadingTexture = TextureArray.make(sprite);
+
+        final float hWidth = (sprite.getWidth() / 256.0f) / 2.0f;
+        final float hHeight = (sprite.getHeight() / 192.0f) / 2.0f;
+
+//        final float[] positions = {
+//            -1.0f, -1.0f,
+//            1.0f, -1.0f,
+//            1.0f, 1.0f,
+//            -1.0f, 1.0f
+//        };
         final float[] positions = {
-            -1.0f, -1.0f,
-            1.0f, -1.0f,
-            1.0f, 1.0f,
-            -1.0f, 1.0f
+            -hWidth, -hHeight,
+            hWidth, -hHeight,
+            hWidth, hHeight,
+            -hWidth, hHeight
         };
         final float[] texCoords = {
             0.0f, 1.0f,
@@ -60,45 +69,17 @@ public class ConsoleRenderer implements Renderer {
         this.startupTexCoords.bind();
         this.startupTexCoords.upload(texCoords);
         VertexBuffer.unbind();
-
-        // Simulate a ball bouncing and fill bounceFrames
-        final int numFrames = BOUNCE_FPS * BOUNCE_DURATION;
-        this.bounceFrames = new Vector2d[numFrames];
-
-        final float acc = -0.008f;
-        final float timeStep = 1.0f / BOUNCE_FPS * 6;
-        float height = 1.0f;
-        float roll = -0.4f;
-        float hVelocity = 0.0f;
-        float vVelocity = 0.006f;
-        for (int i = 0; i < numFrames; i++) {
-            hVelocity += acc * timeStep;
-            height += hVelocity;
-
-//            vVelocity *= 0.8825;
-            roll += vVelocity;
-
-            if (height <= 0) {
-                height = 0;
-//                hVelocity = -hVelocity * 0.55f;
-                hVelocity = -hVelocity * 0.55f;
-                vVelocity *= 0.4;
-            }
-
-//            System.out.println(height);
-            this.bounceFrames[i] = Vector2d.of(roll, height);
-        }
     }
 
     @Override
     public void cleanup() {
-        this.startupTexture.destroy();
+        this.loadingTexture.destroy();
     }
 
     @Override
     public void render() {
-        ARBShaderObjects.glUseProgramObjectARB(this.startupShader);
-        this.startupTexture.bind();
+        ARBShaderObjects.glUseProgramObjectARB(this.basicShader);
+        this.loadingTexture.bind();
 
         this.startupPositions.bind();
         glEnableVertexAttribArray(0);
@@ -107,12 +88,15 @@ public class ConsoleRenderer implements Renderer {
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
-        final Vector2d frame = this.bounceFrames[this.currentFrame];
-        glUniform2f(0, (float) frame.getX(), (float) frame.getY());
+        glUniform1i(0, this.currentFrame);
 
         glDrawArrays(GL_QUADS, 0, 4);
 
         ARBShaderObjects.glUseProgramObjectARB(0);
+    }
+
+    private float lerp(final float x, final float a, final float b, final float c, final float d) {
+        return ((x - a) / (b - a)) * (d - c) + c;
     }
 
 }

@@ -134,7 +134,7 @@ public class TileRenderer implements Renderer {
         // Create GL_TEXTURE_2D_ARRAY
         this.spritemapId = glGenTextures();
         glBindTexture(GL_TEXTURE_2D_ARRAY, this.spritemapId);
-        glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, 64, 64, sprites.size());
+        glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, 16, 16, sprites.size());
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -150,7 +150,7 @@ public class TileRenderer implements Renderer {
             glTexSubImage3D(
                 GL_TEXTURE_2D_ARRAY,
                 0, 0, 0, currentIndex,
-                64, 64, 1,
+                16, 16, 1,
                 GL_RGBA, GL_UNSIGNED_BYTE,
                 sprite.getBuffer().duplicate()
             );

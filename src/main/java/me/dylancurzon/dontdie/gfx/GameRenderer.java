@@ -1,7 +1,6 @@
 package me.dylancurzon.dontdie.gfx;
 
 import me.dylancurzon.dontdie.tile.Level;
-import me.dylancurzon.dontdie.util.ShaderUtil;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL;
@@ -12,8 +11,6 @@ import static org.lwjgl.opengl.ARBFramebufferObject.GL_DRAW_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11C.GL_DEPTH_COMPONENT;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20C.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -57,7 +54,7 @@ public class GameRenderer implements Renderer {
     }
 
     public void tick() {
-        this.consoleRenderer.tick();
+//        this.consoleRenderer.tick();
     }
 
     @Override
@@ -89,18 +86,18 @@ public class GameRenderer implements Renderer {
 //            this.tileRenderer.updateDimensions(width, height);
             this.tileRenderer.tilemapUpdate();
         });
-        glViewport(0, 0, 265, 192);
+        glViewport(0, 0, 256, 192);
 //        glOrtho(0, 256, 192, 0, 1, -1);
         this.camera.setAspectRatio((double) 1024 / 768);
         glfwShowWindow(this.window);
 
-        this.fboShader = ShaderUtil.createShaderProgram("fbo");
+//        this.fboShader = ShaderUtil.createShaderProgram("fbo");
         // Make a Framebuffer of a much lower resolution to emulate the display of older consoles
         this.createFBO(true);
 
         this.consoleRenderer = new ConsoleRenderer();
         this.consoleRenderer.prepare();
-        this.tileRenderer = new TileRenderer(this.camera, this.level);
+//        this.tileRenderer = new TileRenderer(this.camera, this.level);
 //        this.tileRenderer.prepare();
     }
 

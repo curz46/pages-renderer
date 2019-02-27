@@ -8,9 +8,9 @@ import static me.dylancurzon.dontdie.sprite.Sprite.loadSprite;
 
 public interface Sprites {
 
-    Sprite BLACK = loadSprite("textures/black.png");
-    Sprite UNDEFINED = loadSprite("textures/undefined.png");
-    Sprite STONEBRICKS = loadSprite("textures/stonebricks.png");
+    Sprite BLACK = loadSprite("black");
+    Sprite UNDEFINED = loadSprite("undefined");
+    Sprite STONEBRICKS = loadSprite("stonebricks");
 
     static Set<Sprite> getSprites() {
         return Sets.newHashSet(

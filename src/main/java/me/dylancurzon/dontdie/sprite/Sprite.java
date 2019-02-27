@@ -1,6 +1,7 @@
 package me.dylancurzon.dontdie.sprite;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
+import me.dylancurzon.dontdie.util.ByteBuf;
 import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
@@ -9,7 +10,8 @@ import java.nio.ByteBuffer;
 
 public class Sprite {
 
-    public static Sprite loadSprite(final String filename) {
+    public static Sprite loadSprite(final String name) {
+        final String filename = "textures/" + name + ".png";
         return Sprite.loadSprite(Sprite.class.getClassLoader().getResourceAsStream(filename));
     }
 
@@ -39,6 +41,13 @@ public class Sprite {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static Sprite testSprite(final AnimatedSprite anim) {
+        final int width = anim.getWidth();
+        final int height = anim.getHeight();
+        final ByteBuffer buf = anim.getFrames()[0];
+        return new Sprite(width, height, buf);
     }
 
     private final int width;

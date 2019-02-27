@@ -31,9 +31,10 @@ public class Game {
 
         final GameCamera camera = renderer.getCamera();
 
-        float lastTick = 0;
+
+        long lastTick = 0;
         while (!renderer.windowShouldClose()) {
-            final double v = 0.05;
+            final double v = 0.1;
             final Vector2d delta = Vector2d.of(
                 Keys.isPressed(GLFW_KEY_A) ? -v : Keys.isPressed(GLFW_KEY_D) ? v : 0,
                 Keys.isPressed(GLFW_KEY_W) ? v : Keys.isPressed(GLFW_KEY_S) ? -v : 0
@@ -41,8 +42,11 @@ public class Game {
             if (delta.getX() != 0 || delta.getY() != 0) {
                 camera.transform(delta);
             }
-            if (System.currentTimeMillis() - lastTick > (1000 / 60)) {
+
+            final long now = System.currentTimeMillis();
+            if (now - lastTick > (1000.0 / 144)) {
                 renderer.tick();
+                lastTick = now;
             }
             renderer.render();
         }

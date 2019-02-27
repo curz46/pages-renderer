@@ -6,12 +6,12 @@ import me.dylancurzon.dontdie.util.Vector2i;
 public class GameCamera implements Camera {
 
     private static final double MAX_TILES_HORIZONTAL = 16;
-    private static final double MAX_TILES_VERTICAL = MAX_TILES_HORIZONTAL;
+    private static final double MAX_TILES_VERTICAL = 12;
     private static final int TILEMAP_UPDATE_STRIDE = 1;
 
     private final GameRenderer renderer;
 
-    private Vector2d position = Vector2d.of(0.5, 0.5);
+    private Vector2d position = Vector2d.of(0, 0);
     private double aspectRatio = 1;
     private double zoom = 1;
 
@@ -27,23 +27,23 @@ public class GameCamera implements Camera {
         final Vector2d fixedPosition = this.getFixedPosition();
         if (!this.lastFixedPosition.equals(fixedPosition)) {
             this.lastFixedPosition = fixedPosition;
-//            this.renderer.getTileRenderer().tilemapUpdate();
+            this.renderer.getTileRenderer().tilemapUpdate();
         } else {
-//            this.renderer.getTileRenderer().deltaUpdate();
+            this.renderer.getTileRenderer().deltaUpdate();
 //            System.out.println("deltaUpdate");
         }
     }
 
     public Vector2d getSize() {
-        double hTiles = MAX_TILES_HORIZONTAL;
-        double vTiles = hTiles / this.aspectRatio;
+//        double hTiles = MAX_TILES_HORIZONTAL;
+//        double vTiles = hTiles / this.aspectRatio;
+//
+//        if (vTiles > MAX_TILES_VERTICAL) {
+//            vTiles = MAX_TILES_VERTICAL;
+//            hTiles = vTiles * this.aspectRatio;
+//        }
 
-        if (vTiles > MAX_TILES_VERTICAL) {
-            vTiles = MAX_TILES_VERTICAL;
-            hTiles = vTiles * this.aspectRatio;
-        }
-
-        return Vector2d.of(hTiles, vTiles);
+        return Vector2d.of(MAX_TILES_HORIZONTAL, MAX_TILES_VERTICAL);
     }
 
     /**
