@@ -54,7 +54,7 @@ public class GameRenderer implements Renderer {
     }
 
     public void tick() {
-//        this.consoleRenderer.tick();
+        this.consoleRenderer.tick();
     }
 
     @Override

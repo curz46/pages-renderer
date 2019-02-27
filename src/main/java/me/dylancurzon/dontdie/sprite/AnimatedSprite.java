@@ -21,12 +21,10 @@ public class AnimatedSprite {
                 .getResourceAsStream("textures/" + name + ".png");
 
             final PNGDecoder decoder = new PNGDecoder(in);
-//            final BufferedImage image = ImageIO.read(in);
 
             int width = decoder.getWidth();
             int imageHeight = decoder.getHeight();
 
-//            ByteBuffer pixelBuffer = BufferUtils.createByteBuffer(4 * width * imageHeight);
             ByteBuffer pixelBuffer = ByteBuffer.wrap(new byte[4 * width * imageHeight]);
             decoder.decode(pixelBuffer, width * 4, PNGDecoder.Format.RGBA);
             final byte[] pixels = pixelBuffer.array();
@@ -40,13 +38,15 @@ public class AnimatedSprite {
             for (int i = 0; i < frameCount; i++) {
                 ByteBuffer buf = BufferUtils.createByteBuffer(4 * width * height);
 
-                final int startY = i * height;
-//                final int[] data = image.getRGB(0, startY, width, height, null, 0, width);
-                for (int j = startY * height * 4; j < (width * height * 4); j++) {
+                final int initialY = i * height;
+                final int indexBegin = initialY * width * 4;
+                final int indexEnd = indexBegin + (width * height * 4);
+
+                for (int j = indexBegin; j < indexEnd; j++) {
                     buf.put(pixels[j]);
                 }
 
-//                buf.flip();
+                buf.flip();
                 frames[i] = buf;
             }
 

@@ -22,7 +22,7 @@ public class ConsoleRenderer implements Renderer {
     private int currentFrame;
 
     public void tick() {
-        if (this.ticks++ % 20 == 0) {
+        if (this.ticks++ % 15 == 0) {
             if (++this.currentFrame >= 19) {
                 this.currentFrame = 0;
             }

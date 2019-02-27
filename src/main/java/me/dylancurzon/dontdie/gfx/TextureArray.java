@@ -25,7 +25,7 @@ public class TextureArray {
         for (int i = 0; i < sprite.getFrameCount(); i++) {
             final ByteBuffer buf = sprite.getFrames()[i];
             glTexSubImage3D(
-                GL_TEXTURE_2D_ARRAY, 1,
+                GL_TEXTURE_2D_ARRAY, 0,
                 0, 0, i,
                 sprite.getWidth(), sprite.getHeight(), 1,
                 GL_RGBA, GL_UNSIGNED_BYTE, buf
