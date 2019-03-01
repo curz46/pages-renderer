@@ -1,5 +1,6 @@
 package me.dylancurzon.dontdie.gfx;
 
+import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.*;
 

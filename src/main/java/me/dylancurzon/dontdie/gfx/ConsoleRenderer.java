@@ -1,5 +1,7 @@
 package me.dylancurzon.dontdie.gfx;
 
+import me.dylancurzon.dontdie.gfx.opengl.TextureArray;
+import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
 import me.dylancurzon.dontdie.sprite.AnimatedSprite;
 import me.dylancurzon.dontdie.util.ShaderUtil;
 import org.lwjgl.opengl.ARBShaderObjects;

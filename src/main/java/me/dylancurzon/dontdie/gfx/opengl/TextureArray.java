@@ -1,4 +1,4 @@
-package me.dylancurzon.dontdie.gfx;
+package me.dylancurzon.dontdie.gfx.opengl;
 
 import me.dylancurzon.dontdie.sprite.AnimatedSprite;
 

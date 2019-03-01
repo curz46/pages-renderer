@@ -1,6 +1,8 @@
 package me.dylancurzon.dontdie.gfx;
 
-public interface Renderer {
+import me.dylancurzon.dontdie.Renderable;
+
+public interface Renderer extends Renderable {
 
     /**
      * Prepare this Renderer.
@@ -11,10 +13,5 @@ public interface Renderer {
      * Cleanup this Renderer.
      */
     void cleanup();
-
-    /**
-     * Render to the Display.
-     */
-    void render();
 
 }

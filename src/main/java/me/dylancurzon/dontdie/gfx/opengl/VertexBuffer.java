@@ -1,4 +1,4 @@
-package me.dylancurzon.dontdie.gfx;
+package me.dylancurzon.dontdie.gfx.opengl;
 
 import static org.lwjgl.opengl.GL15.*;
 

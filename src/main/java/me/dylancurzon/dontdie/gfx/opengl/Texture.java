@@ -1,8 +1,6 @@
-package me.dylancurzon.dontdie.gfx;
+package me.dylancurzon.dontdie.gfx.opengl;
 
 import me.dylancurzon.dontdie.sprite.Sprite;
-
-import java.awt.*;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11C.glGenTextures;

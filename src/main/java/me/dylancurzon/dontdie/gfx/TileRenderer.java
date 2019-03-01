@@ -1,5 +1,6 @@
 package me.dylancurzon.dontdie.gfx;
 
+import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
 import me.dylancurzon.dontdie.sprite.Sprite;
 import me.dylancurzon.dontdie.sprite.Sprites;
 import me.dylancurzon.dontdie.tile.Level;
@@ -31,7 +32,7 @@ import static org.lwjgl.opengl.GL42.glTexStorage3D;
  */
 public class TileRenderer implements Renderer {
 
-    private final GameCamera camera;
+    private final Camera camera;
     private final Level level;
 
     private int shaderProgram;
@@ -45,11 +46,9 @@ public class TileRenderer implements Renderer {
     private VertexBuffer texIndex;
 //    private VertexBuffer currentFrame;
 
-    private Vector2d cameraFixed;
-    private Vector2d cameraSize;
-    private Vector2d cameraDelta;
+    private Vector2d oldFixed = null;
 
-    public TileRenderer(final GameCamera camera, final Level level) {
+    public TileRenderer(final Camera camera, final Level level) {
         this.camera = camera;
         this.level = level;
     }
@@ -95,7 +94,7 @@ public class TileRenderer implements Renderer {
                     texCoords[iCoords++] = coords[j];
                 }
 
-                final TileType type = level.getTile(Vector2i.of(x, y)).orElse(TileType.BLACK);
+                final TileType type = this.level.getTile(Vector2i.of(x, y)).orElse(TileType.BLACK);
                 final int index = this.spriteIndexMap.get(type.getSprite());
                 for (int j = 0; j < 4; j++) {
                     texIndex[iIndex++] = index;
@@ -111,14 +110,6 @@ public class TileRenderer implements Renderer {
         this.texIndex.bind();
         this.texIndex.upload(texIndex);
         VertexBuffer.unbind();
-
-        this.cameraSize = this.camera.getSize();
-        this.cameraFixed = this.camera.getFixedPosition();
-        this.cameraDelta = this.camera.getDelta();
-    }
-
-    public void deltaUpdate() {
-        this.cameraDelta = this.camera.getDelta();
     }
 
     @Override
@@ -174,7 +165,16 @@ public class TileRenderer implements Renderer {
     public void render() {
 //        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        ARBShaderObjects.glUseProgramObjectARB(shaderProgram);
+        final Vector2d fixed = this.camera.getFixedPosition();
+        final Vector2d size = this.camera.getSize();
+        final Vector2d delta = this.camera.getDelta();
+
+        if (!Objects.equals(this.oldFixed, fixed)) {
+            this.tilemapUpdate();
+            this.oldFixed = fixed;
+        }
+
+        ARBShaderObjects.glUseProgramObjectARB(this.shaderProgram);
         glBindTexture(GL_TEXTURE_2D_ARRAY, this.spritemapId);
 
         this.positions.bind();
@@ -190,9 +190,10 @@ public class TileRenderer implements Renderer {
 //        glEnableVertexAttribArray(3);
 //        glEnableVertexAttribArray(4);
 //        glEnableVertexAttribArray(5);
-        glUniform2fv(3, new float[] { (float) this.cameraFixed.getX(), (float) this.cameraFixed.getY() });
-        glUniform2fv(4, new float[] { (float) this.cameraSize.getX(), (float) this.cameraSize.getY() });
-        glUniform2fv(5, new float[] { (float) this.cameraDelta.getX(), (float) this.cameraDelta.getY() });
+
+        glUniform2fv(3, new float[] { (float) fixed.getX(), (float) fixed.getY() });
+        glUniform2fv(4, new float[] { (float) size.getX(), (float) size.getY() });
+        glUniform2fv(5, new float[] { (float) delta.getX(), (float) delta.getY() });
 
         glDrawArrays(GL_QUADS, 0, this.vertices);
 //        glDrawArrays(GL_QUADS, 0, 4);
