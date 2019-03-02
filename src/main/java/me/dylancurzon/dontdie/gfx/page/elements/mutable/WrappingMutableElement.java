@@ -1,8 +1,7 @@
 package me.dylancurzon.dontdie.gfx.page.elements.mutable;
 
 import com.sun.istack.internal.NotNull;
-import me.dylancurzon.nea.gfx.PixelContainer;
-import me.dylancurzon.nea.util.Vector2i;
+import me.dylancurzon.dontdie.util.Vector2i;
 
 public abstract class WrappingMutableElement extends MutableElement {
 
@@ -24,11 +23,6 @@ public abstract class WrappingMutableElement extends MutableElement {
         this.element.tick();
     }
 
-    @NotNull
-    public int[] getInteractMask() {
-        return this.element.getInteractMask();
-    }
-
     @Override
     public Vector2i getSize() {
         return this.element.getSize();
@@ -37,11 +31,6 @@ public abstract class WrappingMutableElement extends MutableElement {
     @Override
     public Vector2i calculateSize() {
         return this.element.calculateSize();
-    }
-
-    @Override
-    public void render(final PixelContainer container) {
-        this.element.render(container);
     }
 
 }

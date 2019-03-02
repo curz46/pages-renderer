@@ -1,6 +1,6 @@
 package me.dylancurzon.dontdie.gfx.opengl;
 
-import me.dylancurzon.dontdie.sprite.AnimatedSprite;
+import me.dylancurzon.dontdie.sprite.Sprite;
 
 import java.nio.ByteBuffer;
 
@@ -14,7 +14,7 @@ public class TextureArray {
 
     private final int id;
 
-    public static TextureArray make(final AnimatedSprite sprite) {
+    public static TextureArray make(final Sprite sprite) {
         final int id = glGenTextures();
         glBindTexture(GL_TEXTURE_2D_ARRAY, id);
         glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, sprite.getWidth(), sprite.getHeight(), sprite.getFrameCount());

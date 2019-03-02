@@ -2,7 +2,7 @@ package me.dylancurzon.dontdie.gfx;
 
 import me.dylancurzon.dontdie.gfx.opengl.TextureArray;
 import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
-import me.dylancurzon.dontdie.sprite.AnimatedSprite;
+import me.dylancurzon.dontdie.sprite.Sprite;
 import me.dylancurzon.dontdie.util.ShaderUtil;
 import org.lwjgl.opengl.ARBShaderObjects;
 
@@ -40,7 +40,7 @@ public class ConsoleRenderer implements Renderer {
         this.basicShader = ShaderUtil.createShaderProgram("loading");
 
         // TODO: load AnimatedSprite
-        final AnimatedSprite sprite = AnimatedSprite.loadAnimatedSprite("loading", 20);
+        final Sprite sprite = Sprite.loadAnimatedSprite("loading", 20);
         this.loadingTexture = TextureArray.make(sprite);
 
         final float hWidth = (sprite.getWidth() / 256.0f) / 2.0f;

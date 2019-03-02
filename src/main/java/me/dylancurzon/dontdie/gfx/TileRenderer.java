@@ -1,8 +1,6 @@
 package me.dylancurzon.dontdie.gfx;
 
 import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
-import me.dylancurzon.dontdie.sprite.Sprite;
-import me.dylancurzon.dontdie.sprite.Sprites;
 import me.dylancurzon.dontdie.tile.Level;
 import me.dylancurzon.dontdie.tile.TileType;
 import me.dylancurzon.dontdie.util.ShaderUtil;
@@ -13,11 +11,8 @@ import org.lwjgl.opengl.ARBShaderObjects;
 import java.util.*;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL12.glTexSubImage3D;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL42.glTexStorage3D;
 
 /**
  * The TileRenderer is responsible for rendering the tilemap of the Level to the display. It does this by providing the
@@ -37,8 +32,8 @@ public class TileRenderer implements Renderer {
 
     private int shaderProgram;
 
-    private final Map<Sprite, Integer> spriteIndexMap = new HashMap<>();
-    private int spritemapId;
+//    private final Map<OldSprite, Integer> spriteIndexMap = new HashMap<>();
+//    private int spritemapId;
 
     private int vertices;
     private VertexBuffer positions;
@@ -53,11 +48,104 @@ public class TileRenderer implements Renderer {
         this.level = level;
     }
 
+    @Override
+    public void prepare() {
+        this.shaderProgram = ShaderUtil.createShaderProgram("tiles");
+
+        this.positions = VertexBuffer.make();
+        this.texCoord = VertexBuffer.make();
+        this.texIndex = VertexBuffer.make();
+//        this.currentFrame = VertexBuffer.make();
+
+//        final Set<AnimatedSprite> sprites = Sprites.getSprites();
+//        // Create GL_TEXTURE_2D_ARRAY
+//        this.spritemapId = glGenTextures();
+//        glBindTexture(GL_TEXTURE_2D_ARRAY, this.spritemapId);
+//        glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, 16, 16, sprites.size());
+//        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//
+//        int i = 0;
+//        for (final AnimatedSprite sprite : sprites) {
+//            // TODO: Here, calculate the index position by iteratively adding the number of frames that this Sprite has.
+//            final int currentIndex = i++;
+//            System.out.println(currentIndex);
+//            this.spriteIndexMap.put(sprite, currentIndex);
+//
+//            glTexSubImage3D(
+//                GL_TEXTURE_2D_ARRAY,
+//                0, 0, 0, currentIndex,
+//                16, 16, 1,
+//                GL_RGBA, GL_UNSIGNED_BYTE,
+//                sprite.getBuffer().duplicate()
+//            );
+//        }
+
+        // Prepare dynamic Tile spritemap
+
+        this.updateTilemap();
+    }
+
+    @Override
+    public void cleanup() {
+        this.positions.destroy();
+        this.texCoord.destroy();
+        this.texIndex.destroy();
+//        this.currentFrame.destroy();
+
+        this.positions = null;
+        this.texCoord = null;
+        this.texIndex = null;
+//        this.currentFrame = null;
+    }
+
+    @Override
+    public void render() {
+//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        final Vector2d fixed = this.camera.getFixedPosition();
+        final Vector2d size = this.camera.getSize();
+        final Vector2d delta = this.camera.getDelta();
+
+        if (!Objects.equals(this.oldFixed, fixed)) {
+            this.updateTilemap();
+            this.oldFixed = fixed;
+        }
+
+        ARBShaderObjects.glUseProgramObjectARB(this.shaderProgram);
+//        glBindTexture(GL_TEXTURE_2D_ARRAY, this.spritemapId);
+
+        this.positions.bind();
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
+        this.texCoord.bind();
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+        this.texIndex.bind();
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 1, GL_FLOAT, false, 0, 0);
+
+//        glEnableVertexAttribArray(3);
+//        glEnableVertexAttribArray(4);
+//        glEnableVertexAttribArray(5);
+
+        glUniform2fv(3, new float[] { (float) fixed.getX(), (float) fixed.getY() });
+        glUniform2fv(4, new float[] { (float) size.getX(), (float) size.getY() });
+        glUniform2fv(5, new float[] { (float) delta.getX(), (float) delta.getY() });
+
+        glDrawArrays(GL_QUADS, 0, this.vertices);
+//        glDrawArrays(GL_QUADS, 0, 4);
+
+        ARBShaderObjects.glUseProgramObjectARB(0);
+    }
+
     /**
      * Whenever the Camera tilemap is fully updated, the data in each of the VertexBuffers needs to be updated with the
      * new visible tilemap, as well as the uniform values.
      */
-    public void tilemapUpdate() {
+    private void updateTilemap() {
         final Vector2i pointA = this.camera.getVisibleA().sub(2);
         final Vector2i pointB = this.camera.getVisibleB().add(2);
 
@@ -83,7 +171,7 @@ public class TileRenderer implements Renderer {
                 for (int j = 0; j < pos.length; j++) {
                     positions[iPos++] = pos[j];
                 }
-    
+
                 final float[] coords = {
                     0.0f, 0.0f,
                     1.0f, 0.0f,
@@ -95,10 +183,10 @@ public class TileRenderer implements Renderer {
                 }
 
                 final TileType type = this.level.getTile(Vector2i.of(x, y)).orElse(TileType.BLACK);
-                final int index = this.spriteIndexMap.get(type.getSprite());
-                for (int j = 0; j < 4; j++) {
-                    texIndex[iIndex++] = index;
-                }
+//                final int index = this.spriteIndexMap.get(type.getSprite());
+//                for (int j = 0; j < 4; j++) {
+//                    texIndex[iIndex++] = index;
+//                }
             }
         }
 
@@ -110,95 +198,6 @@ public class TileRenderer implements Renderer {
         this.texIndex.bind();
         this.texIndex.upload(texIndex);
         VertexBuffer.unbind();
-    }
-
-    @Override
-    public void prepare() {
-        this.shaderProgram = ShaderUtil.createShaderProgram("tiles");
-
-        this.positions = VertexBuffer.make();
-        this.texCoord = VertexBuffer.make();
-        this.texIndex = VertexBuffer.make();
-//        this.currentFrame = VertexBuffer.make();
-
-        final Set<Sprite> sprites = Sprites.getSprites();
-        // Create GL_TEXTURE_2D_ARRAY
-        this.spritemapId = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D_ARRAY, this.spritemapId);
-        glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, 16, 16, sprites.size());
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-        int i = 0;
-        for (final Sprite sprite : sprites) {
-            // TODO: Here, calculate the index position by iteratively adding the number of frames that this Sprite has.
-            final int currentIndex = i++;
-            System.out.println(currentIndex);
-            this.spriteIndexMap.put(sprite, currentIndex);
-
-            glTexSubImage3D(
-                GL_TEXTURE_2D_ARRAY,
-                0, 0, 0, currentIndex,
-                16, 16, 1,
-                GL_RGBA, GL_UNSIGNED_BYTE,
-                sprite.getBuffer().duplicate()
-            );
-        }
-    }
-
-    @Override
-    public void cleanup() {
-        this.positions.destroy();
-        this.texCoord.destroy();
-        this.texIndex.destroy();
-//        this.currentFrame.destroy();
-
-        this.positions = null;
-        this.texCoord = null;
-        this.texIndex = null;
-//        this.currentFrame = null;
-    }
-
-    @Override
-    public void render() {
-//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        final Vector2d fixed = this.camera.getFixedPosition();
-        final Vector2d size = this.camera.getSize();
-        final Vector2d delta = this.camera.getDelta();
-
-        if (!Objects.equals(this.oldFixed, fixed)) {
-            this.tilemapUpdate();
-            this.oldFixed = fixed;
-        }
-
-        ARBShaderObjects.glUseProgramObjectARB(this.shaderProgram);
-        glBindTexture(GL_TEXTURE_2D_ARRAY, this.spritemapId);
-
-        this.positions.bind();
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
-        this.texCoord.bind();
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
-        this.texIndex.bind();
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 1, GL_FLOAT, false, 0, 0);
-
-//        glEnableVertexAttribArray(3);
-//        glEnableVertexAttribArray(4);
-//        glEnableVertexAttribArray(5);
-
-        glUniform2fv(3, new float[] { (float) fixed.getX(), (float) fixed.getY() });
-        glUniform2fv(4, new float[] { (float) size.getX(), (float) size.getY() });
-        glUniform2fv(5, new float[] { (float) delta.getX(), (float) delta.getY() });
-
-        glDrawArrays(GL_QUADS, 0, this.vertices);
-//        glDrawArrays(GL_QUADS, 0, 4);
-
-        ARBShaderObjects.glUseProgramObjectARB(0);
     }
 
 }

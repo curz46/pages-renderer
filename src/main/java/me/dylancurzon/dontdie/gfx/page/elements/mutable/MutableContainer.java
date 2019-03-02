@@ -1,6 +1,7 @@
 package me.dylancurzon.dontdie.gfx.page.elements.mutable;
 
 import com.sun.istack.internal.NotNull;
+import me.dylancurzon.dontdie.gfx.page.PositionedElement;
 import me.dylancurzon.dontdie.gfx.page.Spacing;
 import me.dylancurzon.dontdie.gfx.page.animation.Animation;
 import me.dylancurzon.dontdie.gfx.page.animation.QuarticEaseInAnimation;
@@ -12,6 +13,8 @@ import me.dylancurzon.dontdie.util.Vector2i;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static me.dylancurzon.dontdie.gfx.page.elements.container.Positioning.*;
 
 public abstract class MutableContainer extends MutableElement {
 
@@ -33,6 +36,8 @@ public abstract class MutableContainer extends MutableElement {
         this.container = container;
         this.elements = elements;
     }
+
+    public abstract List<PositionedElement> draw();
 
     @NotNull
     public List<MutableElement> getElements() {
@@ -99,7 +104,7 @@ public abstract class MutableContainer extends MutableElement {
 
     @Override
     public void click(@NotNull final Vector2i position) {
-        super.click(position, this.getInteractMask());
+        super.click(position);
         // for each MutableElement of this container, find the position relative to its position in this
         // container.
         final Map<MutableElement, Vector2i> elementPositionMap = this.getPositions();

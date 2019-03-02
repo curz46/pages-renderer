@@ -1,7 +1,6 @@
 package me.dylancurzon.dontdie.gfx.page.elements.mutable;
 
 import com.sun.istack.internal.NotNull;
-import me.dylancurzon.dontdie.Renderable;
 import me.dylancurzon.dontdie.gfx.page.InteractOptions;
 import me.dylancurzon.dontdie.gfx.page.Spacing;
 import me.dylancurzon.dontdie.util.Cached;
@@ -9,7 +8,7 @@ import me.dylancurzon.dontdie.util.Vector2i;
 
 import java.util.function.Consumer;
 
-public abstract class MutableElement implements Renderable {
+public abstract class MutableElement {
 
     @NotNull
     protected final Spacing margin;
@@ -72,33 +71,22 @@ public abstract class MutableElement implements Renderable {
     }
 
     /**
-     * If this element has a {@link InteractOptions#getClickConsumer()} this method will check if the {@param position}
-     * is within the bounds of {@link this#getInteractMask()} and fire it if this is the case.
+     * Clicks on this element.
      * Note: if this {@link MutableElement} is a {@link MutableContainer}, it will also propagate the click event
      * through the hierarchy, such that any MutableElements it is responsible for rendering are able to handle it
      * themselves.
      * @param position A position relative to this MutableElement, such that the top-left corner of this element's
      *                 rendering bounds are (0, 0).
-     * @param mask The interact mask to use to determine whether or not to fire the click consumer.
-     *             If the value at the position's index is not zero it will fire.
      */
-    public void click(@NotNull final Vector2i position, @NotNull final int[] mask) {
+    public void click(@NotNull final Vector2i position) {
         if (position.getX() < 0 || position.getX() >= this.getSize().getX() ||
             position.getY() < 0 || position.getY() >= this.getSize().getY()) {
             return;
         }
-        final int value = mask[position.getX() + position.getY() * this.getSize().getX()];
-        // is value is zero, then the interact mask does not include this point; click event should not be fired
-        if (value == 0) return;
         final Consumer<MutableElement> consumer = this.interactOptions.getClickConsumer();
         if (consumer == null) return;
         // fire click
         consumer.accept(this);
-    }
-
-
-    public void click(@NotNull final Vector2i position) {
-        this.click(position, this.getInteractMask());
     }
 
     public Vector2i getMousePosition(final MutableElement element) {
@@ -112,8 +100,6 @@ public abstract class MutableElement implements Renderable {
 
     public void tick() {}
 
-    public abstract int[] getInteractMask();
-
     public Vector2i getSize() {
         return this.cachedSize.get()
             .orElseGet(() -> {
@@ -125,7 +111,5 @@ public abstract class MutableElement implements Renderable {
 
     @NotNull
     public abstract Vector2i calculateSize();
-
-    public abstract void render(@NotNull final PixelContainer container);
 
 }

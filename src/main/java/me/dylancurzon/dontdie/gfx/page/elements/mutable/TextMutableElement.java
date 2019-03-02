@@ -9,21 +9,22 @@ import java.util.function.Consumer;
 public class TextMutableElement extends MutableElement {
 
     private final TextImmutableElement immutableElement;
-    private TextType.TextSprite sprite;
+//    private TextType.TextSprite sprite;
 
     public TextMutableElement(final Spacing margin, final TextImmutableElement immutableElement) {
         super(margin, immutableElement.getInteractOptions());
         this.immutableElement = immutableElement;
-        this.sprite = this.immutableElement.getSprite();
+//        this.sprite = this.immutableElement.getSprite();
     }
 
-    public void setSprite(final TextType.TextSprite sprite) {
-        this.sprite = sprite;
-    }
+//    public void setSprite(final TextType.TextSprite sprite) {
+//        this.sprite = sprite;
+//    }
 
     @Override
     public Vector2i calculateSize() {
-        return this.sprite.getSize();
+//        return this.sprite.getSize();
+        return Vector2i.of(0, 0);
     }
 
     @Override
@@ -32,28 +33,6 @@ public class TextMutableElement extends MutableElement {
         if (consumer != null) {
             consumer.accept(this);
         }
-    }
-
-    @Override
-    public int[] getInteractMask() {
-//        final PixelContainer container = new PixelContainer(
-//            new int[this.getSize().getX() * this.getSize().getY()],
-//            this.getSize().getX(),
-//            this.getSize().getY()
-//        );
-//        this.render(container);
-
-        final int[] mask = new int[this.getSize().getX() * this.getSize().getY()];
-        for (int i = 0; i < mask.length; i++) {
-//            mask[i] = container.getPixels()[i];
-            mask[i] = 1;
-        }
-        return mask;
-    }
-
-    @Override
-    public void render(final PixelContainer container) {
-        this.sprite.render(container, 0, 0);
     }
 
 }

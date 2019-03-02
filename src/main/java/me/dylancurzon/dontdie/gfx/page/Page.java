@@ -6,6 +6,8 @@ import me.dylancurzon.dontdie.gfx.page.elements.mutable.MutableContainer;
 import me.dylancurzon.dontdie.gfx.page.elements.mutable.MutableElement;
 import me.dylancurzon.dontdie.util.Vector2i;
 
+import java.util.List;
+
 public class Page extends MutableContainer implements Tickable {
 
     private final PageTemplate template;
@@ -46,6 +48,11 @@ public class Page extends MutableContainer implements Tickable {
         return this.template.getSize();
     }
 
+    @Override
+    public List<PositionedElement> draw() {
+        return this.container.draw();
+    }
+
     /**
      * @param position The position of the click event on the screen. Will only fire if within this Page's bounds.
      */
@@ -76,38 +83,29 @@ public class Page extends MutableContainer implements Tickable {
         return this.mousePosition.sub(this.position);
     }
 
-    @Override
-    public int[] getInteractMask() {
-        final int[] mask = new int[this.getSize().getX() * this.getSize().getY()];
-        for (int i = 0; i < mask.length; i++) {
-            mask[i] = 1;
-        }
-        return mask;
-    }
-
-    @Override
-    public void render(final PixelContainer window) {
-        final Vector2i size = this.getSize();
-        if (this.template.getBackgroundSprite() != null) {
-            this.template.getBackgroundSprite().render(
-                window,
-                this.position.getX(),
-                this.position.getY()
-            );
-        }
-        final PixelContainer pixelContainer = new PixelContainer(
-            new int[size.getX() * size.getY()],
-            size.getX(),
-            size.getY()
-        );
-        this.container.render(pixelContainer);
-        window.copyPixels(
-            this.position.getX(),
-            this.position.getY(),
-            size.getX(),
-            pixelContainer.getPixels()
-        );
-    }
+//    @Override
+//    public void render(final PixelContainer window) {
+//        final Vector2i size = this.getSize();
+//        if (this.template.getBackgroundSprite() != null) {
+//            this.template.getBackgroundSprite().render(
+//                window,
+//                this.position.getX(),
+//                this.position.getY()
+//            );
+//        }
+//        final PixelContainer pixelContainer = new PixelContainer(
+//            new int[size.getX() * size.getY()],
+//            size.getX(),
+//            size.getY()
+//        );
+//        this.container.render(pixelContainer);
+//        window.copyPixels(
+//            this.position.getX(),
+//            this.position.getY(),
+//            size.getX(),
+//            pixelContainer.getPixels()
+//        );
+//    }
 
     public static class TransformHandler {
 

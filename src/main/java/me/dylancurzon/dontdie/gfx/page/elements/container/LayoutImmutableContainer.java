@@ -205,14 +205,14 @@ public class LayoutImmutableContainer extends ImmutableElement implements Immuta
 
         @NotNull
         public Builder add(final int ratio, final ImmutableElement element) {
-            this.elements.add(Pair.of(ratio, page -> element));
+            this.elements.add(new Pair<>(ratio, page -> element));
             return this;
         }
 
         @NotNull
         public Builder add(final int ratio,
                            final Function<ImmutableContainer, ImmutableElement> fn) {
-            this.elements.add(Pair.of(ratio, fn));
+            this.elements.add(new Pair<>(ratio, fn));
             return this;
         }
 
