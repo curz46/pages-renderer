@@ -34,23 +34,24 @@ public class LevelDesigner implements Game, Tickable {
         this.level = new Level();
         for (int x = -200; x < 200; x++) {
             for (int y = -200; y < 200; y++) {
-                this.level.setTile(Vector2i.of(x, y), (x + y) % 2 == 0 ? TileType.UNDEFINED : TileType.STONEBRICKS);
+//                this.level.setTile(Vector2i.of(x, y), (x + y) % 2 == 0 ? TileType.UNDEFINED : TileType.STONEBRICKS);
+                this.level.setTile(Vector2i.of(x, y), TileType.STONEBRICKS);
             }
         }
 
         this.window = new GameWindow();
         this.window.initialize(true);
 
-        long lastTick = 0;
-        while (!this.killed) {
-            final long now = System.currentTimeMillis();
-            if (now - lastTick > 1000.0 / 144) { // 144tps
-                this.tick();
-                lastTick = now;
-            }
-        }
+//        long lastTick = 0;
+//        while (!this.killed) {
+//            final long now = System.currentTimeMillis();
+//            if (now - lastTick > 1000.0 / 144) { // 144tps
+//                this.tick();
+//                lastTick = now;
+//            }
+//        }
 
-        this.currentState = new MenuState();
+        this.currentState = new LevelState(this.camera, this.level);
         this.currentState.start();
     }
 
@@ -71,14 +72,7 @@ public class LevelDesigner implements Game, Tickable {
 
     @Override
     public void tick() {
-        final double v = 0.1;
-        final Vector2d delta = Vector2d.of(
-            this.window.isKeyPressed(GLFW_KEY_A) ? -v : this.window.isKeyPressed(GLFW_KEY_D) ? +v : 0,
-            this.window.isKeyPressed(GLFW_KEY_W) ? +v : this.window.isKeyPressed(GLFW_KEY_S) ? -v : 0
-        );
-        if (delta.getX() != 0 || delta.getY() != 0) {
-            this.camera.transform(delta);
-        }
+
     }
 
     public class MenuState implements GameState {
@@ -92,6 +86,7 @@ public class LevelDesigner implements Game, Tickable {
                 LevelDesigner.this.window,
                 new Renderer[] { new DesignerMenuRenderer() }
             );
+            LevelDesigner.this.shouldRender = true;
             LevelDesigner.this.renderThread = new Thread(() -> {
                 this.renderer.prepare();
                 while (LevelDesigner.this.shouldRender) {
@@ -118,7 +113,83 @@ public class LevelDesigner implements Game, Tickable {
 
         @Override
         public void tick() {
+            long lastTick = 0;
+            while (!LevelDesigner.this.killed) {
+                final long now = System.currentTimeMillis();
+                if (now - lastTick > 1000.0 / 144) { // 144tps
+                    this.tick();
+                    lastTick = now;
+                }
+            }
+        }
 
+    }
+
+    class LevelState implements GameState {
+
+        private final Camera camera;
+        private final Level level;
+
+        private RootRenderer renderer;
+
+        LevelState(final Camera camera, final Level level) {
+            this.camera = camera;
+            this.level = level;
+        }
+
+        @Override
+        public void start() {
+            this.renderer = new RootRenderer(
+                LevelDesigner.this.window,
+                new Renderer[] { new TileRenderer(this.camera, this.level) }
+            );
+            LevelDesigner.this.shouldRender = true;
+//            LevelDesigner.this.renderThread = new Thread(() -> {
+//                this.renderer.prepare();
+//                while (LevelDesigner.this.shouldRender) {
+//                    this.renderer.render();
+//                }
+//                this.renderer.cleanup();
+//            });
+//            LevelDesigner.this.renderThread.start();
+
+//            long lastTick = 0;
+//            while (!LevelDesigner.this.killed) {
+//                final long now = System.currentTimeMillis();
+//                if (now - lastTick > 1000.0 / 144) { // 144tps
+//                    this.tick();
+//                    lastTick = now;
+//                }
+//            }
+
+            this.renderer.prepare();
+            long lastTick = 0;
+            while (LevelDesigner.this.shouldRender) {
+                this.renderer.render();
+                final long now = System.currentTimeMillis();
+                if (now - lastTick > 1000.0 / 144) { // 144tps
+                    this.tick();
+                    lastTick = now;
+                }
+            }
+            this.renderer.cleanup();
+        }
+
+        @Override
+        public void finish() {
+
+        }
+
+        @Override
+        public void tick() {
+            final double v = 0.02;
+            final Vector2d delta = Vector2d.of(
+                LevelDesigner.this.window.isKeyPressed(GLFW_KEY_A) ? -v : LevelDesigner.this.window.isKeyPressed(GLFW_KEY_D) ? +v : 0,
+                LevelDesigner.this.window.isKeyPressed(GLFW_KEY_W) ? +v : LevelDesigner.this.window.isKeyPressed(GLFW_KEY_S) ? -v : 0
+            );
+            if (delta.getX() != 0 || delta.getY() != 0) {
+                this.camera.transform(delta);
+            }
         }
 
     }

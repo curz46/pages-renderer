@@ -1,6 +1,10 @@
 package me.dylancurzon.dontdie.gfx;
 
+import me.dylancurzon.dontdie.gfx.opengl.Texture;
 import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
+import me.dylancurzon.dontdie.sprite.Sprite;
+import me.dylancurzon.dontdie.sprite.SpritePacker;
+import me.dylancurzon.dontdie.sprite.Sprites;
 import me.dylancurzon.dontdie.tile.Level;
 import me.dylancurzon.dontdie.tile.TileType;
 import me.dylancurzon.dontdie.util.ShaderUtil;
@@ -8,10 +12,12 @@ import me.dylancurzon.dontdie.util.Vector2d;
 import me.dylancurzon.dontdie.util.Vector2i;
 import org.lwjgl.opengl.ARBShaderObjects;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.glTexSubImage3D;
 import static org.lwjgl.opengl.GL20.*;
 
 /**
@@ -38,8 +44,11 @@ public class TileRenderer implements Renderer {
     private int vertices;
     private VertexBuffer positions;
     private VertexBuffer texCoord;
-    private VertexBuffer texIndex;
+//    private VertexBuffer texIndex;
 //    private VertexBuffer currentFrame;
+
+    private SpritePacker tilePacker;
+    private Texture tileTexture;
 
     private Vector2d oldFixed = null;
 
@@ -54,7 +63,7 @@ public class TileRenderer implements Renderer {
 
         this.positions = VertexBuffer.make();
         this.texCoord = VertexBuffer.make();
-        this.texIndex = VertexBuffer.make();
+//        this.texIndex = VertexBuffer.make();
 //        this.currentFrame = VertexBuffer.make();
 
 //        final Set<AnimatedSprite> sprites = Sprites.getSprites();
@@ -84,6 +93,12 @@ public class TileRenderer implements Renderer {
 //        }
 
         // Prepare dynamic Tile spritemap
+//        final Set<Sprite> tileSprites = Arrays.stream(TileType.values())
+//            .map(TileType::getSprite)
+//            .collect(Collectors.toSet());
+        this.tilePacker = new SpritePacker(Sprites.getSprites());
+        this.tileTexture = Texture.make(this.tilePacker);
+//        this.tileTexture = Texture.make(Sprites.STONEBRICKS);
 
         this.updateTilemap();
     }
@@ -92,12 +107,12 @@ public class TileRenderer implements Renderer {
     public void cleanup() {
         this.positions.destroy();
         this.texCoord.destroy();
-        this.texIndex.destroy();
+//        this.texIndex.destroy();
 //        this.currentFrame.destroy();
 
         this.positions = null;
         this.texCoord = null;
-        this.texIndex = null;
+//        this.texIndex = null;
 //        this.currentFrame = null;
     }
 
@@ -115,7 +130,8 @@ public class TileRenderer implements Renderer {
         }
 
         ARBShaderObjects.glUseProgramObjectARB(this.shaderProgram);
-//        glBindTexture(GL_TEXTURE_2D_ARRAY, this.spritemapId);
+        glBindTexture(GL_TEXTURE_2D, this.tileTexture.getId());
+//        this.tileTexture.bind();
 
         this.positions.bind();
         glEnableVertexAttribArray(0);
@@ -123,9 +139,9 @@ public class TileRenderer implements Renderer {
         this.texCoord.bind();
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
-        this.texIndex.bind();
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 1, GL_FLOAT, false, 0, 0);
+//        this.texIndex.bind();
+//        glEnableVertexAttribArray(2);
+//        glVertexAttribPointer(2, 1, GL_FLOAT, false, 0, 0);
 
 //        glEnableVertexAttribArray(3);
 //        glEnableVertexAttribArray(4);
@@ -139,6 +155,8 @@ public class TileRenderer implements Renderer {
 //        glDrawArrays(GL_QUADS, 0, 4);
 
         ARBShaderObjects.glUseProgramObjectARB(0);
+
+        System.out.println("Done render");
     }
 
     /**
@@ -155,13 +173,16 @@ public class TileRenderer implements Renderer {
 
         final float[] positions = new float[numTiles * 2 * 4];
         final float[] texCoords = new float[numTiles * 2 * 4];
-        final float[] texIndex = new float[numTiles * 4];
+//        final float[] texIndex = new float[numTiles * 4];
 
         int iPos = 0;
         int iCoords = 0;
-        int iIndex = 0;
+//        int iIndex = 0;
         for (int x = pointA.getX(); x < pointB.getX();  x++) {
             for (int y = pointA.getY(); y < pointB.getY(); y++) {
+                final TileType type = this.level.getTile(Vector2i.of(x, y)).orElse(TileType.BLACK);
+//                if (type == null) continue;
+
                 final float[] pos = {
                     x, y,
                     x + 1, y,
@@ -172,21 +193,34 @@ public class TileRenderer implements Renderer {
                     positions[iPos++] = pos[j];
                 }
 
+                System.out.println(type);
+                final Sprite sprite = type.getSprite();
+                final Vector2i position = this.tilePacker.getSpritePosition(sprite)
+                    .orElseThrow(() -> new RuntimeException("Sprite of TileType[" + type + "] is not in SpritePacker!"));
+                final float startX = ((float) position.getX()) / this.tilePacker.getWidth();
+                final float startY = ((float) position.getY()) / this.tilePacker.getHeight();
+                final float endX = ((float) (position.getX() + sprite.getWidth())) / this.tilePacker.getWidth();
+                final float endY = ((float) (position.getY() + sprite.getHeight())) / this.tilePacker.getHeight();
+
+                System.out.println(startX + ", " + startY  +", " + endX + ", " + endY);
+
                 final float[] coords = {
-                    0.0f, 0.0f,
-                    1.0f, 0.0f,
-                    1.0f, 1.0f,
-                    0.0f, 1.0f
+                    startX, endY,
+                    endX, endY,
+                    endX, startY,
+                    startX, startY
                 };
+
+//                final float[] coords = {
+//                    0.0f, 0.0f,
+//                    1.0f, 0.0f,
+//                    1.0f, 1.0f,
+//                    0.0f, 1.0f
+//                };
+
                 for (int j = 0; j < coords.length; j++) {
                     texCoords[iCoords++] = coords[j];
                 }
-
-                final TileType type = this.level.getTile(Vector2i.of(x, y)).orElse(TileType.BLACK);
-//                final int index = this.spriteIndexMap.get(type.getSprite());
-//                for (int j = 0; j < 4; j++) {
-//                    texIndex[iIndex++] = index;
-//                }
             }
         }
 
@@ -195,8 +229,8 @@ public class TileRenderer implements Renderer {
         this.positions.upload(positions);
         this.texCoord.bind();
         this.texCoord.upload(texCoords);
-        this.texIndex.bind();
-        this.texIndex.upload(texIndex);
+//        this.texIndex.bind();
+//        this.texIndex.upload(texIndex);
         VertexBuffer.unbind();
     }
 

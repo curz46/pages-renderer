@@ -1,6 +1,8 @@
 package me.dylancurzon.dontdie.gfx.opengl;
 
 import me.dylancurzon.dontdie.sprite.Sprite;
+import me.dylancurzon.dontdie.sprite.SpritePacker;
+import me.dylancurzon.dontdie.util.Buffers;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11C.glGenTextures;
@@ -23,7 +25,22 @@ public class Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, sprite.getWidth(), sprite.getHeight(), 0,
-            GL_RGBA, GL_UNSIGNED_BYTE, sprite.getFrames()[0]);
+            GL_RGBA, GL_UNSIGNED_BYTE, Buffers.asHeapBuffer(sprite.getFrames()[0]));
+        Texture.unbind();
+
+        return texture;
+    }
+
+    public static Texture make(final SpritePacker packer) {
+        final Texture texture = Texture.make();
+
+        texture.bind();
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, packer.getWidth(), packer.getHeight(), 0,
+            GL_RGBA, GL_UNSIGNED_BYTE, Buffers.asHeapBuffer(packer.getPixels()));
         Texture.unbind();
 
         return texture;

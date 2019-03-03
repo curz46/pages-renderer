@@ -2,6 +2,7 @@ package me.dylancurzon.dontdie.sprite;
 
 public interface SpriteSheets {
 
-    SpriteSheet TEXT = SpriteSheet.loadSprite("characters.png");
+    SpriteSheet BRICKS = SpriteSheet.loadSprite("stonebricks");
+    SpriteSheet TEXT = SpriteSheet.loadSprite("characters");
 
 }

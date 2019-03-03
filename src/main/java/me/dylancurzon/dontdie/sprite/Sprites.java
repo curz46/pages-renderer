@@ -4,19 +4,25 @@ import com.google.common.collect.Sets;
 
 import java.util.Set;
 
-import static me.dylancurzon.dontdie.sprite.Sprite.loadSprite;
-
 public interface Sprites {
 
-    Sprite BLACK = loadSprite("black");
-    Sprite UNDEFINED = loadSprite("undefined");
-    Sprite STONEBRICKS = loadSprite("stonebricks");
+    Sprite BLACK = Sprite.loadSprite("black");
+    Sprite UNDEFINED = Sprite.loadSprite("undefined");
+
+//    Sprite STONEBRICKS = Sprite.loadSprite("stonebricks");
+    Sprite STONEBRICKS1 = SpriteSheets.BRICKS.getSprite(0, 0, 16);
+    Sprite STONEBRICKS2 = SpriteSheets.BRICKS.getSprite(1, 0, 16);
+    Sprite STONEBRICKS3 = SpriteSheets.BRICKS.getSprite(0, 1, 16);
+    Sprite STONEBRICKS4 = SpriteSheets.BRICKS.getSprite(1, 1, 16);
 
     static Set<Sprite> getSprites() {
         return Sets.newHashSet(
             BLACK,
             UNDEFINED,
-            STONEBRICKS
+            STONEBRICKS1,
+            STONEBRICKS2,
+            STONEBRICKS3,
+            STONEBRICKS4
         );
     }
 

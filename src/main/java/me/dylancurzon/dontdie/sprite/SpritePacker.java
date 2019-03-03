@@ -1,7 +1,10 @@
 package me.dylancurzon.dontdie.sprite;
 
+import me.dylancurzon.dontdie.util.Buffers;
 import me.dylancurzon.dontdie.util.Vector2i;
+import org.lwjgl.BufferUtils;
 
+import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -11,8 +14,8 @@ public class SpritePacker {
 
     // OpenGL safe Texture size
     // TODO: We may want to adjust this based on content if the large Texture is causing performance issues.
-    private static final int WIDTH = 2018;
-    private static final int HEIGHT = 2018;
+    private static final int WIDTH = 2048;
+    private static final int HEIGHT = 2048;
 
     private final Set<Sprite> sprites;
     private Map<Sprite, Vector2i> spriteMap = new HashMap<>();
@@ -26,8 +29,44 @@ public class SpritePacker {
         return Optional.ofNullable(this.spriteMap.get(sprite));
     }
 
+    public byte[] getPixels() {
+        final byte[] pixels = new byte[WIDTH * HEIGHT * 4];
+        this.spriteMap
+            .forEach((sprite, position) -> {
+                for (int frameNum = 0; frameNum < sprite.getFrameCount(); frameNum++) {
+                    final byte[] frame = sprite.getFrames()[frameNum];
+
+                    for (int xd = 0; xd < sprite.getWidth(); xd++) {
+                        for (int yd = 0; yd < sprite.getHeight(); yd++) {
+                            final int xa = xd + position.getX();
+                            final int ya = yd + position.getY();
+                            //rgba
+                            pixels[(xa + (ya * WIDTH)) * 4 + 0] = frame[(xd + yd * sprite.getWidth()) * 4 + 0];
+                            pixels[(xa + (ya * WIDTH)) * 4 + 1] = frame[(xd + yd * sprite.getWidth()) * 4 + 1];
+                            pixels[(xa + (ya * WIDTH)) * 4 + 2] = frame[(xd + yd * sprite.getWidth()) * 4 + 2];
+                            pixels[(xa + (ya * WIDTH)) * 4 + 3] = frame[(xd + yd * sprite.getWidth()) * 4 + 3];
+                        }
+                    }
+                }
+            });
+
+        // TODO: I spent 6 hours trying to figure out why my SpritePacker wasn't rendering anything, and it was this
+        //       line
+        //return ByteBuffer.wrap(bytes);
+
+        return pixels;
+    }
+
     public Map<Sprite, Vector2i> getSpriteMap() {
         return this.spriteMap;
+    }
+
+    public int getWidth() {
+        return WIDTH;
+    }
+
+    public int getHeight() {
+        return HEIGHT;
     }
 
     private void pack(final Set<Sprite> sprites) {
@@ -157,7 +196,7 @@ public class SpritePacker {
          */
         public Image(final Sprite sprite) {
             this.sprite = sprite;
-            this.width = sprite.getWidth() * sprite.getFrameCount();
+            this.width = sprite.getWidth();
             this.height = sprite.getHeight();
         }
 

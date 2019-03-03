@@ -104,7 +104,7 @@ public class RootRenderer implements Renderer {
         this.frames++;
         if (System.currentTimeMillis() - this.lastSecond > 1000) {
             this.lastSecond = System.currentTimeMillis();
-            glfwSetWindowTitle(this.window.getId(), "FPS: " + this.frames);
+//            glfwSetWindowTitle(this.window.getId(), "FPS: " + this.frames);
             this.frames = 0;
         }
 

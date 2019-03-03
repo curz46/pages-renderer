@@ -8,7 +8,7 @@ import me.dylancurzon.dontdie.gfx.page.elements.container.Positioning;
 import me.dylancurzon.dontdie.gfx.page.elements.mutable.MutableContainer;
 import me.dylancurzon.dontdie.gfx.page.elements.mutable.MutableElement;
 import me.dylancurzon.dontdie.gfx.page.elements.mutable.WrappingMutableElement;
-import me.dylancurzon.dontdie.sprite.OldSprite;
+import me.dylancurzon.dontdie.sprite.Sprite;
 import me.dylancurzon.dontdie.util.Vector2i;
 
 import java.util.List;
@@ -17,13 +17,13 @@ import java.util.function.Function;
 
 public class PageTemplate extends DefaultImmutableContainer {
 
-    private final OldSprite backgroundSprite;
+    private final Sprite backgroundSprite;
     private final Vector2i position;
 
     protected PageTemplate(final Spacing margin, final Consumer<MutableElement> tickConsumer,
                            final List<Function<ImmutableContainer, ImmutableElement>> elements,
                            final Vector2i size, final Spacing padding, final Positioning positioning, final boolean centering,
-                           final OldSprite backgroundSprite, final Vector2i position, final boolean scrollable,
+                           final Sprite backgroundSprite, final Vector2i position, final boolean scrollable,
                            final Function<MutableElement, WrappingMutableElement> mutator,
                            final InteractOptions interactOptions) {
         super(margin, tickConsumer, elements, size, padding, positioning, centering, scrollable, mutator, interactOptions);
@@ -46,7 +46,7 @@ public class PageTemplate extends DefaultImmutableContainer {
     }
 
     @NotNull
-    public OldSprite getBackgroundSprite() {
+    public Sprite getBackgroundSprite() {
         return this.backgroundSprite;
     }
 
@@ -57,11 +57,11 @@ public class PageTemplate extends DefaultImmutableContainer {
 
     public static class Builder extends DefaultImmutableContainer.Builder<Builder> {
 
-        private OldSprite backgroundSprite;
+        private Sprite backgroundSprite;
         private Vector2i position;
 
         @NotNull
-        public Builder setBackground(final OldSprite backgroundSprite) {
+        public Builder setBackground(final Sprite backgroundSprite) {
             this.backgroundSprite = backgroundSprite;
             return this;
         }

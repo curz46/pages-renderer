@@ -1,6 +1,7 @@
 package me.dylancurzon.dontdie.gfx.opengl;
 
 import me.dylancurzon.dontdie.sprite.Sprite;
+import me.dylancurzon.dontdie.util.Buffers;
 
 import java.nio.ByteBuffer;
 
@@ -23,12 +24,11 @@ public class TextureArray {
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         for (int i = 0; i < sprite.getFrameCount(); i++) {
-            final ByteBuffer buf = sprite.getFrames()[i];
             glTexSubImage3D(
                 GL_TEXTURE_2D_ARRAY, 0,
                 0, 0, i,
                 sprite.getWidth(), sprite.getHeight(), 1,
-                GL_RGBA, GL_UNSIGNED_BYTE, buf
+                GL_RGBA, GL_UNSIGNED_BYTE, Buffers.asHeapBuffer(sprite.getFrames()[i])
             );
         }
         return new TextureArray(id);

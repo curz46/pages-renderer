@@ -2,6 +2,7 @@ package me.dylancurzon.dontdie.sprite;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 import me.dylancurzon.dontdie.Tickable;
+import me.dylancurzon.dontdie.util.Buffers;
 import me.dylancurzon.dontdie.util.ByteBuf;
 import org.lwjgl.BufferUtils;
 
@@ -11,10 +12,10 @@ import java.nio.ByteBuffer;
 
 public class Sprite {
 
-    private final int width;
-    private final int height;
-    private final int frameCount;
-    private final ByteBuffer[] frames;
+    protected final int width;
+    protected final int height;
+    protected final int frameCount;
+    protected final byte[][] frames;
 
     public static Sprite loadSprite(final String name) {
         return Sprite.loadAnimatedSprite(name, 1);
@@ -31,30 +32,45 @@ public class Sprite {
             int width = decoder.getWidth();
             int imageHeight = decoder.getHeight();
 
-            ByteBuffer pixelBuffer = ByteBuffer.wrap(new byte[4 * width * imageHeight]);
-            decoder.decode(pixelBuffer, width * 4, PNGDecoder.Format.RGBA);
-            final byte[] pixels = pixelBuffer.array();
+//            ByteBuffer pixelBuffer = ByteBuffer.wrap(new byte[4 * width * imageHeight]);
+            final ByteBuffer spriteBuffer = BufferUtils.createByteBuffer(width * imageHeight * 4);
+            decoder.decode(spriteBuffer, width * 4, PNGDecoder.Format.RGBA);
+            spriteBuffer.flip();
+
+            final byte[] pixels = Buffers.asByteArray(spriteBuffer);
 
             if (imageHeight % frameCount != 0) {
                 throw new RuntimeException("AnimatedSprite is malformed; not a multiple of frameCount");
             }
             int height = imageHeight / frameCount;
 
-            final ByteBuffer[] frames = new ByteBuffer[frameCount];
-            for (int i = 0; i < frameCount; i++) {
+            final byte[][] frames = new byte[frameCount][width * imageHeight * 4];
+            for (int frameNum = 0; frameNum < frameCount; frameNum++) {
 //                ByteBuffer buf = BufferUtils.createByteBuffer(4 * width * height);
-                final ByteBuffer buf = ByteBuffer.wrap(new byte[4 * width * height]);
+//                final ByteBuffer buf = ByteBuffer.wrap(new byte[4 * width * height]);
+                final byte[] frame = new byte[width * height * 4];
 
-                final int initialY = i * height;
-                final int indexBegin = initialY * width * 4;
-                final int indexEnd = indexBegin + (width * height * 4);
+//                final int initialY = i * height;
+//                final int indexBegin = initialY * width * 4;
+//                final int indexEnd = indexBegin + (width * height * 4);
 
-                for (int j = indexBegin; j < indexEnd; j++) {
-                    buf.put(pixels[j]);
+//                for (int j = indexBegin; j < indexEnd; j++) {
+//                    buf.put(pixels[j]);
+//                }
+
+                for (int dx = 0; dx < width; dx++) {
+                    for (int dy = 0; dy < height; dy++) {
+                        final int xp = dx;
+                        final int yp = dy + frameNum * height;
+                        for (int b = 0; b < 4; b++) {
+                            frame[(dx + dy * width) * 4 + b] = pixels[(xp + yp * imageHeight) * 4 + b];
+                        }
+                    }
                 }
 
-                buf.flip();
-                frames[i] = buf;
+//                buf.flip();
+//                frames[i] = buf;
+                frames[frameNum] = frame;
             }
 
             return new Sprite(width, height, frameCount, frames);
@@ -63,7 +79,7 @@ public class Sprite {
         }
     }
 
-    public Sprite(final int width, final int height, final int frameCount, final ByteBuffer[] frames) {
+    public Sprite(final int width, final int height, final int frameCount, final byte[][] frames) {
         this.width = width;
         this.height = height;
         this.frameCount = frameCount;
@@ -86,7 +102,7 @@ public class Sprite {
         return this.frameCount;
     }
 
-    public ByteBuffer[] getFrames() {
+    public byte[][] getFrames() {
         return this.frames;
     }
 
@@ -99,7 +115,7 @@ public class Sprite {
             this.ticks++;
         }
 
-        public ByteBuffer getCurrentFrame() {
+        public byte[] getCurrentFrame() {
             return Sprite.this.frames[this.ticks % Sprite.this.frameCount];
         }
 

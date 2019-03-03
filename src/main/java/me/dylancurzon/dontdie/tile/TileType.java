@@ -3,13 +3,16 @@ package me.dylancurzon.dontdie.tile;
 import me.dylancurzon.dontdie.sprite.Sprite;
 import me.dylancurzon.dontdie.sprite.Sprites;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public enum TileType {
 
     BLACK(0, Sprites.BLACK),
     UNDEFINED(1, Sprites.UNDEFINED),
-    STONEBRICKS(2, Sprites.STONEBRICKS);
+    STONEBRICKS(2,
+        Sprites.STONEBRICKS1, Sprites.STONEBRICKS2, Sprites.STONEBRICKS3, Sprites.STONEBRICKS4, Sprites.STONEBRICKS4,
+        Sprites.STONEBRICKS4, Sprites.STONEBRICKS4);
 
     public static Optional<TileType> forId(final int id) {
         for (TileType type : TileType.values()) {
@@ -19,11 +22,16 @@ public enum TileType {
     }
 
     private final int id;
-    private final Sprite sprite;
+    private final List<Sprite> variations;
 
     TileType(final int id, final Sprite sprite) {
         this.id = id;
-        this.sprite = sprite;
+        this.variations = Collections.singletonList(sprite);
+    }
+
+    TileType(final int id, final Sprite... variations) {
+        this.id = id;
+        this.variations = Arrays.asList(variations);
     }
 
     public int getId() {
@@ -31,7 +39,11 @@ public enum TileType {
     }
 
     public Sprite getSprite() {
-        return this.sprite;
+        // TODO: Make TileType a normal class so this behaviour can be type-specific
+        if (this.variations.size() == 1) {
+            return this.variations.get(0);
+        }
+        return this.variations.get(ThreadLocalRandom.current().nextInt(0, this.variations.size()));
     }
 
 }
