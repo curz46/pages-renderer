@@ -8,26 +8,25 @@ import me.dylancurzon.dontdie.gfx.page.elements.container.Positioning;
 import me.dylancurzon.dontdie.gfx.page.elements.mutable.MutableContainer;
 import me.dylancurzon.dontdie.gfx.page.elements.mutable.MutableElement;
 import me.dylancurzon.dontdie.gfx.page.elements.mutable.WrappingMutableElement;
-import me.dylancurzon.dontdie.sprite.Sprite;
 import me.dylancurzon.dontdie.util.Vector2i;
 
+import java.awt.*;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class PageTemplate extends DefaultImmutableContainer {
 
-    private final Sprite backgroundSprite;
     private final Vector2i position;
 
     protected PageTemplate(final Spacing margin, final Consumer<MutableElement> tickConsumer,
                            final List<Function<ImmutableContainer, ImmutableElement>> elements,
                            final Vector2i size, final Spacing padding, final Positioning positioning, final boolean centering,
-                           final Sprite backgroundSprite, final Vector2i position, final boolean scrollable,
+                           final Vector2i position, final boolean scrollable,
+                           final Color fillColor, final Color lineColor, final Integer lineWidth,
                            final Function<MutableElement, WrappingMutableElement> mutator,
                            final InteractOptions interactOptions) {
-        super(margin, tickConsumer, elements, size, padding, positioning, centering, scrollable, mutator, interactOptions);
-        this.backgroundSprite = backgroundSprite;
+        super(margin, tickConsumer, elements, size, padding, positioning, centering, scrollable, fillColor, lineColor, lineWidth, mutator, interactOptions);
         this.position = position;
     }
 
@@ -46,25 +45,13 @@ public class PageTemplate extends DefaultImmutableContainer {
     }
 
     @NotNull
-    public Sprite getBackgroundSprite() {
-        return this.backgroundSprite;
-    }
-
-    @NotNull
     public Vector2i getPosition() {
         return this.position;
     }
 
     public static class Builder extends DefaultImmutableContainer.Builder<Builder> {
 
-        private Sprite backgroundSprite;
         private Vector2i position;
-
-        @NotNull
-        public Builder setBackground(final Sprite backgroundSprite) {
-            this.backgroundSprite = backgroundSprite;
-            return this;
-        }
 
         @NotNull
         public Builder setPosition(final Vector2i position) {
@@ -89,23 +76,25 @@ public class PageTemplate extends DefaultImmutableContainer {
                 throw new RuntimeException("Empty PageTemplate is not permitted!");
             }
             if (this.position == null) {
-                throw new RuntimeException("Position is a required attributea!");
+                throw new RuntimeException("Position is a required attribute!");
+            }
+            if (this.size == null) {
+                throw new RuntimeException("Size is a required attribute!");
             }
 
             return new PageTemplate(
                 super.margin,
                 super.tickConsumer,
                 super.elements,
-                Vector2i.of(
-                    super.size == null ? this.backgroundSprite.getWidth() : super.size.getX(),
-                    super.size == null ? this.backgroundSprite.getHeight() : super.size.getY()
-                ),
+                super.size,
                 super.padding,
                 super.positioning,
                 super.centering,
-                this.backgroundSprite,
                 this.position,
                 super.scrollable,
+                super.fillColor,
+                super.lineColor,
+                super.lineWidth,
                 super.mutator,
                 super.interactOptions
             );

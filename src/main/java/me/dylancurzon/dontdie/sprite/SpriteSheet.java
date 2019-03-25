@@ -43,14 +43,8 @@ public class SpriteSheet extends Sprite {
     }
 
     public Sprite getSprite(final int x, final int y, final int width, final int height) {
-//        final ByteBuffer buffer = BufferUtils.createByteBuffer(4 * width * height);
         final byte[] pixels = new byte[width * height * 4];
         final byte[] frame = super.frames[0];
-
-        System.out.println("Pixels " + pixels.length);
-        System.out.println("Frame " + frame.length);
-
-        System.out.println("Width: " + width);
 
         for (int dx = 0; dx < width; dx++) {
             for (int dy = 0; dy < height; dy++) {

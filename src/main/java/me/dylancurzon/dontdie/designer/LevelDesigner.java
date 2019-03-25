@@ -2,12 +2,26 @@ package me.dylancurzon.dontdie.designer;
 
 import me.dylancurzon.dontdie.Game;
 import me.dylancurzon.dontdie.GameState;
+import me.dylancurzon.dontdie.Tickable;
 import me.dylancurzon.dontdie.gfx.*;
+import me.dylancurzon.dontdie.gfx.page.Page;
+import me.dylancurzon.dontdie.gfx.page.PageTemplate;
+import me.dylancurzon.dontdie.gfx.page.Spacing;
+import me.dylancurzon.dontdie.gfx.page.elements.SpriteImmutableElement;
+import me.dylancurzon.dontdie.gfx.page.elements.TextImmutableElement;
+import me.dylancurzon.dontdie.gfx.page.elements.container.DefaultImmutableContainer;
+import me.dylancurzon.dontdie.gfx.page.elements.container.ImmutableContainer;
+import me.dylancurzon.dontdie.gfx.page.elements.container.LayoutImmutableContainer;
+import me.dylancurzon.dontdie.gfx.page.elements.container.Positioning;
+import me.dylancurzon.dontdie.sprite.SpriteSheets;
+import me.dylancurzon.dontdie.sprite.Sprites;
+import me.dylancurzon.dontdie.sprite.TextSprite;
 import me.dylancurzon.dontdie.tile.Level;
 import me.dylancurzon.dontdie.tile.TileType;
-import me.dylancurzon.dontdie.Tickable;
 import me.dylancurzon.dontdie.util.Vector2d;
 import me.dylancurzon.dontdie.util.Vector2i;
+
+import java.awt.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -42,16 +56,7 @@ public class LevelDesigner implements Game, Tickable {
         this.window = new GameWindow();
         this.window.initialize(true);
 
-//        long lastTick = 0;
-//        while (!this.killed) {
-//            final long now = System.currentTimeMillis();
-//            if (now - lastTick > 1000.0 / 144) { // 144tps
-//                this.tick();
-//                lastTick = now;
-//            }
-//        }
-
-        this.currentState = new LevelState(this.camera, this.level);
+        this.currentState = new MenuState();
         this.currentState.start();
     }
 
@@ -72,7 +77,6 @@ public class LevelDesigner implements Game, Tickable {
 
     @Override
     public void tick() {
-
     }
 
     public class MenuState implements GameState {
@@ -82,23 +86,66 @@ public class LevelDesigner implements Game, Tickable {
 
         @Override
         public void start() {
+            final Page page = PageTemplate.builder()
+                .setPosition(Vector2i.of(0, 0))
+                .setSize(Vector2i.of(256, 192))
+//                .setCentering(true)
+                .add(p1 -> LayoutImmutableContainer.builder()
+                    .setSize(p1.getSize())
+                    .add(1, p2 -> ImmutableContainer.builder()
+                        .setSize(p2.getSize())
+                        .setLineColor(Color.WHITE)
+                        .setCentering(true)
+                        .add(p3 -> LayoutImmutableContainer.builder()
+                            .setSize(p3.getSize())
+                            .setCentering(true)
+                            .add(1, TextImmutableElement.builder()
+                                .setText(TextSprite.of("guess who has mastered", 2))
+                                .build())
+                            .add(1, TextImmutableElement.builder()
+                                .setText(TextSprite.of("pages in opengl", 2))
+                                .build())
+                            .build())
+                        .build())
+                    .add(1, p2 -> ImmutableContainer.builder()
+                        .setSize(p2.getSize())
+//                        .setFillColor(Color.RED)
+                        .setCentering(true)
+                        .setFillColor(Color.BLUE)
+                        .add(p3 -> ImmutableContainer.builder()
+                            .setFillColor(Color.GREEN)
+                            .setLineColor(Color.RED)
+                            .add(TextImmutableElement.builder()
+                                .setMargin(Spacing.of(10))
+                                .setText(TextSprite.of("this guy", 2))
+                                .build())
+                            .build())
+                        .build())
+                    .build())
+                .build().asMutable();
+
+//            final TextRenderer renderer = new TextRenderer();
+//            renderer.getSprites().put(TextSprite.of("Helloworld", 2), Vector2i.of(100, 100));
+
             this.renderer = new RootRenderer(
                 LevelDesigner.this.window,
-                new Renderer[] { new DesignerMenuRenderer() }
+                new Renderer[] { new PageRenderer(page) }
+//                new Renderer[] { new ConsoleRenderer() }
+//                new Renderer[] { renderer }
             );
             LevelDesigner.this.shouldRender = true;
-            LevelDesigner.this.renderThread = new Thread(() -> {
-                this.renderer.prepare();
-                while (LevelDesigner.this.shouldRender) {
-                    this.renderer.render();
-                }
-                this.renderer.cleanup();
-            });
-            LevelDesigner.this.renderThread.start();
 
-            while (this.running) {
-                this.tick();
+            this.renderer.prepare();
+            long lastTick = 0;
+            while (LevelDesigner.this.shouldRender) {
+                this.renderer.render();
+                final long now = System.currentTimeMillis();
+                if (now - lastTick > 1000.0 / 144) { // 144tps
+                    this.tick();
+                    lastTick = now;
+                }
             }
+            this.renderer.cleanup();
         }
 
         @Override
@@ -113,14 +160,6 @@ public class LevelDesigner implements Game, Tickable {
 
         @Override
         public void tick() {
-            long lastTick = 0;
-            while (!LevelDesigner.this.killed) {
-                final long now = System.currentTimeMillis();
-                if (now - lastTick > 1000.0 / 144) { // 144tps
-                    this.tick();
-                    lastTick = now;
-                }
-            }
         }
 
     }
@@ -144,23 +183,6 @@ public class LevelDesigner implements Game, Tickable {
                 new Renderer[] { new TileRenderer(this.camera, this.level) }
             );
             LevelDesigner.this.shouldRender = true;
-//            LevelDesigner.this.renderThread = new Thread(() -> {
-//                this.renderer.prepare();
-//                while (LevelDesigner.this.shouldRender) {
-//                    this.renderer.render();
-//                }
-//                this.renderer.cleanup();
-//            });
-//            LevelDesigner.this.renderThread.start();
-
-//            long lastTick = 0;
-//            while (!LevelDesigner.this.killed) {
-//                final long now = System.currentTimeMillis();
-//                if (now - lastTick > 1000.0 / 144) { // 144tps
-//                    this.tick();
-//                    lastTick = now;
-//                }
-//            }
 
             this.renderer.prepare();
             long lastTick = 0;

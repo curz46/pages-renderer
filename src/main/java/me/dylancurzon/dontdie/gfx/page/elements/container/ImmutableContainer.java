@@ -5,6 +5,9 @@ import me.dylancurzon.dontdie.gfx.page.InteractOptions;
 import me.dylancurzon.dontdie.gfx.page.Spacing;
 import me.dylancurzon.dontdie.util.Vector2i;
 
+import java.awt.*;
+import java.util.Optional;
+
 public interface ImmutableContainer {
 
     static DefaultImmutableContainer.ContainerBuilder builder() {
@@ -34,6 +37,15 @@ public interface ImmutableContainer {
 
     @NotNull
     boolean isScrollable();
+
+    @NotNull
+    Optional<Color> getFillColor();
+
+    @NotNull
+    Optional<Color> getLineColor();
+
+    @NotNull
+    Optional<Integer> getLineWidth();
 
     @NotNull
     InteractOptions getInteractOptions();

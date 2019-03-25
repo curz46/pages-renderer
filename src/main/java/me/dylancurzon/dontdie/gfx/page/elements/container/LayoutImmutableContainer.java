@@ -11,8 +11,10 @@ import me.dylancurzon.dontdie.gfx.page.elements.mutable.WrappingMutableElement;
 import me.dylancurzon.dontdie.util.Vector2d;
 import me.dylancurzon.dontdie.util.Vector2i;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -27,12 +29,17 @@ public class LayoutImmutableContainer extends ImmutableElement implements Immuta
     private final Positioning positioning;
     private final boolean centering;
     private final boolean scrollable;
+    protected final Color fillColor;
+    private final Color lineColor;
+    private final Integer lineWidth;
+
 
     private LayoutImmutableContainer(final Spacing margin, final Consumer<MutableElement> tickConsumer,
                                      final List<Pair<Integer, Function<ImmutableContainer, ImmutableElement>>> elements,
                                      final Vector2i size, final Spacing padding,
                                      final Positioning positioning, final boolean centering,
-                                     final boolean scrollable,
+                                     final boolean scrollable, final Color fillColor, final Color lineColor,
+                                     final Integer lineWidth,
                                      final Function<MutableElement, WrappingMutableElement> mutator,
                                      final InteractOptions interactOptions) {
         super(margin, tickConsumer, mutator, interactOptions);
@@ -46,6 +53,9 @@ public class LayoutImmutableContainer extends ImmutableElement implements Immuta
             this.padding = padding;
         }
         this.scrollable = scrollable;
+        this.fillColor = fillColor;
+        this.lineColor = lineColor;
+        this.lineWidth = lineWidth;
     }
 
     @NotNull
@@ -73,6 +83,9 @@ public class LayoutImmutableContainer extends ImmutableElement implements Immuta
             .setPadding(this.padding)
             .setPositioning(this.positioning)
             .setScrollable(this.scrollable)
+            .setFillColor(this.fillColor)
+            .setLineColor(this.lineColor)
+            .setLineWidth(this.lineWidth)
             .add(wrappedElements)
             .build()
             .asMutable();
@@ -194,6 +207,21 @@ public class LayoutImmutableContainer extends ImmutableElement implements Immuta
         return this.scrollable;
     }
 
+    @Override
+    public Optional<Color> getFillColor() {
+        return Optional.ofNullable(this.fillColor);
+    }
+
+    @Override
+    public Optional<Color> getLineColor() {
+        return Optional.ofNullable(this.lineColor);
+    }
+
+    @Override
+    public Optional<Integer> getLineWidth() {
+        return Optional.ofNullable(lineWidth);
+    }
+
     public static class Builder extends ImmutableElement.Builder<LayoutImmutableContainer, Builder> {
 
         private final List<Pair<Integer, Function<ImmutableContainer, ImmutableElement>>> elements = new ArrayList<>();
@@ -202,6 +230,9 @@ public class LayoutImmutableContainer extends ImmutableElement implements Immuta
         private Positioning positioning;
         private boolean centering;
         private boolean scrollable;
+        private Color fillColor;
+        private Color lineColor;
+        private Integer lineWidth;
 
         @NotNull
         public Builder add(final int ratio, final ImmutableElement element) {
@@ -240,6 +271,23 @@ public class LayoutImmutableContainer extends ImmutableElement implements Immuta
             return this;
         }
 
+        @NotNull
+        public Builder setFillColor(final Color color) {
+            this.fillColor = color;
+            return this.self();
+        }
+
+        @NotNull
+        public Builder setLineColor(final Color color) {
+            this.lineColor = color;
+            return this.self();
+        }
+
+        @NotNull
+        public Builder setLineWidth(final Integer width) {
+            this.lineWidth = width;
+            return this.self();
+        }
 
         @NotNull
         public Builder setScrollable(final boolean scrollable) {
@@ -265,6 +313,9 @@ public class LayoutImmutableContainer extends ImmutableElement implements Immuta
                 this.positioning,
                 this.centering,
                 this.scrollable,
+                this.fillColor,
+                this.lineColor,
+                this.lineWidth,
                 super.mutator,
                 super.interactOptions
             );

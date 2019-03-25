@@ -7,6 +7,7 @@ import me.dylancurzon.dontdie.gfx.page.elements.mutable.MutableElement;
 import me.dylancurzon.dontdie.util.Vector2i;
 
 import java.util.List;
+import java.util.Map;
 
 public class Page extends MutableContainer implements Tickable {
 
@@ -49,7 +50,7 @@ public class Page extends MutableContainer implements Tickable {
     }
 
     @Override
-    public List<PositionedElement> draw() {
+    public List<AlignedElement> draw() {
         return this.container.draw();
     }
 
@@ -63,24 +64,20 @@ public class Page extends MutableContainer implements Tickable {
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        if (this.transform != null) {
-            this.transform.tick();
-            this.position = this.transform.getPosition();
-            if (this.transform.isCompleted()) {
-                this.transform = null;
-            }
-        }
-        this.container.tick();
-    }
-
-    @Override
     public Vector2i getMousePosition(final MutableElement element) {
         // A page is a wrapper for a container. The container has the same position.
         // final Vector2i position = this.calculatePositions().get(element);
         if (this.mousePosition == null) return null;
         return this.mousePosition.sub(this.position);
+    }
+
+    public Map<MutableElement, Vector2i> getPositions() {
+        return this.container.getPositions();
+    }
+
+    @Override
+    public void tick() {
+        this.container.tick();
     }
 
 //    @Override

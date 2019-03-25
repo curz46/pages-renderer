@@ -7,6 +7,7 @@ import me.dylancurzon.dontdie.gfx.page.Spacing;
 import me.dylancurzon.dontdie.gfx.page.elements.mutable.MutableElement;
 import me.dylancurzon.dontdie.gfx.page.elements.mutable.TextMutableElement;
 import me.dylancurzon.dontdie.gfx.page.elements.mutable.WrappingMutableElement;
+import me.dylancurzon.dontdie.sprite.TextSprite;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -14,14 +15,14 @@ import java.util.function.Function;
 @Immutable
 public class TextImmutableElement extends ImmutableElement {
 
-//    private final TextSprite sprite;
+    private final TextSprite sprite;
 
     protected TextImmutableElement(final Spacing margin, final Consumer<MutableElement> tickConsumer,
-//                                   final TextSprite sprite,
+                                   final TextSprite sprite,
                                    final Function<MutableElement, WrappingMutableElement> mutator,
                                    final InteractOptions interactOptions) {
         super(margin, tickConsumer, mutator, interactOptions);
-//        this.sprite = sprite;
+        this.sprite = sprite;
     }
 
     @NotNull
@@ -35,20 +36,20 @@ public class TextImmutableElement extends ImmutableElement {
         return super.doMutate(new TextMutableElement(super.margin, this));
     }
 
-//    @NotNull
-//    public TextSprite getSprite() {
-//        return this.sprite;
-//    }
+    @NotNull
+    public TextSprite getSprite() {
+        return this.sprite;
+    }
 
     public static class Builder extends ImmutableElement.Builder<TextImmutableElement, Builder> {
 
-//        private TextSprite sprite;
+        private TextSprite sprite;
 
-//        @NotNull
-//        public Builder setText(final TextSprite sprite) {
-//            this.sprite = sprite;
-//            return this;
-//        }
+        @NotNull
+        public Builder setText(final TextSprite sprite) {
+            this.sprite = sprite;
+            return this;
+        }
 
         @Override
         public Builder self() {
@@ -61,7 +62,7 @@ public class TextImmutableElement extends ImmutableElement {
             return new TextImmutableElement(
                 super.margin,
                 super.tickConsumer,
-//                this.sprite,
+                this.sprite,
                 super.mutator,
                 super.interactOptions
             );

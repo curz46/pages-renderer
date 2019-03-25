@@ -64,6 +64,9 @@ public class GameWindow implements Tickable {
         // TODO: look into if this is necessary, as FBO is leaking into this class
         glViewport(0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT);
 
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         if (doShow) glfwShowWindow(this.id);
 
         glfwMakeContextCurrent(0);

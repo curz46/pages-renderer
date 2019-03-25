@@ -1,7 +1,8 @@
 package me.dylancurzon.dontdie.gfx.page.elements.mutable;
 
 import com.sun.istack.internal.NotNull;
-import me.dylancurzon.dontdie.gfx.page.PositionedElement;
+import jdk.nashorn.internal.runtime.regexp.joni.constants.OPCode;
+import me.dylancurzon.dontdie.gfx.page.AlignedElement;
 import me.dylancurzon.dontdie.gfx.page.Spacing;
 import me.dylancurzon.dontdie.gfx.page.animation.Animation;
 import me.dylancurzon.dontdie.gfx.page.animation.QuarticEaseInAnimation;
@@ -10,9 +11,11 @@ import me.dylancurzon.dontdie.util.Cached;
 import me.dylancurzon.dontdie.util.Vector2d;
 import me.dylancurzon.dontdie.util.Vector2i;
 
+import java.awt.*;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static me.dylancurzon.dontdie.gfx.page.elements.container.Positioning.*;
 
@@ -30,14 +33,22 @@ public abstract class MutableContainer extends MutableElement {
 
     private TransformHandler transform;
 
+    private Color fillColor;
+    private Color lineColor;
+    private Integer lineWidth;
+
     protected MutableContainer(final Spacing margin, final ImmutableContainer container,
                                final List<MutableElement> elements) {
         super(margin, container.getInteractOptions());
         this.container = container;
         this.elements = elements;
+
+        this.fillColor = container.getFillColor().orElse(null);
+        this.lineColor = container.getLineColor().orElse(null);
+        this.lineWidth = container.getLineWidth().orElse(null);
     }
 
-    public abstract List<PositionedElement> draw();
+    public abstract List<AlignedElement> draw();
 
     @NotNull
     public List<MutableElement> getElements() {
@@ -45,12 +56,14 @@ public abstract class MutableContainer extends MutableElement {
     }
 
     public Map<MutableElement, Vector2i> getPositions() {
-        return this.positions.get()
+        Map<MutableElement, Vector2i> result = this.positions.get()
             .orElseGet(() -> {
                 final Map<MutableElement, Vector2i> positions = this.calculatePositions();
                 this.positions.set(positions);
                 return positions;
             });
+
+        return result;
     }
 
     /**
@@ -99,6 +112,7 @@ public abstract class MutableContainer extends MutableElement {
                 }
             }
         }
+
         return positions;
     }
 
@@ -147,6 +161,18 @@ public abstract class MutableContainer extends MutableElement {
             this.transform = null;
         }
         this.scrollVelocity += amount * SCROLL_FACTOR;
+    }
+
+    public Optional<Color> getFillColor() {
+        return Optional.ofNullable(this.fillColor);
+    }
+
+    public Optional<Color> getLineColor() {
+        return Optional.ofNullable(this.lineColor);
+    }
+
+    public Optional<Integer> getLineWidth() {
+        return Optional.ofNullable(this.lineWidth);
     }
 
     private void checkBounds() {

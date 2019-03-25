@@ -1,21 +1,21 @@
 package me.dylancurzon.dontdie.gfx;
 
-import me.dylancurzon.dontdie.gfx.opengl.TextureArray;
+import me.dylancurzon.dontdie.gfx.opengl.Texture;
 import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
 import me.dylancurzon.dontdie.sprite.Sprite;
+import me.dylancurzon.dontdie.sprite.SpriteSheets;
+import me.dylancurzon.dontdie.sprite.TextSprite;
 import me.dylancurzon.dontdie.util.ShaderUtil;
 import org.lwjgl.opengl.ARBShaderObjects;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glUniform1i;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL20.*;
 
 public class ConsoleRenderer implements Renderer {
 
     private int basicShader;
 
-    private TextureArray loadingTexture;
+    private Texture loadingTexture;
 
     private VertexBuffer startupPositions;
     private VertexBuffer startupTexCoords;
@@ -40,37 +40,38 @@ public class ConsoleRenderer implements Renderer {
         this.basicShader = ShaderUtil.createShaderProgram("loading");
 
         // TODO: load AnimatedSprite
-        final Sprite sprite = Sprite.loadAnimatedSprite("loading", 20);
-        this.loadingTexture = TextureArray.make(sprite);
-
-        final float hWidth = (sprite.getWidth() / 256.0f) / 2.0f;
-        final float hHeight = (sprite.getHeight() / 192.0f) / 2.0f;
-
+//        final Sprite sprite = Sprite.loadAnimatedSprite("loading", 20);
+//        final Sprite sprite = TextSprite.of("HelloWorld", 4);
+//        this.loadingTexture = Texture.make(sprite);
+//
+//        final float hWidth = (sprite.getWidth() / 256.0f) * 2.0f;
+//        final float hHeight = (sprite.getHeight() / 192.0f) * 2.0f;
+//
+////        final float[] positions = {
+////            -1.0f, -1.0f,
+////            1.0f, -1.0f,
+////            1.0f, 1.0f,
+////            -1.0f, 1.0f
+////        };
 //        final float[] positions = {
-//            -1.0f, -1.0f,
-//            1.0f, -1.0f,
-//            1.0f, 1.0f,
-//            -1.0f, 1.0f
+//            -hWidth, -hHeight,
+//            hWidth, -hHeight,
+//            hWidth, hHeight,
+//            -hWidth, hHeight
 //        };
-        final float[] positions = {
-            -hWidth, -hHeight,
-            hWidth, -hHeight,
-            hWidth, hHeight,
-            -hWidth, hHeight
-        };
-        final float[] texCoords = {
-            0.0f, 1.0f,
-            1.0f, 1.0f,
-            1.0f, 0.0f,
-            0.0f, 0.0f
-        };
-        this.startupPositions = VertexBuffer.make();
-        this.startupPositions.bind();
-        this.startupPositions.upload(positions);
-        this.startupTexCoords = VertexBuffer.make();
-        this.startupTexCoords.bind();
-        this.startupTexCoords.upload(texCoords);
-        VertexBuffer.unbind();
+//        final float[] texCoords = {
+//            0.0f, 0.0f,
+//            1.0f, 0.0f,
+//            1.0f, 1.0f,
+//            0.0f, 1.0f
+//        };
+//        this.startupPositions = VertexBuffer.make();
+//        this.startupPositions.bind();
+//        this.startupPositions.upload(positions);
+//        this.startupTexCoords = VertexBuffer.make();
+//        this.startupTexCoords.bind();
+//        this.startupTexCoords.upload(texCoords);
+//        VertexBuffer.unbind();
     }
 
     @Override

@@ -155,8 +155,6 @@ public class TileRenderer implements Renderer {
 //        glDrawArrays(GL_QUADS, 0, 4);
 
         ARBShaderObjects.glUseProgramObjectARB(0);
-
-        System.out.println("Done render");
     }
 
     /**

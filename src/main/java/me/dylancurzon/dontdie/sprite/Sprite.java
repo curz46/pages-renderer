@@ -86,10 +86,6 @@ public class Sprite {
         this.frames = frames;
     }
 
-    public TickableSprite createTickableSprite() {
-        return new TickableSprite();
-    }
-
     public int getWidth() {
         return this.width;
     }

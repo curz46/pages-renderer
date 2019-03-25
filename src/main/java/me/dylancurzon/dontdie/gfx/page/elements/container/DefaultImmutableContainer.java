@@ -3,7 +3,7 @@ package me.dylancurzon.dontdie.gfx.page.elements.container;
 import com.sun.istack.internal.NotNull;
 import jdk.nashorn.internal.ir.annotations.Immutable;
 import me.dylancurzon.dontdie.gfx.page.InteractOptions;
-import me.dylancurzon.dontdie.gfx.page.PositionedElement;
+import me.dylancurzon.dontdie.gfx.page.AlignedElement;
 import me.dylancurzon.dontdie.gfx.page.Spacing;
 import me.dylancurzon.dontdie.gfx.page.elements.ImmutableElement;
 import me.dylancurzon.dontdie.gfx.page.elements.mutable.MutableContainer;
@@ -11,9 +11,11 @@ import me.dylancurzon.dontdie.gfx.page.elements.mutable.MutableElement;
 import me.dylancurzon.dontdie.gfx.page.elements.mutable.WrappingMutableElement;
 import me.dylancurzon.dontdie.util.Vector2i;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -32,13 +34,17 @@ public class DefaultImmutableContainer extends ImmutableElement implements Immut
     protected final Spacing padding;
     protected final Positioning positioning;
     protected final boolean centering;
-    private final boolean scrollable;
+    protected final boolean scrollable;
+    protected final Color fillColor;
+    private final Color lineColor;
+    private final Integer lineWidth;
 
     protected DefaultImmutableContainer(final Spacing margin, final Consumer<MutableElement> tickConsumer,
                                         final List<Function<ImmutableContainer, ImmutableElement>> elements,
                                         final Vector2i size, final Spacing padding,
                                         final Positioning positioning, final boolean centering,
                                         final boolean scrollable,
+                                        final Color fillColor, final Color lineColor, final Integer lineWidth,
                                         final Function<MutableElement, WrappingMutableElement> mutator,
                                         final InteractOptions interactOptions) {
         super(margin, tickConsumer, mutator, interactOptions);
@@ -56,6 +62,9 @@ public class DefaultImmutableContainer extends ImmutableElement implements Immut
         }
         this.centering = centering;
         this.scrollable = scrollable;
+        this.fillColor = fillColor;
+        this.lineColor = lineColor;
+        this.lineWidth = lineWidth;
     }
 
     @Override
@@ -98,11 +107,12 @@ public class DefaultImmutableContainer extends ImmutableElement implements Immut
                         size = size.setY(calculatedSize.getY());
                     }
                 }
+
                 return size;
             }
 
             @Override
-            public List<PositionedElement> draw() {
+            public List<AlignedElement> draw() {
 //                final Map<MutableElement, Vector2i> positions = super.getPositions();
 //                positions.forEach((mut, pos) -> {
 //                    final Vector2i elementSize = mut.getSize();
@@ -128,14 +138,27 @@ public class DefaultImmutableContainer extends ImmutableElement implements Immut
 //                            }
 //                        }
 //                    }
+                final List<AlignedElement> elements = new ArrayList<>();
+                for (final Map.Entry<MutableElement, Vector2i> entry : super.getPositions().entrySet()) {
+                    final MutableElement element = entry.getKey();
+                    final Vector2i position = entry.getValue();
 
-                return super.getPositions().entrySet().stream()
-                    .flatMap(entry ->
-                        entry.getKey() instanceof MutableContainer
-                            ? ((MutableContainer) entry.getKey()).draw().stream()
-                            : Stream.of(new PositionedElement(entry.getKey(), entry.getValue())
-                    ))
-                    .collect(Collectors.toList());
+                    if (element instanceof MutableContainer) {
+                        elements.addAll(
+                            ((MutableContainer) element).draw().stream()
+                                .map(containedElement -> new AlignedElement(
+                                    containedElement.getElement(),
+                                    position.add(containedElement.getPosition())
+                                ))
+                                .collect(Collectors.toList())
+                        );
+                    } else {
+//                        elements.add(new AlignedElement(element, position));
+                    }
+                    elements.add(new AlignedElement(element, position));
+                }
+
+                return elements;
 
 //                    container.copyPixels(
 //                        pos.getX(),
@@ -325,6 +348,21 @@ public class DefaultImmutableContainer extends ImmutableElement implements Immut
         return this.scrollable;
     }
 
+    @Override
+    public Optional<Color> getFillColor() {
+        return Optional.ofNullable(this.fillColor);
+    }
+
+    @Override
+    public Optional<Color> getLineColor() {
+        return Optional.ofNullable(this.lineColor);
+    }
+
+    @Override
+    public Optional<Integer> getLineWidth() {
+        return Optional.ofNullable(this.lineWidth);
+    }
+
     @NotNull
     public Spacing getPadding() {
         return this.padding;
@@ -356,6 +394,9 @@ public class DefaultImmutableContainer extends ImmutableElement implements Immut
         protected Positioning positioning;
         protected boolean centering;
         protected boolean scrollable;
+        protected Color fillColor;
+        protected Color lineColor;
+        protected Integer lineWidth;
 
         @NotNull
         public T add(final ImmutableElement element) {
@@ -413,6 +454,24 @@ public class DefaultImmutableContainer extends ImmutableElement implements Immut
             return this.self();
         }
 
+        @NotNull
+        public T setFillColor(final Color color) {
+            this.fillColor = color;
+            return this.self();
+        }
+
+        @NotNull
+        public T setLineColor(final Color color) {
+            this.lineColor = color;
+            return this.self();
+        }
+
+        @NotNull
+        public T setLineWidth(final Integer width) {
+            this.lineWidth = width;
+            return this.self();
+        }
+
         @Override
         @NotNull
         public DefaultImmutableContainer build() {
@@ -421,9 +480,9 @@ public class DefaultImmutableContainer extends ImmutableElement implements Immut
                     "A centering ImmutableContainer may only contain a single ImmutableElement!"
                 );
             }
-            if (this.elements.size() == 0) {
-                throw new RuntimeException("Empty ImmutableContainer is not permitted!");
-            }
+//            if (this.elements.size() == 0) {
+//                throw new RuntimeException("Empty ImmutableContainer is not permitted!");
+//            }
             return new DefaultImmutableContainer(
                 super.margin,
                 super.tickConsumer,
@@ -433,6 +492,9 @@ public class DefaultImmutableContainer extends ImmutableElement implements Immut
                 this.positioning,
                 this.centering,
                 this.scrollable,
+                this.fillColor,
+                this.lineColor,
+                this.lineWidth,
                 super.mutator,
                 super.interactOptions
             );

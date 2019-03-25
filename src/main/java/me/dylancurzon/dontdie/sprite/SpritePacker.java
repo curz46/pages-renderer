@@ -1,10 +1,7 @@
 package me.dylancurzon.dontdie.sprite;
 
-import me.dylancurzon.dontdie.util.Buffers;
 import me.dylancurzon.dontdie.util.Vector2i;
-import org.lwjgl.BufferUtils;
 
-import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.stream.Collectors;
 
