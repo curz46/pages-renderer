@@ -1,6 +1,6 @@
 package me.dylancurzon.dontdie;
 
-public interface GameState extends Tickable {
+public interface GameState {
 
     void start();
 

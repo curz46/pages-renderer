@@ -11,6 +11,8 @@ import java.util.Map;
 
 public class Page extends MutableContainer implements Tickable {
 
+    public static final boolean DEBUG_CONTAINERS = false;
+
     private final PageTemplate template;
     private final MutableContainer container;
 

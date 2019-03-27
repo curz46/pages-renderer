@@ -12,10 +12,12 @@ public class SpriteSheet extends Sprite {
 
     public static SpriteSheet loadSprite(final String name) {
         final String filename = "textures/" + name + ".png";
+        System.out.println(filename);
         return SpriteSheet.loadSprite(Sprite.class.getClassLoader().getResourceAsStream(filename));
     }
 
     public static SpriteSheet loadSprite(final InputStream in) {
+        System.out.println(in);
         try {
             final PNGDecoder decoder = new PNGDecoder(in);
 

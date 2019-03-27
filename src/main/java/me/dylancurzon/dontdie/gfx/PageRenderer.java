@@ -247,7 +247,7 @@ public class PageRenderer implements Renderer {
 
         for (final AlignedElement alignedElement : elements) {
             final MutableContainer container = (MutableContainer) alignedElement.getElement();
-            if (container.getLineColor().isPresent()) outlines++;
+            if (Page.DEBUG_CONTAINERS || container.getLineColor().isPresent()) outlines++;
             if (container.getFillColor().isPresent()) fills++;
         }
 
@@ -268,7 +268,7 @@ public class PageRenderer implements Renderer {
         for (final AlignedElement alignedElement : elements) {
             final MutableContainer container = (MutableContainer) alignedElement.getElement();
             // Check if we need to outline
-            if (!container.getLineColor().isPresent() && !container.getFillColor().isPresent()) continue;
+            if (!(Page.DEBUG_CONTAINERS || container.getLineColor().isPresent()) && !container.getFillColor().isPresent()) continue;
 
             final Vector2i position = alignedElement.getPosition();
 
@@ -280,7 +280,7 @@ public class PageRenderer implements Renderer {
 
             final float d = 0.5f / 256.0f * 2.0f;
 
-            if (container.getLineColor().isPresent()) {
+            if (Page.DEBUG_CONTAINERS || container.getLineColor().isPresent()) {
                 final float[] outlinePositions = {
                     (x + 0) / 256.0f * 2.0f - 1.0f, -((y + 0) / 192.0f * 2.0f - 1.0f),
                     (x - 1 + width) / 256.0f * 2.0f - 1.0f, -((y + 0) / 192.0f * 2.0f - 1.0f),
@@ -298,12 +298,14 @@ public class PageRenderer implements Renderer {
                     outlinePositionData[iOutlinePosition++] = outlinePositions[j] + d;
                 }
                 for (int j = 0; j < 4 * 2; j++) {
-                    if (container.getLineColor().isPresent()) {
-                        final Color lineColor = container.getLineColor().get();
-                        outlineColorData[iOutlineColor++] = lineColor.getRed();
-                        outlineColorData[iOutlineColor++] = lineColor.getBlue();
-                        outlineColorData[iOutlineColor++] = lineColor.getGreen();
-                        outlineColorData[iOutlineColor++] = lineColor.getAlpha();
+                    if (Page.DEBUG_CONTAINERS || container.getLineColor().isPresent()) {
+                        final Color lineColor = Page.DEBUG_CONTAINERS
+                            ? Color.MAGENTA
+                            : container.getLineColor().get();
+                        outlineColorData[iOutlineColor++] = lineColor.getRed() / 255.0f;
+                        outlineColorData[iOutlineColor++] = lineColor.getGreen() / 255.0f;
+                        outlineColorData[iOutlineColor++] = lineColor.getBlue() / 255.0f;
+                        outlineColorData[iOutlineColor++] = lineColor.getAlpha() / 255.0f;
                     }
                 }
             }
@@ -320,10 +322,10 @@ public class PageRenderer implements Renderer {
                 for (int j = 0; j < 4; j++) {
                     if (container.getFillColor().isPresent()) {
                         final Color fillColor = container.getFillColor().get();
-                        fillColorData[iFillColor++] = fillColor.getRed();
-                        fillColorData[iFillColor++] = fillColor.getGreen();
-                        fillColorData[iFillColor++] = fillColor.getBlue();
-                        fillColorData[iFillColor++] = fillColor.getAlpha();
+                        fillColorData[iFillColor++] = fillColor.getRed() / 255.0f;
+                        fillColorData[iFillColor++] = fillColor.getGreen() / 255.0f;
+                        fillColorData[iFillColor++] = fillColor.getBlue() / 255.0f;
+                        fillColorData[iFillColor++] = fillColor.getAlpha() / 255.0f;
                     }
                 }
             }

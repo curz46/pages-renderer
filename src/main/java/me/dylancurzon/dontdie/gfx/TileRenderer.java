@@ -191,7 +191,7 @@ public class TileRenderer implements Renderer {
                     positions[iPos++] = pos[j];
                 }
 
-                System.out.println(type);
+//                System.out.println(type);
                 final Sprite sprite = type.getSprite();
                 final Vector2i position = this.tilePacker.getSpritePosition(sprite)
                     .orElseThrow(() -> new RuntimeException("Sprite of TileType[" + type + "] is not in SpritePacker!"));
@@ -200,7 +200,7 @@ public class TileRenderer implements Renderer {
                 final float endX = ((float) (position.getX() + sprite.getWidth())) / this.tilePacker.getWidth();
                 final float endY = ((float) (position.getY() + sprite.getHeight())) / this.tilePacker.getHeight();
 
-                System.out.println(startX + ", " + startY  +", " + endX + ", " + endY);
+//                System.out.println(startX + ", " + startY  +", " + endX + ", " + endY);
 
                 final float[] coords = {
                     startX, endY,

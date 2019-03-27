@@ -70,6 +70,7 @@ public class RootRenderer implements Renderer {
             GL.getCapabilities();
         } catch (final IllegalStateException ex) {
             GL.createCapabilities(true);
+
         }
         GLUtil.setupDebugMessageCallback();
 

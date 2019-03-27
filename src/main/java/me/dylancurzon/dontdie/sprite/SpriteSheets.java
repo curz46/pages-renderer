@@ -4,5 +4,6 @@ public interface SpriteSheets {
 
     SpriteSheet BRICKS = SpriteSheet.loadSprite("stonebricks");
     SpriteSheet TEXT = SpriteSheet.loadSprite("characters");
+    SpriteSheet GUI = SpriteSheet.loadSprite("gui");
 
 }

@@ -6,10 +6,15 @@ import java.util.Set;
 
 public interface Sprites {
 
+    Sprite GUI_CURSOR = SpriteSheets.GUI.getSprite(0, 0, 16);
+    Sprite GUI_CURSOR_SELECTED = SpriteSheets.GUI.getSprite(0, 1, 16);
+    Sprite GUI_PAINTBRUSH = SpriteSheets.GUI.getSprite(1, 0, 16);
+    Sprite GUI_PAINTBRUSH_SELECTED = SpriteSheets.GUI.getSprite(1, 1, 16);
+
     Sprite BLACK = Sprite.loadSprite("black");
     Sprite UNDEFINED = Sprite.loadSprite("undefined");
 
-//    Sprite STONEBRICKS = Sprite.loadSprite("stonebricks");
+    Sprite STONEBRICKS = Sprite.loadSprite("stonebricks");
     Sprite STONEBRICKS1 = SpriteSheets.BRICKS.getSprite(0, 0, 16);
     Sprite STONEBRICKS2 = SpriteSheets.BRICKS.getSprite(1, 0, 16);
     Sprite STONEBRICKS3 = SpriteSheets.BRICKS.getSprite(0, 1, 16);

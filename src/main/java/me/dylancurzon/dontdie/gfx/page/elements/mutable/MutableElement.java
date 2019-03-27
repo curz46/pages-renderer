@@ -84,7 +84,9 @@ public abstract class MutableElement {
             return;
         }
         final Consumer<MutableElement> consumer = this.interactOptions.getClickConsumer();
-        if (consumer == null) return;
+        if (consumer == null) {
+            return;
+        }
         // fire click
         consumer.accept(this);
     }

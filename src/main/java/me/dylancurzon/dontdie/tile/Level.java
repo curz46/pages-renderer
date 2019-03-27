@@ -13,6 +13,16 @@ public class Level {
 
     private final Map<Vector2i, TileType> tileMap;
 
+    public static Level generateTestLevel() {
+        final Level level = new Level();
+        for (int x = -250; x < 250; x++) {
+            for (int y = -250; y < 250; y++) {
+                level.setTile(Vector2i.of(x, y), (x + y) % 2 == 0 ? TileType.STONEBRICKS : TileType.UNDEFINED);
+            }
+        }
+        return level;
+    }
+
     public Level() {
         this.tileMap = new HashMap<>();
     }

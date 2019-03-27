@@ -28,12 +28,18 @@ dependencies {
     // TODO: For now, only support Windows.
     compile "org.lwjgl:lwjgl:${lwjglVersion}"
     compile "org.lwjgl:lwjgl:${lwjglVersion}:natives-windows"
+    compile "org.lwjgl:lwjgl:${lwjglVersion}:natives-linux"
     compile "org.lwjgl:lwjgl-opengl:${lwjglVersion}"
     compile "org.lwjgl:lwjgl-opengl:${lwjglVersion}:natives-windows"
+    compile "org.lwjgl:lwjgl-opengl:${lwjglVersion}:natives-linux"
     compile "org.lwjgl:lwjgl-glfw:${lwjglVersion}"
     compile "org.lwjgl:lwjgl-glfw:${lwjglVersion}:natives-windows"
+    compile "org.lwjgl:lwjgl-glfw:${lwjglVersion}:natives-linux"
     
     compile 'org.jetbrains:annotations:17.0.0'
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
 }
 
 jar {

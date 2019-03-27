@@ -2,12 +2,17 @@ package me.dylancurzon.dontdie.gfx;
 
 import me.dylancurzon.dontdie.Tickable;
 import me.dylancurzon.dontdie.util.Vector2d;
+import me.dylancurzon.dontdie.util.Vector2f;
+import me.dylancurzon.dontdie.util.Vector2i;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.DoubleBuffer;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Consumer;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -15,12 +20,13 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class GameWindow implements Tickable {
 
-    private static final String TITLE = "Don't Die";
-    private static final int WIDTH = 1024;
-    private static final int HEIGHT = 768;
+    public static final int WIDTH = 1024;
+    public static final int HEIGHT = 768;
 
-    private static final int VIRTUAL_WIDTH = 256;
-    private static final int VIRTUAL_HEIGHT = 192;
+    public static final int VIRTUAL_WIDTH = 256;
+    public static final int VIRTUAL_HEIGHT = 192;
+
+    private static final String TITLE = "Don't Die";
 
     private long id = -1;
 
@@ -28,6 +34,8 @@ public class GameWindow implements Tickable {
 
     private boolean mousePressed;
     private boolean mouseJustPressed;
+
+    private Set<Consumer<Vector2d>> clickListeners = new HashSet<>();
 
     public void initialize(final boolean doShow) {
         // Make errors print to stderr
@@ -59,6 +67,16 @@ public class GameWindow implements Tickable {
             if (action == GLFW_RELEASE) this.keys[key] = false;
         });
 
+        glfwSetMouseButtonCallback(this.id, (window, button, action, mods) -> {
+            if (button == GLFW_MOUSE_BUTTON_1) {
+                this.mousePressed = action != GLFW_RELEASE;
+                this.mouseJustPressed = this.mousePressed;
+                if (action == GLFW_PRESS) {
+                    this.clickListeners.forEach(consumer -> consumer.accept(this.getMousePosition()));
+                }
+            }
+        });
+
         glfwSwapInterval(0);
         glClearColor(0, 0, 0, 0);
         // TODO: look into if this is necessary, as FBO is leaking into this class
@@ -80,6 +98,10 @@ public class GameWindow implements Tickable {
     @Override
     public void tick() {
         this.mouseJustPressed = false;
+    }
+
+    public void registerClickListener(final Consumer<Vector2d> consumer) {
+        this.clickListeners.add(consumer);
     }
 
     public Vector2d getMousePosition() {
