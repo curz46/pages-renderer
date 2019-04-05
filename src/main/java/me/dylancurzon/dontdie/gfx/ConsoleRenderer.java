@@ -24,9 +24,9 @@ public class ConsoleRenderer implements Renderer {
     private int currentFrame;
 
     public void tick() {
-        if (this.ticks++ % 15 == 0) {
-            if (++this.currentFrame >= 19) {
-                this.currentFrame = 0;
+        if (ticks++ % 15 == 0) {
+            if (++currentFrame >= 19) {
+                currentFrame = 0;
             }
         }
     }
@@ -37,7 +37,7 @@ public class ConsoleRenderer implements Renderer {
 //        this.startupTexture = Texture.make(
 //            Sprite.loadSprite("textures/zarggames.png")
 //        );
-        this.basicShader = ShaderUtil.createShaderProgram("loading");
+        basicShader = ShaderUtil.createShaderProgram("loading");
 
         // TODO: load AnimatedSprite
 //        final Sprite sprite = Sprite.loadAnimatedSprite("loading", 20);
@@ -76,29 +76,29 @@ public class ConsoleRenderer implements Renderer {
 
     @Override
     public void cleanup() {
-        this.loadingTexture.destroy();
+        loadingTexture.destroy();
     }
 
     @Override
     public void render() {
-        ARBShaderObjects.glUseProgramObjectARB(this.basicShader);
-        this.loadingTexture.bind();
+        ARBShaderObjects.glUseProgramObjectARB(basicShader);
+        loadingTexture.bind();
 
-        this.startupPositions.bind();
+        startupPositions.bind();
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
-        this.startupTexCoords.bind();
+        startupTexCoords.bind();
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
-        glUniform1i(0, this.currentFrame);
+        glUniform1i(0, currentFrame);
 
         glDrawArrays(GL_QUADS, 0, 4);
 
         ARBShaderObjects.glUseProgramObjectARB(0);
     }
 
-    private float lerp(final float x, final float a, final float b, final float c, final float d) {
+    private float lerp(float x, float a, float b, float c, float d) {
         return ((x - a) / (b - a)) * (d - c) + c;
     }
 

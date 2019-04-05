@@ -6,8 +6,8 @@ import java.io.IOException;
 
 public class Bootstrapper {
 
-    public static void main(final String[] args) throws IOException {
-        final LevelDesigner designer = new LevelDesigner();
+    public static void main(String[] args) throws IOException {
+        LevelDesigner designer = new LevelDesigner();
         designer.launch();
 
 //        final SpritePacker packer = new SpritePacker(Sprites.getSprites());

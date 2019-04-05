@@ -16,8 +16,8 @@ public class Texture {
         return new Texture(glGenTextures());
     }
 
-    public static Texture make(final Sprite sprite) {
-        final Texture texture = Texture.make();
+    public static Texture make(Sprite sprite) {
+        Texture texture = Texture.make();
 
         texture.bind();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -31,8 +31,8 @@ public class Texture {
         return texture;
     }
 
-    public static Texture make(final SpritePacker packer) {
-        final Texture texture = Texture.make();
+    public static Texture make(SpritePacker packer) {
+        Texture texture = Texture.make();
 
         texture.bind();
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -50,20 +50,20 @@ public class Texture {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    private Texture(final int id) {
+    private Texture(int id) {
         this.id = id;
     }
 
     public int getId() {
-        return this.id;
+        return id;
     }
 
     public void bind() {
-        glBindTexture(GL_TEXTURE_2D, this.id);
+        glBindTexture(GL_TEXTURE_2D, id);
     }
 
     public void destroy() {
-        glDeleteTextures(this.id);
+        glDeleteTextures(id);
     }
 
 }

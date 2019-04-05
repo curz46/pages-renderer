@@ -14,36 +14,36 @@ public class VertexBuffer {
 
     private final int id;
 
-    private VertexBuffer(final int id) {
+    private VertexBuffer(int id) {
         this.id = id;
     }
 
-    public void upload(final short[] data) {
+    public void upload(short[] data) {
         glBufferData(GL_ARRAY_BUFFER, data, GL_DYNAMIC_DRAW);
     }
 
-    public void upload(final double[] data) {
+    public void upload(double[] data) {
         glBufferData(GL_ARRAY_BUFFER, data, GL_DYNAMIC_DRAW);
     }
 
-    public void upload(final int[] data) {
+    public void upload(int[] data) {
         glBufferData(GL_ARRAY_BUFFER, data, GL_DYNAMIC_DRAW);
     }
 
-    public void upload(final float[] data) {
+    public void upload(float[] data) {
         glBufferData(GL_ARRAY_BUFFER, data, GL_DYNAMIC_DRAW);
     }
 
-    public void upload(final long[] data) {
+    public void upload(long[] data) {
         glBufferData(GL_ARRAY_BUFFER, data, GL_DYNAMIC_DRAW);
     }
 
     public void bind() {
-        glBindBuffer(GL_ARRAY_BUFFER, this.id);
+        glBindBuffer(GL_ARRAY_BUFFER, id);
     }
 
     public void destroy() {
-        glDeleteBuffers(this.id);
+        glDeleteBuffers(id);
     }
 
 }

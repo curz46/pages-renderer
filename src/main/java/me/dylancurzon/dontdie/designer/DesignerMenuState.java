@@ -12,46 +12,46 @@ public class DesignerMenuState implements GameState {
     private final LevelDesigner designer;
     private JFrame frame;
 
-    public DesignerMenuState(final LevelDesigner designer) {
+    public DesignerMenuState(LevelDesigner designer) {
         this.designer = designer;
     }
 
     @Override
     public void start() {
-        this.frame = new JFrame("Level Designer");
+        frame = new JFrame("Level Designer");
 
-        final Dimension dim = new Dimension(250, 100);
-        this.frame.setMinimumSize(dim);
-        this.frame.setPreferredSize(dim);
-        this.frame.setMaximumSize(dim);
-        this.frame.setResizable(false);
+        Dimension dim = new Dimension(250, 100);
+        frame.setMinimumSize(dim);
+        frame.setPreferredSize(dim);
+        frame.setMaximumSize(dim);
+        frame.setResizable(false);
 
-        this.frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        final JPanel panel = new JPanel(new GridLayout(1, 2));
+        JPanel panel = new JPanel(new GridLayout(1, 2));
 
-        final JPanel panel1 = new JPanel(new GridBagLayout());
-        final JButton button1 = new JButton("Choose Level");
+        JPanel panel1 = new JPanel(new GridBagLayout());
+        JButton button1 = new JButton("Choose Level");
         button1.addActionListener(e -> {
-            final JFileChooser chooser = new JFileChooser();
-            final int option = chooser.showOpenDialog(panel1);
+            JFileChooser chooser = new JFileChooser();
+            int option = chooser.showOpenDialog(panel1);
             if (option != JFileChooser.APPROVE_OPTION) return;
 
-            final File file = chooser.getSelectedFile();
+            File file = chooser.getSelectedFile();
             if (file == null) throw new RuntimeException("file == null");
-            final Level level = Level.fromFile(file);
+            Level level = Level.fromFile(file);
 //            (new LevelDesigner(level)).start();
-            this.designer.setGameState(new DesignerLevelState(this.designer, level));
+            designer.setGameState(new DesignerLevelState(designer, level));
         });
 
         panel1.add(button1);
 
-        final JPanel panel2 = new JPanel(new GridBagLayout());
-        final JButton button2 = new JButton("Create Level");
+        JPanel panel2 = new JPanel(new GridBagLayout());
+        JButton button2 = new JButton("Create Level");
         button2.addActionListener(e -> {
-            final Level level = new Level();
+            Level level = new Level();
 //            (new LevelDesigner(level)).start();
-            this.designer.setGameState(new DesignerLevelState(this.designer, Level.generateTestLevel()));
+            designer.setGameState(new DesignerLevelState(designer, Level.generateTestLevel()));
         });
 
         panel2.add(button2);
@@ -59,17 +59,17 @@ public class DesignerMenuState implements GameState {
         panel.add(panel1);
         panel.add(panel2);
 
-        this.frame.pack();
-        this.frame.setLocationRelativeTo(null);
-        this.frame.getContentPane().add(panel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.getContentPane().add(panel);
 
-        this.frame.setVisible(true);
+        frame.setVisible(true);
     }
 
     @Override
     public void finish() {
-        this.frame.dispose();
-        this.frame = null;
+        frame.dispose();
+        frame = null;
         // TODO: This is required in order to stop the program crashing when using JFrame and LWJGL in the same process.
         System.gc();
     }

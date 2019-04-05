@@ -6,7 +6,7 @@ import me.dylancurzon.dontdie.HasState;
 import me.dylancurzon.dontdie.gfx.*;
 import me.dylancurzon.dontdie.tile.Level;
 import me.dylancurzon.dontdie.tile.TileType;
-import me.dylancurzon.dontdie.util.Vector2i;
+import me.dylancurzon.pages.util.Vector2i;
 
 public class LevelDesigner implements Game, HasState {
 
@@ -25,38 +25,38 @@ public class LevelDesigner implements Game, HasState {
 
     @Override
     public void launch() {
-        this.camera = new Camera();
-        this.level = new Level();
+        camera = new Camera();
+        level = new Level();
         for (int x = -200; x < 200; x++) {
             for (int y = -200; y < 200; y++) {
 //                this.level.setTile(Vector2i.of(x, y), (x + y) % 2 == 0 ? TileType.UNDEFINED : TileType.STONEBRICKS);
-                this.level.setTile(Vector2i.of(x, y), TileType.STONEBRICKS);
+                level.setTile(Vector2i.of(x, y), TileType.STONEBRICKS);
             }
         }
 
 //        this.window = new GameWindow();
 //        this.window.initialize(true);
 
-        this.setGameState(new DesignerMenuState(this));
+        setGameState(new DesignerMenuState(this));
     }
 
     @Override
     public void kill() {
-        this.shouldRender = false;
-        this.killed = true;
-        this.window.destroy();
+        shouldRender = false;
+        killed = true;
+        window.destroy();
 
-        this.levelRenderer = null;
-        this.window = null;
+        levelRenderer = null;
+        window = null;
     }
 
     @Override
-    public void setGameState(final GameState gameState) {
-        if (this.currentState != null) {
-            this.currentState.finish();
+    public void setGameState(GameState gameState) {
+        if (currentState != null) {
+            currentState.finish();
         }
-        this.currentState = gameState;
-        this.currentState.start();
+        currentState = gameState;
+        currentState.start();
     }
 
 //    public class MenuState implements GameState {
@@ -135,7 +135,7 @@ public class LevelDesigner implements Game, HasState {
 //            this.renderer.prepare();
 //            long lastTick = 0;
 //            while (LevelDesigner.this.shouldRender) {
-////                final Vector2d mousePosition = LevelDesigner.this.window.getMousePosition();
+//            //                final Vector2d mousePosition = LevelDesigner.this.window.getMousePosition();
 //                this.renderer.render();
 //                final long now = System.currentTimeMillis();
 //                if (now - lastTick > 1000.0 / 144) { // 144tps

@@ -1,7 +1,7 @@
 package me.dylancurzon.dontdie.gfx;
 
-import me.dylancurzon.dontdie.util.Vector2d;
-import me.dylancurzon.dontdie.util.Vector2i;
+import me.dylancurzon.pages.util.Vector2d;
+import me.dylancurzon.pages.util.Vector2i;
 
 public class Camera {
 
@@ -13,14 +13,14 @@ public class Camera {
 //    private double aspectRatio = 1;
     private double zoom = 1;
 
-    private Vector2d lastFixedPosition = this.getFixedPosition();
+    private Vector2d lastFixedPosition = getFixedPosition();
 
-    public void transform(final Vector2d by) {
-        this.position = this.position.add(by);
+    public void transform(Vector2d by) {
+        position = position.add(by);
 
-        final Vector2d fixedPosition = this.getFixedPosition();
-        if (!this.lastFixedPosition.equals(fixedPosition)) {
-            this.lastFixedPosition = fixedPosition;
+        Vector2d fixedPosition = getFixedPosition();
+        if (!lastFixedPosition.equals(fixedPosition)) {
+            lastFixedPosition = fixedPosition;
         }
     }
 
@@ -57,11 +57,11 @@ public class Camera {
 //        return tiles;
 //    }
     public Vector2i getVisibleA() {
-        return this.getFixedPosition().sub(this.getSize().div(2)).ceil().toInt();
+        return getFixedPosition().sub(getSize().div(2)).ceil().toInt();
     }
 
     public Vector2i getVisibleB() {
-        return this.getFixedPosition().add(this.getSize().div(2)).ceil().toInt();
+        return getFixedPosition().add(getSize().div(2)).ceil().toInt();
     }
 
     /**
@@ -69,7 +69,7 @@ public class Camera {
      * to change only when new Tiles are visible while still being able to transform tiles to the correct position.
      */
     public Vector2d getDelta() {
-        return this.position.sub(this.getFixedPosition());
+        return position.sub(getFixedPosition());
     }
 
     /**
@@ -78,12 +78,12 @@ public class Camera {
      */
     public Vector2d getFixedPosition() {
         return Vector2d.of(
-            Math.round(this.position.getX() / TILEMAP_UPDATE_STRIDE) * TILEMAP_UPDATE_STRIDE,
-            Math.round(this.position.getY() / TILEMAP_UPDATE_STRIDE) * TILEMAP_UPDATE_STRIDE
+            Math.round(position.getX() / TILEMAP_UPDATE_STRIDE) * TILEMAP_UPDATE_STRIDE,
+            Math.round(position.getY() / TILEMAP_UPDATE_STRIDE) * TILEMAP_UPDATE_STRIDE
         );
     }
 
-    public void setPosition(final Vector2d position) {
+    public void setPosition(Vector2d position) {
         this.position = position;
     }
 
@@ -92,12 +92,12 @@ public class Camera {
 //        this.aspectRatio = ratio;
 //    }
 
-    public void setZoom(final double zoom) {
+    public void setZoom(double zoom) {
         this.zoom = zoom;
     }
 
     public Vector2d getPosition() {
-        return this.position;
+        return position;
     }
 
 //    @Override
@@ -106,7 +106,7 @@ public class Camera {
 //    }
 
     public double getZoom() {
-        return this.zoom;
+        return zoom;
     }
 
 }

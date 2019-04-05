@@ -3,7 +3,7 @@ package me.dylancurzon.dontdie.sprite;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TextSprite {
+public class TextSprite implements me.dylancurzon.pages.util.TextSprite {
 
     public static final Map<Character, Sprite> SPRITE_MAP = new HashMap<>();
     public static final int SPRITE_WIDTH;
@@ -13,22 +13,22 @@ public class TextSprite {
     // Not very safe to do this here, probably should be called by a register method
     static {
         // TODO: Make SpriteSheet registered, not hardcoded
-        final SpriteSheet sheet = SpriteSheets.TEXT;
+        SpriteSheet sheet = SpriteSheets.TEXT;
         // TODO: Perform validation of SpriteSheet
-        final int spriteWidth = sheet.getWidth() / SPRITE_CHARACTERS.length;
+        int spriteWidth = sheet.getWidth() / SPRITE_CHARACTERS.length;
         for (int i = 0; i < SPRITE_CHARACTERS.length; i++) {
-            final char character = SPRITE_CHARACTERS[i];
+            char character = SPRITE_CHARACTERS[i];
             SPRITE_MAP.put(character, sheet.getSprite(i, 0, spriteWidth));
         }
         SPRITE_WIDTH = spriteWidth;
         SPRITE_HEIGHT = sheet.getHeight();
     }
 
-    public static TextSprite of(final String content, final int spacing) {
-        final Sprite[] sprites = new Sprite[content.length()];
-        final char[] characters = content.toUpperCase().toCharArray();
+    public static TextSprite of(String content, int spacing) {
+        Sprite[] sprites = new Sprite[content.length()];
+        char[] characters = content.toUpperCase().toCharArray();
         for (int i = 0; i < characters.length; i++) {
-            final char character = characters[i];
+            char character = characters[i];
             if (!SPRITE_MAP.containsKey(character)) throw new IllegalArgumentException("Unsupported character: " + character);
             sprites[i] = SPRITE_MAP.get(character);
         }
@@ -115,7 +115,7 @@ public class TextSprite {
 //        return new TextSprite(width, spriteSheet.getHeight(), pixels);
 //    }
 
-    private TextSprite(final int spriteWidth, final int width, final int height, final int spacing, final Sprite[] sprites) {
+    private TextSprite(int spriteWidth, int width, int height, int spacing, Sprite[] sprites) {
         this.spriteWidth = spriteWidth;
 //        super(width, height, 1, new byte[][] { pixels });
         this.width = width;
@@ -131,23 +131,23 @@ public class TextSprite {
     private final Sprite[] sprites;
 
     public int getSpriteWidth() {
-        return this.spriteWidth;
+        return spriteWidth;
     }
 
     public int getWidth() {
-        return this.width;
+        return width;
     }
 
     public int getHeight() {
-        return this.height;
+        return height;
     }
 
     public int getSpacing() {
-        return this.spacing;
+        return spacing;
     }
 
     public Sprite[] getSprites() {
-        return this.sprites;
+        return sprites;
     }
 
 }

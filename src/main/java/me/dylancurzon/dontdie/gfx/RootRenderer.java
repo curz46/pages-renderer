@@ -31,25 +31,26 @@ public class RootRenderer implements Renderer {
     private int fboId;
     private int fboTextureId;
 
-    public RootRenderer(@NotNull GameWindow window, @NotNull final Renderer[] children) {
+    public RootRenderer(@NotNull GameWindow window, @NotNull Renderer[] children) {
         this.window = window;
         this.children = children;
     }
 
     @NotNull
-    public <T extends Renderer> T getChild(final Class<T> clazz) {
-        for (final Renderer child : this.children) {
+    public <T extends Renderer> T getChild(Class<T> clazz) {
+        for (Renderer child : children) {
             if (clazz.isInstance(child)) {
                 //noinspection unchecked
                 return (T) child;
             }
         }
         throw new RuntimeException(
+
             "RootRenderer[" + this + "] does not have a child that extends the given class, " + clazz);
     }
 
     public Renderer[] getChildren() {
-        return this.children;
+        return children;
     }
 
     @Override
@@ -64,32 +65,32 @@ public class RootRenderer implements Renderer {
             throw new IllegalStateException("Unable to initialize GLFW");
         }
 
-        glfwMakeContextCurrent(this.window.getId());
+        glfwMakeContextCurrent(window.getId());
         try {
             // Check if capabilities have been created in this Thread
             GL.getCapabilities();
-        } catch (final IllegalStateException ex) {
+        } catch (IllegalStateException ex) {
             GL.createCapabilities(true);
 
         }
-        GLUtil.setupDebugMessageCallback();
+//        GLUtil.setupDebugMessageCallback();
 
         // Make a Framebuffer of a much lower resolution to emulate the display of older consoles
-        this.createFBO(true);
+        createFBO(true);
 
-        for (final Renderer child : this.children) {
+        for (Renderer child : children) {
             child.prepare();
         }
     }
 
     @Override
     public void cleanup() {
-        for (final Renderer child : this.children) {
+        for (Renderer child : children) {
             child.cleanup();
         }
 
-        glDeleteTextures(this.fboTextureId);
-        glDeleteFramebuffers(this.fboId);
+        glDeleteTextures(fboTextureId);
+        glDeleteFramebuffers(fboId);
     }
 
     @Override
@@ -97,65 +98,65 @@ public class RootRenderer implements Renderer {
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Draw everything to Framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, this.fboId);
+        glBindFramebuffer(GL_FRAMEBUFFER, fboId);
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        this.frames++;
-        if (System.currentTimeMillis() - this.lastSecond > 1000) {
-            this.lastSecond = System.currentTimeMillis();
+        frames++;
+        if (System.currentTimeMillis() - lastSecond > 1000) {
+            lastSecond = System.currentTimeMillis();
 //            glfwSetWindowTitle(this.window.getId(), "FPS: " + this.frames);
-            this.frames = 0;
+            frames = 0;
         }
 
-        for (final Renderer child : this.children) {
+        for (Renderer child : children) {
             child.render();
         }
 
         ARBShaderObjects.glUseProgramObjectARB(0);
 
         // now copy low res framebuffer to window-managed framebuffer
-        glBindFramebuffer(GL_READ_FRAMEBUFFER, this.fboId);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, fboId);
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
         glBlitFramebuffer(
-            0, 0, this.windowWidth / 4, this.windowHeight / 4,
-            0, 0, this.windowWidth, this.windowHeight,
+            0, 0, windowWidth / 4, windowHeight / 4,
+            0, 0, windowWidth, windowHeight,
             GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT, GL_NEAREST
         );
 
-        glfwSwapBuffers(this.window.getId());
+        glfwSwapBuffers(window.getId());
         glfwPollEvents();
     }
 
     // If we changed the resolution, we would need to call this
     private void recreateFBO() {
-        glDeleteTextures(this.fboTextureId);
-        glDeleteFramebuffers(this.fboId);
-        this.createFBO(false);
+        glDeleteTextures(fboTextureId);
+        glDeleteFramebuffers(fboId);
+        createFBO(false);
     }
 
-    private void createFBO(final boolean makeBuffers) {
-        final int renderbufferId = glGenRenderbuffers();
+    private void createFBO(boolean makeBuffers) {
+        int renderbufferId = glGenRenderbuffers();
         glBindRenderbuffer(GL_RENDERBUFFER, renderbufferId);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT,
-            this.windowWidth / 4, this.windowHeight / 4);
+            windowWidth / 4, windowHeight / 4);
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-        this.fboTextureId = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, this.fboTextureId);
+        fboTextureId = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, fboTextureId);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, this.windowWidth / 4, this.windowHeight / 4, 0,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, windowWidth / 4, windowHeight / 4, 0,
             GL_RGBA, GL_UNSIGNED_BYTE, 0);
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        this.fboId = glGenFramebuffers();
-        glBindFramebuffer(GL_FRAMEBUFFER, this.fboId);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this.fboTextureId, 0);
+        fboId = glGenFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, fboId);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTextureId, 0);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, renderbufferId);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

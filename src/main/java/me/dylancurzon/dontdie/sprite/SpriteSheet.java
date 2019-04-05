@@ -10,25 +10,24 @@ import java.nio.ByteBuffer;
 
 public class SpriteSheet extends Sprite {
 
-    public static SpriteSheet loadSprite(final String name) {
-        final String filename = "textures/" + name + ".png";
-        System.out.println(filename);
+    public static SpriteSheet loadSprite(String name) {
+        String filename = "textures/" + name + ".png";
+//        System.out.println(filename);
         return SpriteSheet.loadSprite(Sprite.class.getClassLoader().getResourceAsStream(filename));
     }
 
-    public static SpriteSheet loadSprite(final InputStream in) {
-        System.out.println(in);
+    public static SpriteSheet loadSprite(InputStream in) {
         try {
-            final PNGDecoder decoder = new PNGDecoder(in);
+            PNGDecoder decoder = new PNGDecoder(in);
 
             int width = decoder.getWidth();
             int height = decoder.getHeight();
 
-            final ByteBuffer buffer = BufferUtils.createByteBuffer(4 * width * height);
+            ByteBuffer buffer = BufferUtils.createByteBuffer(4 * width * height);
             decoder.decode(buffer, width * 4, PNGDecoder.Format.RGBA);
             buffer.flip();
 
-            final byte[] pixels = Buffers.asByteArray(buffer);
+            byte[] pixels = Buffers.asByteArray(buffer);
 
             return new SpriteSheet(width, height, pixels);
         } catch (IOException e) {
@@ -40,19 +39,19 @@ public class SpriteSheet extends Sprite {
         super(width, height, 1, new byte[][] { pixels });
     }
 
-    public Sprite getSprite(final int x, final int y, final int width) {
-        return this.getSprite(x, y, width, width);
+    public Sprite getSprite(int x, int y, int width) {
+        return getSprite(x, y, width, width);
     }
 
-    public Sprite getSprite(final int x, final int y, final int width, final int height) {
-        final byte[] pixels = new byte[width * height * 4];
-        final byte[] frame = super.frames[0];
+    public Sprite getSprite(int x, int y, int width, int height) {
+        byte[] pixels = new byte[width * height * 4];
+        byte[] frame = super.frames[0];
 
         for (int dx = 0; dx < width; dx++) {
             for (int dy = 0; dy < height; dy++) {
                 for (int b = 0; b < 4; b++) {
-                    final int xa = dx + x * width;
-                    final int ya = dy + y * height;
+                    int xa = dx + x * width;
+                    int ya = dy + y * height;
                     pixels[(dx + dy * width) * 4 + b] = (frame[(xa + ya * this.width) * 4 + b]);
                 }
             }

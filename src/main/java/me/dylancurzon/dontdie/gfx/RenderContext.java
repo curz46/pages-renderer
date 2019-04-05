@@ -35,37 +35,37 @@ public class RenderContext {
             throw new IllegalStateException("Unable to initialize GLFW");
         }
 
-        this.window = this.createWindow();
+        window = createWindow();
 
-        glfwMakeContextCurrent(this.window);
+        glfwMakeContextCurrent(window);
         // TODO: I'm paranoid that making this true will result in terrifying errors in the future.
         GL.createCapabilities(true);
 
         glfwSwapInterval(1);
-        glfwShowWindow(this.window);
+        glfwShowWindow(window);
         glClearColor(0, 0, 0, 0);
 
-        this.createShaders();
-        this.initRender();
+        createShaders();
+        initRender();
 
-        return this.window;
+        return window;
     }
 
     public void render() {
         glClear(GL_COLOR_BUFFER_BIT); // clear the framebuffer
 
-        final float[] positions = {
+        float[] positions = {
             -0.5f, -0.5f,
             0.0f, 0.5f,
             0.5f, -0.5f
         };
 
-        ARBShaderObjects.glUseProgramObjectARB(this.tileShaderProgram);
+        ARBShaderObjects.glUseProgramObjectARB(tileShaderProgram);
 //        glBindBuffer(GL_ARRAY_BUFFER, this.buffer);
 //        glBufferData(GL_ARRAY_BUFFER, positions, GL_STATIC_DRAW);
 //
-        this.triangle.bind();
-        this.triangle.upload(positions);
+        triangle.bind();
+        triangle.upload(positions);
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
         glEnableVertexAttribArray(0);
         VertexBuffer.unbind();
@@ -74,7 +74,7 @@ public class RenderContext {
 
         ARBShaderObjects.glUseProgramObjectARB(0);
 
-        glfwSwapBuffers(this.window);
+        glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
@@ -82,15 +82,15 @@ public class RenderContext {
         glClearColor(0f, 0f, 0f, 0f);
 
 //        this.buffer = glGenBuffers();
-        this.triangle = VertexBuffer.make();
+        triangle = VertexBuffer.make();
     }
 
     private long createWindow() {
         // Create the Display.
-        final String title = "Don't Die";
+        String title = "Don't Die";
         // TODO: Consider these values more carefully; this is 4:3 and nobody likes that.
-        final int width = 1024;
-        final int height = 768;
+        int width = 1024;
+        int height = 768;
 
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
@@ -99,14 +99,14 @@ public class RenderContext {
         // not be maintained.
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-        final long id = glfwCreateWindow(width, height, title, NULL, NULL); //Does the actual window creation
+        long id = glfwCreateWindow(width, height, title, NULL, NULL); //Does the actual window creation
         if (id == NULL) throw new RuntimeException("Failed to create window");
 
         return id;
     }
 
     private void createShaders() {
-        this.tileShaderProgram = this.createShaderProgram("tiles");
+        tileShaderProgram = createShaderProgram("tiles");
     }
 
     /**
@@ -114,12 +114,12 @@ public class RenderContext {
      * @param name The name to use when locating the shaders.
      * @return The ID of the Shader Program created.
      */
-    private int createShaderProgram(final String name) {
-        final int vertShader = this.createShader("shaders/" + name + ".vert",
+    private int createShaderProgram(String name) {
+        int vertShader = createShader("shaders/" + name + ".vert",
             ARBVertexShader.GL_VERTEX_SHADER_ARB);
-        final int fragShader = this.createShader("shaders/" + name + ".frag",
+        int fragShader = createShader("shaders/" + name + ".frag",
             ARBFragmentShader.GL_FRAGMENT_SHADER_ARB);
-        final int program = ARBShaderObjects.glCreateProgramObjectARB();
+        int program = ARBShaderObjects.glCreateProgramObjectARB();
         ARBShaderObjects.glAttachObjectARB(program, vertShader);
         ARBShaderObjects.glAttachObjectARB(program, fragShader);
 
@@ -138,19 +138,19 @@ public class RenderContext {
         return program;
     }
 
-    private int createShader(final String path, final int shaderType) {
+    private int createShader(String path, int shaderType) {
         int shader = 0;
         try {
             shader = ARBShaderObjects.glCreateShaderObjectARB(shaderType);
             if (shader == 0) return 0;
 
-            ARBShaderObjects.glShaderSourceARB(shader, this.readFile(path));
+            ARBShaderObjects.glShaderSourceARB(shader, readFile(path));
             ARBShaderObjects.glCompileShaderARB(shader);
 
             if (ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB)
                 == GL_FALSE) {
                 // Get the error log for this shader
-                final String info = ARBShaderObjects.glGetInfoLogARB(
+                String info = ARBShaderObjects.glGetInfoLogARB(
                     shader,
                     ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
                 throw new RuntimeException(
@@ -158,7 +158,7 @@ public class RenderContext {
             }
 
             return shader;
-        } catch (final Exception e) {
+        } catch (Exception e) {
             ARBShaderObjects.glDeleteObjectARB(shader);
             throw e;
         }
@@ -169,16 +169,16 @@ public class RenderContext {
      * @param path The path of the File to read.
      * @return The contents of the File.
      */
-    private String readFile(final String path) {
-        final StringBuilder result = new StringBuilder();
-        final ClassLoader loader = this.getClass().getClassLoader();
+    private String readFile(String path) {
+        StringBuilder result = new StringBuilder();
+        ClassLoader loader = getClass().getClassLoader();
 
-        try (final Scanner scanner = new Scanner(loader.getResourceAsStream(path))) {
+        try (Scanner scanner = new Scanner(loader.getResourceAsStream(path))) {
             while (scanner.hasNextLine()) {
-                final String line = scanner.nextLine();
+                String line = scanner.nextLine();
                 result.append(line).append("\n");
             }
-        } catch (final Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("An exception occurred while attempting to read File of path: " + path);
         }
 

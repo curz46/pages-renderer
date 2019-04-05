@@ -1,9 +1,7 @@
 package me.dylancurzon.dontdie.gfx;
 
 import me.dylancurzon.dontdie.Tickable;
-import me.dylancurzon.dontdie.util.Vector2d;
-import me.dylancurzon.dontdie.util.Vector2f;
-import me.dylancurzon.dontdie.util.Vector2i;
+import me.dylancurzon.pages.util.Vector2d;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
@@ -37,7 +35,7 @@ public class GameWindow implements Tickable {
 
     private Set<Consumer<Vector2d>> clickListeners = new HashSet<>();
 
-    public void initialize(final boolean doShow) {
+    public void initialize(boolean doShow) {
         // Make errors print to stderr
         GLFWErrorCallback errorCallback;
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
@@ -46,33 +44,33 @@ public class GameWindow implements Tickable {
             throw new IllegalStateException("Unable to initialize GLFW");
         }
 
-        final String title = "Don't Die";
+        String title = "Don't Die";
         // TODO: Consider these values more carefully; this is 4:3 and nobody likes that.
-        final int width = 1024;
-        final int height = 768;
+        int width = 1024;
+        int height = 768;
 
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-        this.id = glfwCreateWindow(width, height, title, NULL, NULL); //Does the actual window creation
-        if (this.id == NULL) throw new RuntimeException("Failed to create window");
+        id = glfwCreateWindow(width, height, title, NULL, NULL); //Does the actual window creation
+        if (id == NULL) throw new RuntimeException("Failed to create window");
 
-        glfwMakeContextCurrent(this.id);
+        glfwMakeContextCurrent(id);
         GL.createCapabilities(true);
-        GLUtil.setupDebugMessageCallback();
+//        GLUtil.setupDebugMessageCallback();
 
-        glfwSetKeyCallback(this.id, (window, key, scancode, action, mods) -> {
-            if (action == GLFW_PRESS) this.keys[key] = true;
-            if (action == GLFW_RELEASE) this.keys[key] = false;
+        glfwSetKeyCallback(id, (window, key, scancode, action, mods) -> {
+            if (action == GLFW_PRESS) keys[key] = true;
+            if (action == GLFW_RELEASE) keys[key] = false;
         });
 
-        glfwSetMouseButtonCallback(this.id, (window, button, action, mods) -> {
+        glfwSetMouseButtonCallback(id, (window, button, action, mods) -> {
             if (button == GLFW_MOUSE_BUTTON_1) {
-                this.mousePressed = action != GLFW_RELEASE;
-                this.mouseJustPressed = this.mousePressed;
+                mousePressed = action != GLFW_RELEASE;
+                mouseJustPressed = mousePressed;
                 if (action == GLFW_PRESS) {
-                    this.clickListeners.forEach(consumer -> consumer.accept(this.getMousePosition()));
+                    clickListeners.forEach(consumer -> consumer.accept(getMousePosition()));
                 }
             }
         });
@@ -85,52 +83,52 @@ public class GameWindow implements Tickable {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        if (doShow) glfwShowWindow(this.id);
+        if (doShow) glfwShowWindow(id);
 
         glfwMakeContextCurrent(0);
     }
 
     public void destroy() {
-        glfwDestroyWindow(this.id);
-        this.id = -1;
+        glfwDestroyWindow(id);
+        id = -1;
     }
 
     @Override
     public void tick() {
-        this.mouseJustPressed = false;
+        mouseJustPressed = false;
     }
 
-    public void registerClickListener(final Consumer<Vector2d> consumer) {
-        this.clickListeners.add(consumer);
+    public void registerClickListener(Consumer<Vector2d> consumer) {
+        clickListeners.add(consumer);
     }
 
     public Vector2d getMousePosition() {
-        try (final MemoryStack stack = MemoryStack.stackPush()) {
-            final DoubleBuffer x = stack.callocDouble(1);
-            final DoubleBuffer y = stack.callocDouble(1);
-            glfwGetCursorPos(this.id, x, y);
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            DoubleBuffer x = stack.callocDouble(1);
+            DoubleBuffer y = stack.callocDouble(1);
+            glfwGetCursorPos(id, x, y);
             return Vector2d.of(x.get(0), y.get(0));
         }
     }
 
     public boolean isKeyPressed(int code) {
-        return this.keys[code];
+        return keys[code];
     }
 
     public boolean isMousePressed() {
-        return this.mousePressed;
+        return mousePressed;
     }
 
     public boolean isMouseJustPressed() {
-        return this.mouseJustPressed;
+        return mouseJustPressed;
     }
 
     public boolean shouldWindowClose() {
-        return glfwWindowShouldClose(this.id);
+        return glfwWindowShouldClose(id);
     }
 
     public long getId() {
-        return this.id;
+        return id;
     }
 
 }

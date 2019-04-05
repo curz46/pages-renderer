@@ -6,16 +6,16 @@ import java.nio.ByteBuffer;
 
 public class Buffers {
 
-    public static ByteBuffer asHeapBuffer(final byte[] pixels) {
-        final ByteBuffer buffer = BufferUtils.createByteBuffer(pixels.length);
+    public static ByteBuffer asHeapBuffer(byte[] pixels) {
+        ByteBuffer buffer = BufferUtils.createByteBuffer(pixels.length);
         buffer.put(pixels);
         buffer.flip();
         return buffer;
     }
 
-    public static byte[] asByteArray(final ByteBuffer buffer) {
+    public static byte[] asByteArray(ByteBuffer buffer) {
         buffer.position(0);
-        final byte[] pixels = new byte[buffer.remaining()];
+        byte[] pixels = new byte[buffer.remaining()];
         buffer.get(pixels);
         return pixels;
     }

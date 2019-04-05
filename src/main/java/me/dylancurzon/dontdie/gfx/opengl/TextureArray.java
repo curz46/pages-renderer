@@ -15,8 +15,8 @@ public class TextureArray {
 
     private final int id;
 
-    public static TextureArray make(final int width, final int height, final Sprite[] sprites) {
-        final int id = glGenTextures();
+    public static TextureArray make(int width, int height, Sprite[] sprites) {
+        int id = glGenTextures();
         glBindTexture(GL_TEXTURE_2D_ARRAY, id);
         glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, width, height, sprites.length);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -24,7 +24,7 @@ public class TextureArray {
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         for (int i = 0; i < sprites.length; i++) {
-            final Sprite sprite = sprites[i];
+            Sprite sprite = sprites[i];
             glTexSubImage3D(
                 GL_TEXTURE_2D_ARRAY, 0,
                 0, 0, i,
@@ -35,8 +35,8 @@ public class TextureArray {
         return new TextureArray(id);
     }
 
-    public static TextureArray make(final Sprite sprite) {
-        final int id = glGenTextures();
+    public static TextureArray make(Sprite sprite) {
+        int id = glGenTextures();
         glBindTexture(GL_TEXTURE_2D_ARRAY, id);
         glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, sprite.getWidth(), sprite.getHeight(), sprite.getFrameCount());
         glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -58,16 +58,16 @@ public class TextureArray {
         glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
     }
 
-    private TextureArray(final int id) {
+    private TextureArray(int id) {
         this.id = id;
     }
 
     public void bind() {
-        glBindTexture(GL_TEXTURE_2D_ARRAY, this.id);
+        glBindTexture(GL_TEXTURE_2D_ARRAY, id);
     }
 
     public void destroy() {
-        glDeleteTextures(this.id);
+        glDeleteTextures(id);
     }
 
 }

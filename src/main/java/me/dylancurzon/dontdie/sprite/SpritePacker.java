@@ -1,6 +1,6 @@
 package me.dylancurzon.dontdie.sprite;
 
-import me.dylancurzon.dontdie.util.Vector2i;
+import me.dylancurzon.pages.util.Vector2i;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,26 +17,26 @@ public class SpritePacker {
     private final Set<Sprite> sprites;
     private Map<Sprite, Vector2i> spriteMap = new HashMap<>();
 
-    public SpritePacker(final Set<Sprite> sprites) {
+    public SpritePacker(Set<Sprite> sprites) {
         this.sprites = sprites;
-        this.pack(sprites);
+        pack(sprites);
     }
 
-    public Optional<Vector2i> getSpritePosition(final Sprite sprite) {
-        return Optional.ofNullable(this.spriteMap.get(sprite));
+    public Optional<Vector2i> getSpritePosition(Sprite sprite) {
+        return Optional.ofNullable(spriteMap.get(sprite));
     }
 
     public byte[] getPixels() {
-        final byte[] pixels = new byte[WIDTH * HEIGHT * 4];
-        this.spriteMap
+        byte[] pixels = new byte[WIDTH * HEIGHT * 4];
+        spriteMap
             .forEach((sprite, position) -> {
                 for (int frameNum = 0; frameNum < sprite.getFrameCount(); frameNum++) {
-                    final byte[] frame = sprite.getFrames()[frameNum];
+                    byte[] frame = sprite.getFrames()[frameNum];
 
                     for (int xd = 0; xd < sprite.getWidth(); xd++) {
                         for (int yd = 0; yd < sprite.getHeight(); yd++) {
-                            final int xa = xd + position.getX();
-                            final int ya = yd + position.getY();
+                            int xa = xd + position.getX();
+                            int ya = yd + position.getY();
                             //rgba
                             pixels[(xa + (ya * WIDTH)) * 4 + 0] = frame[(xd + yd * sprite.getWidth()) * 4 + 0];
                             pixels[(xa + (ya * WIDTH)) * 4 + 1] = frame[(xd + yd * sprite.getWidth()) * 4 + 1];
@@ -55,7 +55,7 @@ public class SpritePacker {
     }
 
     public Map<Sprite, Vector2i> getSpriteMap() {
-        return this.spriteMap;
+        return spriteMap;
     }
 
     public int getWidth() {
@@ -66,27 +66,27 @@ public class SpritePacker {
         return HEIGHT;
     }
 
-    private void pack(final Set<Sprite> sprites) {
-        final List<Image> images = sprites.stream()
+    private void pack(Set<Sprite> sprites) {
+        List<Image> images = sprites.stream()
             .map(Image::new)
             .sorted(Comparator.comparingInt(a -> a.width * a.height))
             .collect(Collectors.toList());
         Collections.reverse(images);
 
-        final LinkedList<Bin> bins = new LinkedList<>();
+        LinkedList<Bin> bins = new LinkedList<>();
         bins.add(new Bin(0, 0, WIDTH, HEIGHT));
 
-        for (final Image image : images) {
-            final int imageWidth = image.width;
-            final int imageHeight = image.height;
-            final ListIterator<Bin> iterator = bins.listIterator(bins.size());
+        for (Image image : images) {
+            int imageWidth = image.width;
+            int imageHeight = image.height;
+            ListIterator<Bin> iterator = bins.listIterator(bins.size());
 
             boolean success = false;
 
             // First, find a Bin that this Sprite is able to fit into
             // We do this in reverse order in order to prioritize smaller splits
             while (iterator.hasPrevious()) {
-                final Bin bin = iterator.previous();
+                Bin bin = iterator.previous();
 
                 // Calculate the bigger and smaller split as shown here:
                 // https://github.com/TeamHypersomnia/rectpack2D/blob/master/images/diag01.png
@@ -94,8 +94,8 @@ public class SpritePacker {
                 // This addresses corner cases using the following as reference:
                 // https://github.com/TeamHypersomnia/rectpack2D/blob/master/src/insert_and_split.h
 
-                final int freeWidth = bin.width - imageWidth;
-                final int freeHeight = bin.height - imageHeight;
+                int freeWidth = bin.width - imageWidth;
+                int freeHeight = bin.height - imageHeight;
 
                 if (freeWidth < 0 || freeHeight < 0) {
                     // Sprite cannot fit in this Bin, as dimensions are greater
@@ -105,7 +105,7 @@ public class SpritePacker {
                 if (freeWidth == 0 && freeHeight == 0) {
                     // Sprite perfectly fits, so delete the space and create no splits
                     iterator.remove();
-                    this.spriteMap.put(image.sprite, Vector2i.of(bin.x, bin.y));
+                    spriteMap.put(image.sprite, Vector2i.of(bin.x, bin.y));
                     success = true;
                     break;
                 }
@@ -113,65 +113,65 @@ public class SpritePacker {
                 // Conditions for when there would only be one split
 
                 if (freeWidth > 0 && freeHeight == 0) {
-                    final int splitX = bin.x + imageWidth;
-                    final int splitY = bin.y;
-                    final int splitWidth = bin.width - imageWidth;
-                    final int splitHeight = bin.height;
+                    int splitX = bin.x + imageWidth;
+                    int splitY = bin.y;
+                    int splitWidth = bin.width - imageWidth;
+                    int splitHeight = bin.height;
                     iterator.remove();
                     bins.addLast(new Bin(splitX, splitY, splitWidth, splitHeight));
-                    this.spriteMap.put(image.sprite, Vector2i.of(bin.x, bin.y));
+                    spriteMap.put(image.sprite, Vector2i.of(bin.x, bin.y));
                     success = true;
                     break;
                 }
 
                 if (freeWidth == 0) {
-                    final int splitX = bin.x;
-                    final int splitY = bin.y + imageHeight;
-                    final int splitWidth = bin.width;
-                    final int splitHeight = bin.height - imageHeight;
+                    int splitX = bin.x;
+                    int splitY = bin.y + imageHeight;
+                    int splitWidth = bin.width;
+                    int splitHeight = bin.height - imageHeight;
                     iterator.remove();
                     bins.addLast(new Bin(splitX, splitY, splitWidth, splitHeight));
-                    this.spriteMap.put(image.sprite, Vector2i.of(bin.x, bin.y));
+                    spriteMap.put(image.sprite, Vector2i.of(bin.x, bin.y));
                     success = true;
                     break;
                 }
 
                 if (freeWidth > freeHeight) {
-                    final int biggerX = bin.x + imageWidth;
-                    final int biggerY = bin.y;
-                    final int biggerWidth = freeWidth;
-                    final int biggerHeight = bin.height;
+                    int biggerX = bin.x + imageWidth;
+                    int biggerY = bin.y;
+                    int biggerWidth = freeWidth;
+                    int biggerHeight = bin.height;
 
-                    final int smallerX = bin.x;
-                    final int smallerY = bin.y + imageHeight;
-                    final int smallerWidth = image.width;
-                    final int smallerHeight = freeHeight;
+                    int smallerX = bin.x;
+                    int smallerY = bin.y + imageHeight;
+                    int smallerWidth = image.width;
+                    int smallerHeight = freeHeight;
 
                     iterator.remove();
                     // Push to bins
                     bins.addLast(new Bin(biggerX, biggerY, biggerWidth, biggerHeight));
                     bins.addLast(new Bin(smallerX, smallerY, smallerWidth, smallerHeight));
-                    this.spriteMap.put(image.sprite, Vector2i.of(bin.x, bin.y));
+                    spriteMap.put(image.sprite, Vector2i.of(bin.x, bin.y));
                     success = true;
 
                     break;
                 }
 
-                final int biggerX = bin.x;
-                final int biggerY = bin.y + imageHeight;
-                final int biggerWidth = bin.width;
-                final int biggerHeight = freeHeight;
+                int biggerX = bin.x;
+                int biggerY = bin.y + imageHeight;
+                int biggerWidth = bin.width;
+                int biggerHeight = freeHeight;
 
-                final int smallerX = bin.x + imageWidth;
-                final int smallerY = bin.y;
-                final int smallerWidth = freeWidth;
-                final int smallerHeight = imageHeight;
+                int smallerX = bin.x + imageWidth;
+                int smallerY = bin.y;
+                int smallerWidth = freeWidth;
+                int smallerHeight = imageHeight;
 
                 iterator.remove();
                 // Push to bins
                 bins.addLast(new Bin(biggerX, biggerY, biggerWidth, biggerHeight));
                 bins.addLast(new Bin(smallerX, smallerY, smallerWidth, smallerHeight));
-                this.spriteMap.put(image.sprite, Vector2i.of(bin.x, bin.y));
+                spriteMap.put(image.sprite, Vector2i.of(bin.x, bin.y));
                 success = true;
                 break;
             }
@@ -191,10 +191,10 @@ public class SpritePacker {
         /**
          * Accounts for animated Sprites by considering it as a long image
          */
-        public Image(final Sprite sprite) {
+        public Image(Sprite sprite) {
             this.sprite = sprite;
-            this.width = sprite.getWidth();
-            this.height = sprite.getHeight();
+            width = sprite.getWidth();
+            height = sprite.getHeight();
         }
 
     }
@@ -206,7 +206,7 @@ public class SpritePacker {
         int width;
         int height;
 
-        public Bin(final int x, final int y, final int width, final int height) {
+        public Bin(int x, int y, int width, int height) {
             this.x = x;
             this.y = y;
             this.width = width;

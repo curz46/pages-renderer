@@ -1,7 +1,5 @@
 package me.dylancurzon.dontdie.util;
 
-import jdk.nashorn.internal.ir.annotations.Immutable;
-
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -9,83 +7,82 @@ import java.nio.charset.StandardCharsets;
 /**
  * A simple wrapper utility class which allows reading strings from a ByteBuffer.
  */
-@Immutable
 public class ByteBuf {
 
     private final ByteBuffer buffer;
 
-    public ByteBuf(final ByteBuffer buffer) {
+    public ByteBuf(ByteBuffer buffer) {
         this.buffer = buffer;
     }
 
     public boolean hasRemaining() {
-        return this.buffer.hasRemaining();
+        return buffer.hasRemaining();
     }
 
     public int remaining() {
-        return this.buffer.remaining();
+        return buffer.remaining();
     }
 
     public void flip() {
-        this.buffer.flip();
+        buffer.flip();
     }
 
-    public void writeString(final String value, final int length) {
-        final byte[] buf = new byte[length];
-        final byte[] bytes;
+    public void writeString(String value, int length) {
+        byte[] buf = new byte[length];
+        byte[] bytes;
         try {
             bytes = value.getBytes("UTF-8");
-        } catch (final UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("Failed to encode String value as UTF-8.", e);
         }
         System.arraycopy(bytes, 0, buf, 0, bytes.length);
-        this.buffer.put(buf, 0, buf.length);
+        buffer.put(buf, 0, buf.length);
     }
 
-    public void writeInt(final int value) {
-        this.buffer.putInt(value);
+    public void writeInt(int value) {
+        buffer.putInt(value);
     }
 
-    public void writeDouble(final double value) {
-        this.buffer.putDouble(value);
+    public void writeDouble(double value) {
+        buffer.putDouble(value);
     }
 
-    public void writeLong(final long value) {
-        this.buffer.putLong(value);
+    public void writeLong(long value) {
+        buffer.putLong(value);
     }
 
-    public void writeShort(final short value) {
-        this.buffer.putShort(value);
+    public void writeShort(short value) {
+        buffer.putShort(value);
     }
 
-    public void writeByte(final byte value) {
-        this.buffer.put(value);
+    public void writeByte(byte value) {
+        buffer.put(value);
     }
 
-    public String readString(final int length) {
-        final byte[] buf = new byte[length];
-        this.buffer.get(buf, 0, length);
+    public String readString(int length) {
+        byte[] buf = new byte[length];
+        buffer.get(buf, 0, length);
         return new String(buf, StandardCharsets.UTF_8);
     }
 
     public int readInt() {
-        return this.buffer.getInt();
+        return buffer.getInt();
     }
 
     public double readDouble() {
-        return this.buffer.getDouble();
+        return buffer.getDouble();
     }
 
     public long readLong() {
-        return this.buffer.getLong();
+        return buffer.getLong();
     }
 
     public short readShort() {
-        return this.buffer.getShort();
+        return buffer.getShort();
     }
 
     public byte readByte() {
-        return this.buffer.get();
+        return buffer.get();
     }
 
 }

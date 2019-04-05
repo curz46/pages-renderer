@@ -2,6 +2,6 @@ package me.dylancurzon.dontdie;
 
 public interface HasState {
 
-    void setGameState(final GameState gameState);
+    void setGameState(GameState gameState);
 
 }

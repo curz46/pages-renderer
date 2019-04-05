@@ -19,19 +19,19 @@ public class ShaderUtil {
      * @param name The name to use when locating the shaders.
      * @return The ID of the Shader Program created.
      */
-    public static int createShaderProgram(final String name) {
-        final int vertShader = createShader("shaders/" + name + ".vert",
+    public static int createShaderProgram(String name) {
+        int vertShader = createShader("shaders/" + name + ".vert",
             ARBVertexShader.GL_VERTEX_SHADER_ARB);
-        final int fragShader = createShader("shaders/" + name + ".frag",
+        int fragShader = createShader("shaders/" + name + ".frag",
             ARBFragmentShader.GL_FRAGMENT_SHADER_ARB);
-        final int program = ARBShaderObjects.glCreateProgramObjectARB();
+        int program = ARBShaderObjects.glCreateProgramObjectARB();
         ARBShaderObjects.glAttachObjectARB(program, vertShader);
         ARBShaderObjects.glAttachObjectARB(program, fragShader);
 
         ARBShaderObjects.glLinkProgramARB(program);
         if (ARBShaderObjects.glGetObjectParameteriARB(program, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB)
             == GL_FALSE) {
-            final String log = glGetProgramInfoLog(program, glGetProgrami(program, GL_INFO_LOG_LENGTH));
+            String log = glGetProgramInfoLog(program, glGetProgrami(program, GL_INFO_LOG_LENGTH));
             throw new RuntimeException("Link failed for shader program: " + log);
         }
 
@@ -44,7 +44,7 @@ public class ShaderUtil {
         return program;
     }
 
-    public static int createShader(final String path, final int shaderType) {
+    public static int createShader(String path, int shaderType) {
         int shader = 0;
         try {
             shader = ARBShaderObjects.glCreateShaderObjectARB(shaderType);
@@ -56,7 +56,7 @@ public class ShaderUtil {
             if (ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB)
                 == GL_FALSE) {
                 // Get the error log for this shader
-                final String info = ARBShaderObjects.glGetInfoLogARB(
+                String info = ARBShaderObjects.glGetInfoLogARB(
                     shader,
                     ARBShaderObjects.glGetObjectParameteriARB(shader, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
                 throw new RuntimeException(
@@ -64,7 +64,7 @@ public class ShaderUtil {
             }
 
             return shader;
-        } catch (final Exception e) {
+        } catch (Exception e) {
             ARBShaderObjects.glDeleteObjectARB(shader);
             throw e;
         }
@@ -75,16 +75,16 @@ public class ShaderUtil {
      * @param path The path of the File to read.
      * @return The contents of the File.
      */
-    private static String readFile(final String path) {
-        final StringBuilder result = new StringBuilder();
-        final ClassLoader loader = ShaderUtil.class.getClassLoader();
+    private static String readFile(String path) {
+        StringBuilder result = new StringBuilder();
+        ClassLoader loader = ShaderUtil.class.getClassLoader();
 
-        try (final Scanner scanner = new Scanner(loader.getResourceAsStream(path))) {
+        try (Scanner scanner = new Scanner(loader.getResourceAsStream(path))) {
             while (scanner.hasNextLine()) {
-                final String line = scanner.nextLine();
+                String line = scanner.nextLine();
                 result.append(line).append("\n");
             }
-        } catch (final Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("An exception occurred while attempting to read File of path: " + path);
         }
 

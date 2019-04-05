@@ -8,20 +8,20 @@ public class Cached<T> {
 
     public Cached() {}
 
-    public Cached(final T object) {
+    public Cached(T object) {
         this.object = object;
     }
 
     public Optional<T> get() {
-        return Optional.ofNullable(this.object);
+        return Optional.ofNullable(object);
     }
 
-    public void set(final T object) {
+    public void set(T object) {
         this.object = object;
     }
 
     public void clear() {
-        this.object = null;
+        object = null;
     }
 
 }
