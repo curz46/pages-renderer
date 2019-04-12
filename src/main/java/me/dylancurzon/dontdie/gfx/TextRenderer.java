@@ -16,7 +16,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
-public class TextRenderer implements Renderer {
+public class TextRenderer extends Renderer {
 
     private final Map<TextSprite, Vector2i> textSprites = new HashMap<>();
 

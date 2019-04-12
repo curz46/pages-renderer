@@ -17,7 +17,7 @@ import static org.lwjgl.opengl.GL30.*;
  * The main renderer for the game. This renderer will change its contents (the sub-renderers that it calls) based on the
  * current state of the game.
  */
-public class RootRenderer implements Renderer {
+public class RootRenderer extends Renderer {
 
     private final GameWindow window;
     private final Renderer[] children;
@@ -91,6 +91,21 @@ public class RootRenderer implements Renderer {
 
         glDeleteTextures(fboTextureId);
         glDeleteFramebuffers(fboId);
+    }
+
+    @Override
+    public void update() {
+        for (Renderer child : children) {
+            if (child.isDirty()) {
+                child.update();
+                child.setDirty(false);
+            }
+        }
+    }
+
+    @Override
+    public boolean isDirty() {
+        return false;
     }
 
     @Override

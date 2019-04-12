@@ -2,16 +2,48 @@ package me.dylancurzon.dontdie.gfx;
 
 import me.dylancurzon.dontdie.Renderable;
 
-public interface Renderer extends Renderable {
+import java.util.concurrent.atomic.AtomicBoolean;
+
+public abstract class Renderer implements Renderable {
+
+    /**
+     * A dirty renderer is one which needs to update its buffers to reflect changed game state. This field is an
+     * {@link AtomicBoolean} such that {@link this#setDirty(boolean)} can be called from different Threads.
+     */
+    private boolean dirty;
 
     /**
      * Prepare this Renderer.
      */
-    void prepare();
+    public abstract void prepare();
 
     /**
      * Cleanup this Renderer.
      */
-    void cleanup();
+    public abstract void cleanup();
+
+    /**
+     * Update this Renderer.
+     */
+    public abstract void update();
+
+    /**
+     * Set this {@link Renderer} as dirty.
+     * @return The old value
+     * @see this#isDirty()
+     */
+    public boolean setDirty(boolean newValue) {
+        boolean oldValue = dirty;
+        dirty = newValue;
+        return oldValue;
+    }
+
+    /**
+     * @return {@code true} only if this {@link Renderer} is dirty.
+     * @see this#dirty
+     */
+    public boolean isDirty() {
+        return dirty;
+    }
 
 }

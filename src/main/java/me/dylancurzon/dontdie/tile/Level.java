@@ -108,7 +108,7 @@ public class Level {
         return Optional.ofNullable(tile);
     }
 
-        public Optional<TileType> getTile(Vector2i position) {
+    public Optional<TileType> getTile(Vector2i position) {
         if (tileMap.containsKey(position)) {
             return Optional.of(tileMap.get(position));
         }

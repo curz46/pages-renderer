@@ -28,7 +28,7 @@ import static org.lwjgl.opengl.GL20.*;
  * uniform:
  * - Camera fixed position and delta
  */
-public class TileRenderer implements Renderer {
+public class TileRenderer extends Renderer {
 
     private final Camera camera;
     private final Level level;
@@ -97,7 +97,7 @@ public class TileRenderer implements Renderer {
         tileTexture = Texture.make(tilePacker);
 //        this.tileTexture = Texture.make(Sprites.STONEBRICKS);
 
-        updateTilemap();
+        update();
     }
 
     @Override
@@ -122,7 +122,7 @@ public class TileRenderer implements Renderer {
         Vector2d delta = camera.getDelta();
 
         if (!Objects.equals(oldFixed, fixed)) {
-            updateTilemap();
+            update();
             oldFixed = fixed;
         }
 
@@ -158,7 +158,8 @@ public class TileRenderer implements Renderer {
      * Whenever the Camera tilemap is fully updated, the data in each of the VertexBuffers needs to be updated with the
      * new visible tilemap, as well as the uniform values.
      */
-    private void updateTilemap() {
+    @Override
+    public void update() {
         Vector2i pointA = camera.getVisibleA().sub(2);
         Vector2i pointB = camera.getVisibleB().add(2);
 
@@ -173,7 +174,7 @@ public class TileRenderer implements Renderer {
         int iPos = 0;
         int iCoords = 0;
 //        int iIndex = 0;
-        for (int x = pointA.getX(); x < pointB.getX();  x++) {
+        for (int x = pointA.getX(); x < pointB.getX(); x++) {
             for (int y = pointA.getY(); y < pointB.getY(); y++) {
                 TileType type = level.getTile(Vector2i.of(x, y)).orElse(TileType.BLACK);
 //                if (type == null) continue;

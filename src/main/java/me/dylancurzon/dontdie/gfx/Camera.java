@@ -5,15 +5,33 @@ import me.dylancurzon.pages.util.Vector2i;
 
 public class Camera {
 
+    private static final int TILE_WIDTH = 16;
+
     private static final double MAX_TILES_HORIZONTAL = 16;
     private static final double MAX_TILES_VERTICAL = 12;
     private static final int TILEMAP_UPDATE_STRIDE = 1;
 
     private Vector2d position = Vector2d.of(0, 0);
-//    private double aspectRatio = 1;
     private double zoom = 1;
 
     private Vector2d lastFixedPosition = getFixedPosition();
+
+    public Vector2i getTileForMousePosition(Vector2i mousePosition) {
+        // In order to find the Tile position, first we need the bounds
+        Vector2d boundA = getPosition().sub(getSize().div(2));
+        // Find relative position in the window
+        Vector2d normalizedPosition = mousePosition
+            .div(Vector2d.of(GameWindow.VIRTUAL_WIDTH, GameWindow.VIRTUAL_HEIGHT))
+            .mul(Vector2d.of(1, -1))
+            .add(Vector2d.of(0, 1));
+        // Find tilePosition
+        Vector2d relativePosition = normalizedPosition
+            .mul(Vector2d.of(MAX_TILES_HORIZONTAL, MAX_TILES_VERTICAL));
+        // Round down to left Tile corner
+        return boundA.add(relativePosition)
+            .floor()
+            .toInt();
+    }
 
     public void transform(Vector2d by) {
         position = position.add(by);
@@ -25,37 +43,9 @@ public class Camera {
     }
 
     public Vector2d getSize() {
-//        double hTiles = MAX_TILES_HORIZONTAL;
-//        double vTiles = hTiles / this.aspectRatio;
-//
-//        if (vTiles > MAX_TILES_VERTICAL) {
-//            vTiles = MAX_TILES_VERTICAL;
-//            hTiles = vTiles * this.aspectRatio;
-//        }
-
         return Vector2d.of(MAX_TILES_HORIZONTAL, MAX_TILES_VERTICAL);
     }
 
-    /**
-     * @return The index positions of the visible tiles as calculated by this Camera.
-     */
-//    public List<Vector2i> getVisibleTiles() {
-//        final List<Vector2i> tiles = new ArrayList<>();
-//
-//        final Vector2d size = this.getSize();
-//        int hTiles = (int) Math.ceil(size.getX());
-//        int vTiles = (int) Math.ceil(size.getY());
-//
-//        final int radius = 2;
-//        final Vector2i fixed = this.getFixedPosition().ceil().toInt();
-//        for (int x = fixed.getX() - radius; x < fixed.getX() + hTiles + radius; x++) {
-//            for (int y = fixed.getY() - radius; y < fixed.getY() + vTiles + radius; y++) {
-//                tiles.add(Vector2i.of(x, y));
-//            }
-//        }
-//
-//        return tiles;
-//    }
     public Vector2i getVisibleA() {
         return getFixedPosition().sub(getSize().div(2)).ceil().toInt();
     }
@@ -87,11 +77,6 @@ public class Camera {
         this.position = position;
     }
 
-//    @Override
-//    public void setAspectRatio(final double ratio) {
-//        this.aspectRatio = ratio;
-//    }
-
     public void setZoom(double zoom) {
         this.zoom = zoom;
     }
@@ -99,11 +84,6 @@ public class Camera {
     public Vector2d getPosition() {
         return position;
     }
-
-//    @Override
-//    public double getAspectRatio() {
-//        return this.aspectRatio;
-//    }
 
     public double getZoom() {
         return zoom;

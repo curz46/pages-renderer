@@ -15,7 +15,9 @@ public class SpritePacker {
     private static final int HEIGHT = 2048;
 
     private final Set<Sprite> sprites;
-    private Map<Sprite, Vector2i> spriteMap = new HashMap<>();
+    private Map<Sprite, Vector2i> spriteMap = new LinkedHashMap<>();
+
+    private byte[] pixels;
 
     public SpritePacker(Set<Sprite> sprites) {
         this.sprites = sprites;
@@ -27,30 +29,6 @@ public class SpritePacker {
     }
 
     public byte[] getPixels() {
-        byte[] pixels = new byte[WIDTH * HEIGHT * 4];
-        spriteMap
-            .forEach((sprite, position) -> {
-                for (int frameNum = 0; frameNum < sprite.getFrameCount(); frameNum++) {
-                    byte[] frame = sprite.getFrames()[frameNum];
-
-                    for (int xd = 0; xd < sprite.getWidth(); xd++) {
-                        for (int yd = 0; yd < sprite.getHeight(); yd++) {
-                            int xa = xd + position.getX();
-                            int ya = yd + position.getY();
-                            //rgba
-                            pixels[(xa + (ya * WIDTH)) * 4 + 0] = frame[(xd + yd * sprite.getWidth()) * 4 + 0];
-                            pixels[(xa + (ya * WIDTH)) * 4 + 1] = frame[(xd + yd * sprite.getWidth()) * 4 + 1];
-                            pixels[(xa + (ya * WIDTH)) * 4 + 2] = frame[(xd + yd * sprite.getWidth()) * 4 + 2];
-                            pixels[(xa + (ya * WIDTH)) * 4 + 3] = frame[(xd + yd * sprite.getWidth()) * 4 + 3];
-                        }
-                    }
-                }
-            });
-
-        // TODO: I spent 6 hours trying to figure out why my SpritePacker wasn't rendering anything, and it was this
-        //       line
-        //return ByteBuffer.wrap(bytes);
-
         return pixels;
     }
 
@@ -180,6 +158,28 @@ public class SpritePacker {
                 System.out.println("Failed to pack Sprite: " + image);
             }
         }
+
+        pixels = new byte[WIDTH * HEIGHT * 4];
+        for (Map.Entry<Sprite, Vector2i> entry : spriteMap.entrySet()) {
+            Sprite sprite = entry.getKey();
+            Vector2i position = entry.getValue();
+
+            for (int frameNum = 0; frameNum < sprite.getFrameCount(); frameNum++) {
+                byte[] frame = sprite.getFrames()[frameNum];
+
+                for (int xd = 0; xd < sprite.getWidth(); xd++) {
+                    for (int yd = 0; yd < sprite.getHeight(); yd++) {
+                        int xa = xd + position.getX();
+                        int ya = yd + position.getY();
+                        //rgba
+                        pixels[(xa + ya * WIDTH) * 4 + 0] = frame[(xd + yd * sprite.getWidth()) * 4 + 0];
+                        pixels[(xa + ya * WIDTH) * 4 + 1] = frame[(xd + yd * sprite.getWidth()) * 4 + 1];
+                        pixels[(xa + ya * WIDTH) * 4 + 2] = frame[(xd + yd * sprite.getWidth()) * 4 + 2];
+                        pixels[(xa + ya * WIDTH) * 4 + 3] = frame[(xd + yd * sprite.getWidth()) * 4 + 3];
+                    }
+                }
+            }
+        }
     }
 
     class Image {
@@ -211,6 +211,15 @@ public class SpritePacker {
             this.y = y;
             this.width = width;
             this.height = height;
+        }
+
+        @Override
+        public String toString() {
+            return "Bin{" +
+                "x=" + x +
+                ", y=" + y +
+                ", width=" + width +
+                ", height=" + height + "}";
         }
 
     }

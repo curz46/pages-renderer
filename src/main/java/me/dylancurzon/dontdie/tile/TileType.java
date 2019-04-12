@@ -10,7 +10,7 @@ public enum TileType {
 
     BLACK(0, Sprites.BLACK),
     UNDEFINED(1, Sprites.UNDEFINED),
-    STONEBRICKS(2, Sprites.STONEBRICKS1);
+    STONEBRICKS(2, Sprites.STONEBRICKS);
 
     public static Optional<TileType> forId(int id) {
         for (TileType type : TileType.values()) {

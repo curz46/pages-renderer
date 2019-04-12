@@ -1,6 +1,7 @@
-package me.dylancurzon.dontdie.designer;
+package me.dylancurzon.dontdie.designer.gameState;
 
 import me.dylancurzon.dontdie.GameState;
+import me.dylancurzon.dontdie.designer.DesignerGame;
 import me.dylancurzon.dontdie.tile.Level;
 
 import javax.swing.*;
@@ -9,10 +10,10 @@ import java.io.File;
 
 public class DesignerMenuState implements GameState {
 
-    private final LevelDesigner designer;
+    private final DesignerGame designer;
     private JFrame frame;
 
-    public DesignerMenuState(LevelDesigner designer) {
+    public DesignerMenuState(DesignerGame designer) {
         this.designer = designer;
     }
 
@@ -51,7 +52,7 @@ public class DesignerMenuState implements GameState {
         button2.addActionListener(e -> {
             Level level = new Level();
 //            (new LevelDesigner(level)).start();
-            designer.setGameState(new DesignerLevelState(designer, Level.generateTestLevel()));
+            designer.setGameState(new DesignerLevelState(designer, new Level()));
         });
 
         panel2.add(button2);

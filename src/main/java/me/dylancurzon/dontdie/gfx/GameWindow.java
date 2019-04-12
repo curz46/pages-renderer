@@ -2,6 +2,7 @@ package me.dylancurzon.dontdie.gfx;
 
 import me.dylancurzon.dontdie.Tickable;
 import me.dylancurzon.pages.util.Vector2d;
+import me.dylancurzon.pages.util.Vector2i;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLUtil;
@@ -32,6 +33,9 @@ public class GameWindow implements Tickable {
 
     private boolean mousePressed;
     private boolean mouseJustPressed;
+
+    private Vector2d lastMousePosition;
+    private boolean inFocus;
 
     private Set<Consumer<Vector2d>> clickListeners = new HashSet<>();
 
@@ -75,6 +79,13 @@ public class GameWindow implements Tickable {
             }
         });
 
+        glfwFocusWindow(id);
+        inFocus = true;
+
+        glfwSetWindowFocusCallback(id, (window, focused) -> {
+            inFocus = focused;
+        });
+
         glfwSwapInterval(0);
         glClearColor(0, 0, 0, 0);
         // TODO: look into if this is necessary, as FBO is leaking into this class
@@ -102,13 +113,40 @@ public class GameWindow implements Tickable {
         clickListeners.add(consumer);
     }
 
+    /**
+     * Gets the mouse position, but in a more predictable fashion. GLFW will provide a mouse position regardless of if
+     * the mouse is currently within the window's bounds or even if the window is in focus. This method will catch
+     * instances where the mouse has exited the window's bounds and stop tracking it, and will do the same for when the
+     * window becomes unfocused. This is a more user friendly experience since, in most cases, an unfocused window
+     * should leave the user alone.
+     * @return A mouse position with real screen coordinates; a minimum of (0, 0) and a maximum of
+     * ({@link this#WIDTH}, {@link this#HEIGHT}).
+     */
     public Vector2d getMousePosition() {
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            DoubleBuffer x = stack.callocDouble(1);
-            DoubleBuffer y = stack.callocDouble(1);
-            glfwGetCursorPos(id, x, y);
-            return Vector2d.of(x.get(0), y.get(0));
+        // TODO: The implementation of this method is such that an accurate "lastMousePosition" requires that this
+        //       method is frequently called. That is arbitrary behaviour as far as the user is concerned, so really
+        //       the user should be able to "update" this Window and the lastMousePosition should be as of last "update"
+
+        // If window not in focus, return the last known position
+        if (!inFocus) {
+            return lastMousePosition;
         }
+
+        Vector2d mousePosition = queryMousePosition();
+
+        // If mouse position is outside of window bounds, return last known position
+        boolean withinBounds = mousePosition.getX() > 0 && mousePosition.getY() > 0 &&
+            mousePosition.getX() <= WIDTH && mousePosition.getY() <= HEIGHT;
+        if (!withinBounds) {
+            return lastMousePosition;
+        }
+
+        lastMousePosition = mousePosition;
+        return mousePosition;
+    }
+
+    public boolean isWindowFocused() {
+        return inFocus;
     }
 
     public boolean isKeyPressed(int code) {
@@ -129,6 +167,15 @@ public class GameWindow implements Tickable {
 
     public long getId() {
         return id;
+    }
+
+    private Vector2d queryMousePosition() {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            DoubleBuffer x = stack.callocDouble(1);
+            DoubleBuffer y = stack.callocDouble(1);
+            glfwGetCursorPos(id, x, y);
+            return Vector2d.of(x.get(0), y.get(0));
+        }
     }
 
 }

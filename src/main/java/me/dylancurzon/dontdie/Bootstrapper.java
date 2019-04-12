@@ -1,13 +1,13 @@
 package me.dylancurzon.dontdie;
 
-import me.dylancurzon.dontdie.designer.LevelDesigner;
+import me.dylancurzon.dontdie.designer.DesignerGame;
 
 import java.io.IOException;
 
 public class Bootstrapper {
 
     public static void main(String[] args) throws IOException {
-        LevelDesigner designer = new LevelDesigner();
+        DesignerGame designer = new DesignerGame();
         designer.launch();
 
 //        final SpritePacker packer = new SpritePacker(Sprites.getSprites());

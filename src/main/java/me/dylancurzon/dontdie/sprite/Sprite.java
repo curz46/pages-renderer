@@ -43,10 +43,11 @@ public class Sprite implements me.dylancurzon.pages.util.Sprite {
             }
             int height = imageHeight / frameCount;
 
-            byte[][] frames = new byte[frameCount][width * imageHeight * 4];
+            byte[][] frames = new byte[frameCount][width * height * 4];
             for (int frameNum = 0; frameNum < frameCount; frameNum++) {
 //                ByteBuffer buf = BufferUtils.createByteBuffer(4 * width * height);
 //                final ByteBuffer buf = ByteBuffer.wrap(new byte[4 * width * height]);
+
                 byte[] frame = new byte[width * height * 4];
 
 //                final int initialY = i * height;
@@ -61,8 +62,9 @@ public class Sprite implements me.dylancurzon.pages.util.Sprite {
                     for (int dy = 0; dy < height; dy++) {
                         int xp = dx;
                         int yp = dy + frameNum * height;
+
                         for (int b = 0; b < 4; b++) {
-                            frame[(dx + dy * width) * 4 + b] = pixels[(xp + yp * imageHeight) * 4 + b];
+                            frame[(dx + dy * width) * 4 + b] = pixels[(xp + yp * width) * 4 + b];
                         }
                     }
                 }

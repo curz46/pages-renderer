@@ -24,7 +24,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
-public class PageRenderer implements Renderer {
+public class PageRenderer extends Renderer {
 
     private final Page page;
 
@@ -138,6 +138,7 @@ public class PageRenderer implements Renderer {
         textRenderer.render();
     }
 
+    @Override
     public void update() {
         if (page == null) {
             updateSprites(Collections.emptyList());
@@ -171,6 +172,7 @@ public class PageRenderer implements Renderer {
         }
 
         packer = new SpritePacker(new HashSet<>(sprites));
+        if (packerTexture != null) packerTexture.destroy();
         packerTexture = Texture.make(packer);
 
         int iPosition = 0;
@@ -242,7 +244,7 @@ public class PageRenderer implements Renderer {
         textRenderer.update();
     }
 
-    public static final boolean DEBUG_CONTAINERS = true;
+    public static final boolean DEBUG_CONTAINERS = false;
 
     private void updateOutlines(List<FlattenedElement> elements) {
         Collections.reverse(elements);

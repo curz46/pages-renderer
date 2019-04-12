@@ -11,7 +11,7 @@ import org.lwjgl.opengl.ARBShaderObjects;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 
-public class ConsoleRenderer implements Renderer {
+public class ConsoleRenderer extends Renderer {
 
     private int basicShader;
 
@@ -77,6 +77,11 @@ public class ConsoleRenderer implements Renderer {
     @Override
     public void cleanup() {
         loadingTexture.destroy();
+    }
+
+    @Override
+    public void update() {
+
     }
 
     @Override
