@@ -11,6 +11,7 @@ import me.dylancurzon.dontdie.sprite.Sprites;
 import me.dylancurzon.dontdie.tile.Level;
 import me.dylancurzon.pages.Page;
 import me.dylancurzon.pages.PageTemplate;
+import me.dylancurzon.pages.element.ElementDecoration;
 import me.dylancurzon.pages.element.container.Axis;
 import me.dylancurzon.pages.element.container.ImmutableAbsoluteContainer;
 import me.dylancurzon.pages.element.container.ImmutableOverlayContainer;
@@ -22,6 +23,7 @@ import me.dylancurzon.pages.util.Vector2d;
 import me.dylancurzon.pages.util.Vector2i;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,11 +54,25 @@ public class LevelDesigner extends Renderer implements Tickable {
                             Sprites.GUI_CURSOR, Sprites.GUI_CURSOR_HOVER, Sprites.GUI_CURSOR_SELECTED)
                         .setTag("selectButton")
                         .setMargin(Spacing.of(5, 0, 0, 0))
+                        .setZIndex(5)
                         .build())
                     .add(new ImmutableButtonElement.Builder(
                             Sprites.GUI_PAINTBRUSH, Sprites.GUI_PAINTBRUSH_HOVER, Sprites.GUI_PAINTBRUSH_SELECTED)
                         .setTag("paintButton")
                         .setMargin(Spacing.of(5, 0, 0, 0))
+                        .setZIndex(5)
+                        .build())
+                    .build())
+                .add(new ImmutableStackingContainer.Builder()
+                    .setFixedSize(Vector2i.of(0, 0))
+                    .fillAllocatedSize()
+                    .setCenterOnX(true)
+                    .setCenterOnY(true)
+                    .add(new ImmutableStackingContainer.Builder()
+                        .setFixedSize(Vector2i.of(100, 16))
+                        .setDecoration(ElementDecoration.builder()
+                            .setFillColor(new Color(72, 77, 91))
+                            .build())
                         .build())
                     .build())
                 .build(), Vector2i.of(0, 168))

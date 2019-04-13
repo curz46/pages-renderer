@@ -20,7 +20,7 @@ public class ImmutableButtonElement extends ImmutableSpriteElement {
     @Override
     public Function<MutableContainer, MutableElement> asMutable() {
         return parent -> {
-            MutableSpriteElement element = new MutableButtonElement(parent, margin, tag, zPosition, sprite, decoration, selectedSprite);
+            MutableSpriteElement element = new MutableButtonElement(parent, margin, tag, zIndex, sprite, decoration, selectedSprite);
             listeners.forEach(element::subscribe);
             onCreate.forEach(consumer -> consumer.accept(element));
             return element;

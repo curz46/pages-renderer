@@ -9,7 +9,9 @@ import me.dylancurzon.pages.util.Vector2d;
 import me.dylancurzon.pages.util.Vector2i;
 import org.lwjgl.opengl.ARBShaderObjects;
 
-import java.util.HashMap;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -18,7 +20,8 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 public class TextRenderer extends Renderer {
 
-    private final Map<TextSprite, Vector2i> textSprites = new HashMap<>();
+//    private final Map<TextSprite, Vector2i> textSprites = new HashMap<>();
+    private final List<RenderObject> renderObjects = new ArrayList<>();
 
     private int program;
 
@@ -28,8 +31,21 @@ public class TextRenderer extends Renderer {
     private VertexBuffer positions;
     private VertexBuffer textureCoords;
     private VertexBuffer textureIndices;
+    private VertexBuffer depthBuffer;
 
     private int vertices;
+
+    public void addText(TextSprite textSprite, Vector2i position) {
+        addText(textSprite, position, 0);
+    }
+
+    public void addText(TextSprite textSprite, Vector2i position, float depth) {
+        renderObjects.add(new RenderObject(textSprite, position, depth));
+    }
+
+    public void clearText() {
+        renderObjects.clear();
+    }
 
     @Override
     public void prepare() {
@@ -37,6 +53,7 @@ public class TextRenderer extends Renderer {
         positions = VertexBuffer.make();
         textureCoords = VertexBuffer.make();
         textureIndices = VertexBuffer.make();
+        depthBuffer = VertexBuffer.make();
 
         // TODO: This is too hardcoded
         sprites = TextSprite.SPRITE_MAP.values().toArray(new Sprite[]{});
@@ -55,6 +72,7 @@ public class TextRenderer extends Renderer {
         positions.destroy();
         textureCoords.destroy();
         textureIndices.destroy();
+        depthBuffer.destroy();
         sprites = null;
         textTextures.destroy();
     }
@@ -77,6 +95,11 @@ public class TextRenderer extends Renderer {
         // TODO: Investigate why GL_INT here doesn't work
         // (makes all characters a Z)
         glVertexAttribPointer(2, 1, GL_FLOAT, false, 0, 0);
+        depthBuffer.bind();
+        glEnableVertexAttribArray(3);
+        // TODO: I'm just making this float as well because debugging this would probably take several hours which
+        //       I don't have.
+        glVertexAttribPointer(3, 1, GL_FLOAT, false, 0, 0);
 
         glDrawArrays(GL_QUADS, 0, vertices);
 
@@ -85,21 +108,23 @@ public class TextRenderer extends Renderer {
 
     public void update() {
         int vertices = 0;
-        for (TextSprite textSprite : textSprites.keySet()) {
-            vertices += textSprite.getSprites().length * 4;
+        for (RenderObject renderObject : renderObjects) {
+            vertices += renderObject.getTextSprite().getSprites().length * 4;
         }
 
         float[] positionsData = new float[vertices * 2];
         float[] coordsData = new float[vertices * 2];
         int[] indexData = new int[vertices];
+        float[] depthData = new float[vertices];
 
         int iPosition = 0;
         int iCoord = 0;
         int iIndex = 0;
+        int iDepth = 0;
 
-        for (Map.Entry<TextSprite, Vector2i> entry : textSprites.entrySet()) {
-            TextSprite textSprite = entry.getKey();
-            Vector2i spritePosition = entry.getValue();
+        for (RenderObject renderObject : renderObjects) {
+            TextSprite textSprite = renderObject.getTextSprite();
+            Vector2i spritePosition = renderObject.getPosition();
 
             for (int i = 0; i < textSprite.getSprites().length; i++) {
                 Sprite sprite = textSprite.getSprites()[i];
@@ -139,6 +164,11 @@ public class TextRenderer extends Renderer {
                 for (int j = 0; j < 4; j++) {
                     indexData[iIndex++] = index;
                 }
+
+                float depth = renderObject.getDepth();
+                for (int j = 0; j < 4; j++) {
+                    depthData[iDepth++] = depth;
+                }
             }
         }
 
@@ -148,13 +178,11 @@ public class TextRenderer extends Renderer {
         textureCoords.upload(coordsData);
         textureIndices.bind();
         textureIndices.upload(indexData);
+        depthBuffer.bind();
+        depthBuffer.upload(depthData);
         VertexBuffer.unbind();
 
         this.vertices = vertices;
-    }
-
-    public Map<TextSprite, Vector2i> getSprites() {
-        return textSprites;
     }
 
     private Vector2d toClipSpace(Vector2i pixel) {
@@ -172,6 +200,32 @@ public class TextRenderer extends Renderer {
             if (sprite.equals(candidate)) return i;
         }
         throw new IllegalArgumentException("Sprite given is not a known Text Sprite");
+    }
+
+    private class RenderObject {
+
+        private final TextSprite textSprite;
+        private final Vector2i position;
+        private final float depth;
+
+        protected RenderObject(TextSprite textSprite, Vector2i position, float depth) {
+            this.textSprite = textSprite;
+            this.position = position;
+            this.depth = depth;
+        }
+
+        public TextSprite getTextSprite() {
+            return textSprite;
+        }
+
+        public Vector2i getPosition() {
+            return position;
+        }
+
+        public float getDepth() {
+            return depth;
+        }
+
     }
 
 }

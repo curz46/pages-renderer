@@ -35,6 +35,7 @@ public class PageRenderer extends Renderer {
     private int spriteVertices = 0;
     private VertexBuffer spritePositions;
     private VertexBuffer spriteTexCoords;
+    private VertexBuffer spriteDepths;
 
     // Delegate Text rendering to the TextRenderer
     // This way every mutableElement can be rendered a Sprite
@@ -44,10 +45,12 @@ public class PageRenderer extends Renderer {
 
     private VertexBuffer outlinePositions;
     private VertexBuffer outlineColors;
+    private VertexBuffer outlineDepths;
     private int outlineVertices = 0;
 
     private VertexBuffer fillPositions;
     private VertexBuffer fillColors;
+    private VertexBuffer fillDepths;
     private int fillVertices = 0;
 
     public PageRenderer(Page page) {
@@ -59,13 +62,16 @@ public class PageRenderer extends Renderer {
         spriteProgram = ShaderUtil.createShaderProgram("page");
         spritePositions = VertexBuffer.make();
         spriteTexCoords = VertexBuffer.make();
+        spriteDepths = VertexBuffer.make();
 
         fillProgram = ShaderUtil.createShaderProgram("fill");
 
         outlinePositions = VertexBuffer.make();
         outlineColors = VertexBuffer.make();
+        outlineDepths = VertexBuffer.make();
         fillPositions = VertexBuffer.make();
         fillColors = VertexBuffer.make();
+        fillDepths = VertexBuffer.make();
 
         textRenderer = new TextRenderer();
         textRenderer.prepare();
@@ -77,37 +83,36 @@ public class PageRenderer extends Renderer {
     public void cleanup() {
         spritePositions.destroy();
         spriteTexCoords.destroy();
+        spriteDepths.destroy();
 
         outlinePositions.destroy();
         outlineColors.destroy();
+        outlineDepths.destroy();
 
         fillPositions.destroy();
         fillColors.destroy();
+        fillDepths.destroy();
 
         spritePositions = null;
         spriteTexCoords = null;
 
         outlinePositions = null;
         outlineColors = null;
+        outlineDepths = null;
 
         fillPositions = null;
         fillColors = null;
+        fillDepths = null;
     }
 
     @Override
     public void render() {
-        ARBShaderObjects.glUseProgramObjectARB(fillProgram);
+        glClearDepth(0.0f);
+        glClear(GL_DEPTH_BUFFER_BIT);
 
-        fillPositions.bind();
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
-        fillColors.bind();
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, 0);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_GEQUAL);
 
-        glDrawArrays(GL_QUADS, 0, fillVertices);
-
-        ARBShaderObjects.glUseProgramObjectARB(0);
         ARBShaderObjects.glUseProgramObjectARB(fillProgram);
 
         outlinePositions.bind();
@@ -116,8 +121,26 @@ public class PageRenderer extends Renderer {
         outlineColors.bind();
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, 0);
+        outlineDepths.bind();
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 1, GL_FLOAT, false, 0, 0);
 
         glDrawArrays(GL_LINES, 0, outlineVertices);
+
+        ARBShaderObjects.glUseProgramObjectARB(0);
+        ARBShaderObjects.glUseProgramObjectARB(fillProgram);
+
+        fillPositions.bind();
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
+        fillColors.bind();
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, 0);
+        fillDepths.bind();
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 1, GL_FLOAT, false, 0, 0);
+
+        glDrawArrays(GL_QUADS, 0, fillVertices);
 
         ARBShaderObjects.glUseProgramObjectARB(0);
         ARBShaderObjects.glUseProgramObjectARB(spriteProgram);
@@ -130,12 +153,17 @@ public class PageRenderer extends Renderer {
         spriteTexCoords.bind();
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+        spriteDepths.bind();
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 1, GL_FLOAT, false, 0, 0);
 
         glDrawArrays(GL_QUADS, 0, spriteVertices);
 
         ARBShaderObjects.glUseProgramObjectARB(0);
 
         textRenderer.render();
+
+        glDisable(GL_DEPTH_TEST);
     }
 
     @Override
@@ -179,6 +207,8 @@ public class PageRenderer extends Renderer {
         float[] positionsData = new float[elementCount * 2 * 4];
         int iTexCoord = 0;
         float[] texCoordsData = new float[elementCount * 2 * 4];
+        int iDepth = 0;
+        float[] depthData = new float[elementCount * 4];
 
         for (FlattenedElement element : elements) {
             MutableElement mutableElement = element.mutableElement;
@@ -225,6 +255,11 @@ public class PageRenderer extends Renderer {
                 for (int j = 0; j < spriteTexCoords.length; j++) {
                     texCoordsData[iTexCoord++] = spriteTexCoords[j];
                 }
+
+                float depth = mutableElement.getZIndex() / 100.0f;
+                for (int j = 0; j < 4; j++) {
+                    depthData[iDepth++] = depth;
+                }
             }
         }
 
@@ -233,18 +268,21 @@ public class PageRenderer extends Renderer {
         spritePositions.upload(positionsData);
         spriteTexCoords.bind();
         spriteTexCoords.upload(texCoordsData);
+        spriteDepths.bind();
+        spriteDepths.upload(depthData);
         VertexBuffer.unbind();
     }
 
     private void updateText(List<FlattenedElement> elements) {
-        textRenderer.getSprites().clear();
-        elements.forEach(element ->
-            textRenderer.getSprites()
-                .put((TextSprite) ((MutableTextElement) element.mutableElement).getSprite(), element.position));
+        textRenderer.clearText();
+        for (FlattenedElement element : elements) {
+            MutableTextElement textElement = (MutableTextElement) (element.mutableElement);
+            textRenderer.addText((TextSprite) textElement.getSprite(), element.position, textElement.getZIndex() / 100.0f);
+        }
         textRenderer.update();
     }
 
-    public static final boolean DEBUG_CONTAINERS = false;
+    public static final boolean DEBUG_CONTAINERS = true;
 
     private void updateOutlines(List<FlattenedElement> elements) {
         Collections.reverse(elements);
@@ -263,14 +301,18 @@ public class PageRenderer extends Renderer {
 
         float[] outlinePositionData = new float[outlineVertices * 2];
         float[] outlineColorData = new float[outlineVertices * 4];
+        float[] outlineDepthData = new float[outlineVertices];
 
         float[] fillPositionData = new float[fillVertices * 2];
         float[] fillColorData = new float[fillVertices * 4];
+        float[] fillDepthData = new float[fillVertices];
 
         int iOutlinePosition = 0;
         int iOutlineColor = 0;
+        int iOutlineDepth = 0;
         int iFillPosition = 0;
         int iFillColor = 0;
+        int iFillDepth = 0;
 
         for (FlattenedElement element : elements) {
             MutableElement mutableElement = element.mutableElement;
@@ -283,6 +325,8 @@ public class PageRenderer extends Renderer {
 
             int x = position.getX();
             int y = position.getY();
+            // When DEBUG_CONTAINERS is enabled show above other elements
+            float depth = DEBUG_CONTAINERS ? 1.0f : mutableElement.getZIndex() / 100.0f;
 
             int width = mutableElement.getSize().getX();
             int height = mutableElement.getSize().getY();
@@ -317,6 +361,9 @@ public class PageRenderer extends Renderer {
                         outlineColorData[iOutlineColor++] = lineColor.getAlpha() / 255.0f;
                     }
                 }
+                for (int j = 0; j < 4; j++) {
+                    outlineDepthData[iOutlineDepth++] = DEBUG_CONTAINERS ? 1.0f : depth;
+                }
             }
             if (mutableElement.getDecoration().getFillColor().isPresent()) {
                 float[] fillPositions = {
@@ -337,6 +384,9 @@ public class PageRenderer extends Renderer {
                         fillColorData[iFillColor++] = fillColor.getAlpha() / 255.0f;
                     }
                 }
+                for (int j = 0; j < 4; j++) {
+                    fillDepthData[iFillDepth++] = depth;
+                }
             }
         }
 
@@ -347,11 +397,15 @@ public class PageRenderer extends Renderer {
         outlinePositions.upload(outlinePositionData);
         outlineColors.bind();
         outlineColors.upload(outlineColorData);
+        outlineDepths.bind();
+        outlineDepths.upload(outlineDepthData);
 
         fillPositions.bind();
         fillPositions.upload(fillPositionData);
         fillColors.bind();
         fillColors.upload(fillColorData);
+        fillDepths.bind();
+        fillDepths.upload(fillDepthData);
 
         VertexBuffer.unbind();
     }
