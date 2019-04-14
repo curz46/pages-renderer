@@ -7,6 +7,8 @@ import me.dylancurzon.dontdie.gfx.TileRenderer;
 import me.dylancurzon.dontdie.sprite.Sprites;
 import me.dylancurzon.dontdie.tile.Level;
 import me.dylancurzon.dontdie.tile.TileType;
+import me.dylancurzon.pages.Page;
+import me.dylancurzon.pages.element.MutableElement;
 import me.dylancurzon.pages.util.Vector2d;
 import me.dylancurzon.pages.util.Vector2i;
 import org.jetbrains.annotations.Nullable;
@@ -18,20 +20,34 @@ public class PaintTool extends Tool {
     private final Camera camera;
 
     private final TileRenderer tileRenderer;
+    private final Page page;
+    private final MutableElement actionBarContainer;
+    private final MutableElement tileBar;
 
     private final TileOverlayRenderer overlayRenderer;
 
     @Nullable
     private Vector2i hoverPosition;
+    private TileType paintType;
 
-    public PaintTool(GameWindow window, Level level, Camera camera, TileRenderer tileRenderer) {
+    public PaintTool(GameWindow window, Level level, Camera camera, TileRenderer tileRenderer, Page page) {
         this.window = window;
         this.level = level;
         this.camera = camera;
 
         this.tileRenderer = tileRenderer;
+        this.page = page;
+
+        actionBarContainer = page.queryElement("actionBarContainer", MutableElement.class)
+            .orElseThrow();
+        tileBar = page.queryElement("tileBar", MutableElement.class)
+            .orElseThrow();
 
         overlayRenderer = new TileOverlayRenderer(camera);
+    }
+
+    public void setPaintType(TileType paintType) {
+        this.paintType = paintType;
     }
 
     @Override
@@ -75,9 +91,11 @@ public class PaintTool extends Tool {
         hoverPosition = tilePosition;
         setDirty(true);
 
-        if (window.isMousePressed()) {
-            if (level.getTile(tilePosition).orElse(null) != TileType.STONEBRICKS) {
-                level.setTile(tilePosition, TileType.STONEBRICKS);
+        if (window.isMousePressed()
+            && actionBarContainer.getMousePosition() == null
+            && tileBar.getMousePosition() == null) {
+            if (level.getTile(tilePosition).orElse(null) != paintType) {
+                level.setTile(tilePosition, paintType);
                 tileRenderer.setDirty(true);
             }
         }

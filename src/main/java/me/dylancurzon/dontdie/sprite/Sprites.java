@@ -7,6 +7,8 @@ import java.util.Set;
 public interface Sprites {
 
     Sprite DESIGNER_ACTION_BAR = Sprite.loadSprite("designer_action_bar");
+    Sprite DESIGNER_TILE_BAR = Sprite.loadSprite("designer_tile_bar");
+    Sprite DESIGNER_METADATA_WINDOW = Sprite.loadSprite("designer_metadata_window");
 
     Sprite OVERLAY_SELECT_HOVER = SpriteSheets.GUI.getSprite(3, 0, 16);
     Sprite OVERLAY_SELECT_SELECTED = SpriteSheets.GUI.getSprite(2, 0, 16);

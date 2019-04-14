@@ -5,6 +5,7 @@ import me.dylancurzon.pages.element.ElementDecoration;
 import me.dylancurzon.pages.element.container.MutableContainer;
 import me.dylancurzon.pages.element.sprite.MutableSpriteElement;
 import me.dylancurzon.pages.util.Spacing;
+import me.dylancurzon.pages.util.Vector2i;
 import org.jetbrains.annotations.Nullable;
 
 public class MutableButtonElement extends MutableSpriteElement {
@@ -16,11 +17,13 @@ public class MutableButtonElement extends MutableSpriteElement {
     public MutableButtonElement(@Nullable MutableContainer parent,
                                 Spacing margin,
                                 @Nullable String tag,
-                                @Nullable Integer zPosition,
+                                @Nullable Integer zIndex,
+                                boolean visible,
                                 me.dylancurzon.pages.util.Sprite sprite,
+                                Vector2i forcedSize,
                                 ElementDecoration decoration,
                                 Sprite selectedSprite) {
-        super(parent, margin, tag, zPosition, sprite, decoration);
+        super(parent, margin, tag, zIndex, visible, sprite, forcedSize, decoration);
         this.selectedSprite = selectedSprite;
     }
 
