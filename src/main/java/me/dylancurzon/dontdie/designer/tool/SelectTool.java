@@ -83,7 +83,6 @@ public class SelectTool extends Tool {
 
         if (!Objects.equals(hoverPosition, tilePosition)) {
             hoverPosition = tilePosition;
-            System.out.println(hoverPosition);
             setDirty(true);
         }
     }

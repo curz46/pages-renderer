@@ -56,6 +56,10 @@ public class DesignerLevelState implements GameState {
                 designer.click(virtualPosition);
             });
 
+            window.registerScrollListener(offset -> {
+                designer.scroll(offset);
+            });
+
             renderThreadReady.set(true);
 
             while (shouldContinueRender.get()) {

@@ -38,6 +38,7 @@ public class GameWindow implements Tickable {
     private boolean inFocus;
 
     private Set<Consumer<Vector2d>> clickListeners = new HashSet<>();
+    private Set<Consumer<Double>> scrollListeners = new HashSet<>();
 
     public void initialize(boolean doShow) {
         // Make errors print to stderr
@@ -79,6 +80,10 @@ public class GameWindow implements Tickable {
             }
         });
 
+        glfwSetScrollCallback(id, (window, offsetX, offsetY) ->
+            // I don't know what "offsetX" is but I assume that it's useless
+            scrollListeners.forEach(consumer -> consumer.accept(offsetY)));
+
         glfwFocusWindow(id);
         inFocus = true;
 
@@ -111,6 +116,10 @@ public class GameWindow implements Tickable {
 
     public void registerClickListener(Consumer<Vector2d> consumer) {
         clickListeners.add(consumer);
+    }
+
+    public void registerScrollListener(Consumer<Double> consumer) {
+        scrollListeners.add(consumer);
     }
 
     /**

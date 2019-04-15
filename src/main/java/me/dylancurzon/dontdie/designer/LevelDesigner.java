@@ -6,7 +6,10 @@ import me.dylancurzon.dontdie.designer.button.MutableButtonElement;
 import me.dylancurzon.dontdie.designer.tool.PaintTool;
 import me.dylancurzon.dontdie.designer.tool.SelectTool;
 import me.dylancurzon.dontdie.designer.tool.Tool;
-import me.dylancurzon.dontdie.gfx.*;
+import me.dylancurzon.dontdie.gfx.Camera;
+import me.dylancurzon.dontdie.gfx.GameWindow;
+import me.dylancurzon.dontdie.gfx.Renderer;
+import me.dylancurzon.dontdie.gfx.TileRenderer;
 import me.dylancurzon.dontdie.gfx.page.PageRenderer;
 import me.dylancurzon.dontdie.sprite.Sprites;
 import me.dylancurzon.dontdie.tile.Level;
@@ -17,7 +20,6 @@ import me.dylancurzon.pages.element.ElementDecoration;
 import me.dylancurzon.pages.element.MutableElement;
 import me.dylancurzon.pages.element.container.*;
 import me.dylancurzon.pages.element.sprite.ImmutableSpriteElement;
-import me.dylancurzon.pages.element.sprite.MutableSpriteElement;
 import me.dylancurzon.pages.util.MouseButton;
 import me.dylancurzon.pages.util.Spacing;
 import me.dylancurzon.pages.util.Vector2d;
@@ -38,6 +40,31 @@ public class LevelDesigner extends Renderer implements Tickable {
         .setPosition(Vector2i.of(0, 0))
         .setFixedSize(Vector2i.of(256, 192))
         .add(p1 -> new ImmutableAbsoluteContainer.Builder()
+            .add(new ImmutableOverlayContainer.Builder()
+                .setTag("metadataOverlay")
+                .setFixedSize(Vector2i.of(Sprites.DESIGNER_METADATA_WINDOW.getWidth(), Sprites.DESIGNER_METADATA_WINDOW.getHeight()))
+                .add(new ImmutableSpriteElement.Builder()
+                    .setTag("metadataWindow")
+                    .setSprite(Sprites.DESIGNER_METADATA_WINDOW)
+                    .build())
+                .add(new ImmutableStackingContainer.Builder()
+                    .fillAllocatedSize()
+//                    .add(new ImmutableTextElement.Builder()
+//                        .setText(TextSprite.of("Sample Text", 2))
+//                        .build())
+                    .doOnCreate(element -> {
+                        ImmutableSpriteElement immutableSprite = new ImmutableSpriteElement.Builder()
+                            .setSprite(Sprites.STONEBRICKS)
+                            .setMargin(Spacing.of(0, 10, 0, 0))
+                            .build();
+                        for (int i = 0; i < 50; i++) {
+                            element.getChildren().add(immutableSprite.asMutable(element));
+                        }
+                        element.propagateUpdate();
+                    })
+                    .setScrolling(ImmutableContainer.ELASTIC_SCROLLING)
+                    .build())
+                .build(), Vector2i.of(256 - Sprites.DESIGNER_METADATA_WINDOW.getWidth(), 25))
             .add(p2 -> new ImmutableOverlayContainer.Builder()
                 .setTag("tileBar")
                 .setFixedSize(Vector2i.of(256, Sprites.DESIGNER_TILE_BAR.getHeight()))
@@ -227,6 +254,10 @@ public class LevelDesigner extends Renderer implements Tickable {
             return;
         }
         if (selectedTool != null) selectedTool.click(position);
+    }
+
+    public void scroll(double offset) {
+        page.scroll(offset);
     }
 
     @Override
