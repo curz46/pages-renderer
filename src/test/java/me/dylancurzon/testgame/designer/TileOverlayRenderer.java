@@ -1,6 +1,5 @@
-package me.dylancurzon.dontdie.designer;
+package me.dylancurzon.testgame.designer;
 
-import me.dylancurzon.dontdie.gfx.Camera;
 import me.dylancurzon.dontdie.gfx.Renderer;
 import me.dylancurzon.dontdie.gfx.opengl.Texture;
 import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
@@ -10,6 +9,7 @@ import me.dylancurzon.dontdie.sprite.Sprites;
 import me.dylancurzon.dontdie.util.ShaderUtil;
 import me.dylancurzon.pages.util.Vector2d;
 import me.dylancurzon.pages.util.Vector2i;
+import me.dylancurzon.testgame.gfx.Camera;
 import org.lwjgl.opengl.ARBShaderObjects;
 
 import java.util.ArrayList;

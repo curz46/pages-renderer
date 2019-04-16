@@ -1,6 +1,6 @@
-package me.dylancurzon.dontdie;
+package me.dylancurzon.testgame;
 
-import me.dylancurzon.dontdie.designer.DesignerGame;
+import me.dylancurzon.testgame.designer.DesignerGame;
 
 import java.io.IOException;
 

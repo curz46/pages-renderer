@@ -1,16 +1,16 @@
-package me.dylancurzon.dontdie.designer.tool;
+package me.dylancurzon.testgame.designer.tool;
 
-import me.dylancurzon.dontdie.designer.TileOverlayRenderer;
-import me.dylancurzon.dontdie.gfx.Camera;
 import me.dylancurzon.dontdie.gfx.GameWindow;
-import me.dylancurzon.dontdie.gfx.TileRenderer;
 import me.dylancurzon.dontdie.sprite.Sprites;
-import me.dylancurzon.dontdie.tile.Level;
-import me.dylancurzon.dontdie.tile.TileType;
 import me.dylancurzon.pages.Page;
 import me.dylancurzon.pages.element.MutableElement;
 import me.dylancurzon.pages.util.Vector2d;
 import me.dylancurzon.pages.util.Vector2i;
+import me.dylancurzon.testgame.designer.TileOverlayRenderer;
+import me.dylancurzon.testgame.gfx.Camera;
+import me.dylancurzon.testgame.gfx.TileRenderer;
+import me.dylancurzon.testgame.tile.Level;
+import me.dylancurzon.testgame.tile.TileType;
 import org.jetbrains.annotations.Nullable;
 
 public class PaintTool extends Tool {

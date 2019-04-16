@@ -1,14 +1,14 @@
-package me.dylancurzon.dontdie.designer.gameState;
+package me.dylancurzon.testgame.designer.gameState;
 
 import me.dylancurzon.dontdie.GameState;
-import me.dylancurzon.dontdie.designer.LevelDesigner;
-import me.dylancurzon.dontdie.designer.DesignerGame;
-import me.dylancurzon.dontdie.gfx.Camera;
 import me.dylancurzon.dontdie.gfx.GameWindow;
 import me.dylancurzon.dontdie.gfx.Renderer;
 import me.dylancurzon.dontdie.gfx.RootRenderer;
-import me.dylancurzon.dontdie.tile.Level;
 import me.dylancurzon.pages.util.Vector2i;
+import me.dylancurzon.testgame.designer.DesignerGame;
+import me.dylancurzon.testgame.designer.LevelDesigner;
+import me.dylancurzon.testgame.gfx.Camera;
+import me.dylancurzon.testgame.tile.Level;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 

@@ -1,5 +1,6 @@
-package me.dylancurzon.dontdie.gfx;
+package me.dylancurzon.testgame.gfx;
 
+import me.dylancurzon.dontdie.gfx.Renderer;
 import me.dylancurzon.dontdie.gfx.opengl.Texture;
 import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
 import me.dylancurzon.dontdie.sprite.Sprite;

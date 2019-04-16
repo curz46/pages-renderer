@@ -1,5 +1,6 @@
-package me.dylancurzon.dontdie.gfx;
+package me.dylancurzon.testgame.gfx;
 
+import me.dylancurzon.dontdie.gfx.GameWindow;
 import me.dylancurzon.pages.util.Vector2d;
 import me.dylancurzon.pages.util.Vector2i;
 

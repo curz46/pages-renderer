@@ -1,4 +1,4 @@
-package me.dylancurzon.dontdie.designer.tool;
+package me.dylancurzon.testgame.designer.tool;
 
 import me.dylancurzon.dontdie.Tickable;
 import me.dylancurzon.dontdie.gfx.Renderer;

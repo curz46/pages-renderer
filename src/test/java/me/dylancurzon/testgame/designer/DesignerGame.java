@@ -1,13 +1,15 @@
-package me.dylancurzon.dontdie.designer;
+package me.dylancurzon.testgame.designer;
 
 import me.dylancurzon.dontdie.Game;
 import me.dylancurzon.dontdie.GameState;
 import me.dylancurzon.dontdie.HasState;
-import me.dylancurzon.dontdie.designer.gameState.DesignerMenuState;
-import me.dylancurzon.dontdie.gfx.*;
-import me.dylancurzon.dontdie.tile.Level;
-import me.dylancurzon.dontdie.tile.TileType;
+import me.dylancurzon.dontdie.gfx.GameWindow;
+import me.dylancurzon.dontdie.gfx.RootRenderer;
 import me.dylancurzon.pages.util.Vector2i;
+import me.dylancurzon.testgame.designer.gameState.DesignerMenuState;
+import me.dylancurzon.testgame.gfx.Camera;
+import me.dylancurzon.testgame.tile.Level;
+import me.dylancurzon.testgame.tile.TileType;
 
 public class DesignerGame implements Game, HasState {
 

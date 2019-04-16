@@ -1,4 +1,4 @@
-package me.dylancurzon.dontdie.designer.button;
+package me.dylancurzon.testgame.designer.button;
 
 import me.dylancurzon.dontdie.sprite.Sprite;
 import me.dylancurzon.pages.element.MutableElement;

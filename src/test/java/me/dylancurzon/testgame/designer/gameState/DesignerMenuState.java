@@ -1,8 +1,8 @@
-package me.dylancurzon.dontdie.designer.gameState;
+package me.dylancurzon.testgame.designer.gameState;
 
 import me.dylancurzon.dontdie.GameState;
-import me.dylancurzon.dontdie.designer.DesignerGame;
-import me.dylancurzon.dontdie.tile.Level;
+import me.dylancurzon.testgame.designer.DesignerGame;
+import me.dylancurzon.testgame.tile.Level;
 
 import javax.swing.*;
 import java.awt.*;

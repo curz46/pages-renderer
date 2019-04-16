@@ -18,7 +18,7 @@
 
 ---------------  S U M M A R Y ------------
 
-Command Line: -Dvisualvm.id=10200667098091 -Dvisualvm.id=10199834894366 -javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2019.1\lib\idea_rt.jar=4262:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2019.1\bin -Dfile.encoding=UTF-8 me.dylancurzon.dontdie.Bootstrapper
+Command Line: -Dvisualvm.id=10200667098091 -Dvisualvm.id=10199834894366 -javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2019.1\lib\idea_rt.jar=4262:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2019.1\bin -Dfile.encoding=UTF-8 me.dylancurzon.testgame.Bootstrapper
 
 Host: Intel(R) Core(TM) i7-5820K CPU @ 3.30GHz, 12 cores, 15G,  Windows 10 , 64 bit Build 17134 (10.0.17134.706)
 Time: Thu Apr 11 07:24:37 2019 GMT Summer Time elapsed time: 68 seconds (0d 0h 1m 8s)
@@ -34,10 +34,10 @@ C  [nvoglv64.dll+0xaffa30]
 Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
 J 2715  org.lwjgl.opengl.GL11C.nglTexImage2D(IIIIIIIIJ)V (0 bytes) @ 0x000002760fe82f4c [0x000002760fe82ec0+0x000000000000008c]
 J 2731 c1 me.dylancurzon.dontdie.gfx.opengl.Texture.make(Lme/dylancurzon/dontdie/sprite/SpritePacker;)Lme/dylancurzon/dontdie/gfx/opengl/Texture; (90 bytes) @ 0x0000027608b08214 [0x0000027608b072c0+0x0000000000000f54]
-J 2612 c1 me.dylancurzon.dontdie.designer.DesignerOverlayRenderer.update()V (879 bytes) @ 0x00000276089398d4 [0x0000027608938ba0+0x0000000000000d34]
+J 2612 c1 me.dylancurzon.testgame.designer.DesignerOverlayRenderer.update()V (879 bytes) @ 0x00000276089398d4 [0x0000027608938ba0+0x0000000000000d34]
 J 2496 c1 me.dylancurzon.dontdie.gfx.RootRenderer.update()V (47 bytes) @ 0x0000027608d9fd54 [0x0000027608d9fb00+0x0000000000000254]
-j  me.dylancurzon.dontdie.designer.gameState.DesignerLevelState.lambda$start$4(Lme/dylancurzon/pages/Page;Ljava/util/concurrent/atomic/AtomicBoolean;)V+135
-j  me.dylancurzon.dontdie.designer.gameState.DesignerLevelState$$Lambda$252.run()V+12
+j  me.dylancurzon.testgame.designer.gameState.DesignerLevelState.lambda$start$4(Lme/dylancurzon/pages/Page;Ljava/util/concurrent/atomic/AtomicBoolean;)V+135
+j  me.dylancurzon.testgame.designer.gameState.DesignerLevelState$$Lambda$252.run()V+12
 j  java.lang.Thread.run()V+11 java.base@12
 v  ~StubRoutines::call_stub
 
@@ -1417,7 +1417,7 @@ symbol engine: initialized successfully - sym options: 0x614 - pdb path: .;C:\Pr
 
 VM Arguments:
 jvm_args: -Dvisualvm.id=10200667098091 -Dvisualvm.id=10199834894366 -javaagent:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2019.1\lib\idea_rt.jar=4262:C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2019.1\bin -Dfile.encoding=UTF-8 
-java_command: me.dylancurzon.dontdie.Bootstrapper
+java_command: me.dylancurzon.testgame.Bootstrapper
 java_class_path (initial): D:\MEGA\code\dont-die\out\production\classes;D:\MEGA\code\dont-die\out\production\resources;D:\MEGA\code\dont-die\pages\out\production\classes;C:\Users\Dylan Curzon\.gradle\caches\modules-2\files-2.1\com.google.guava\guava\27.0.1-jre\bd41a290787b5301e63929676d792c507bbc00ae\guava-27.0.1-jre.jar;C:\Users\Dylan Curzon\.gradle\caches\modules-2\files-2.1\org.l33tlabs.twl\pngdecoder\1.0\6422688e344db244da42244b21998284bf098948\pngdecoder-1.0.jar;C:\Users\Dylan Curzon\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-opengl\3.2.0\1c64c692473a70af297651d369debc93efa2e49f\lwjgl-opengl-3.2.0.jar;C:\Users\Dylan Curzon\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-opengl\3.2.0\b1f27bce30f8e40b03502a5d86687b30d844ba35\lwjgl-opengl-3.2.0-natives-windows.jar;C:\Users\Dylan Curzon\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-opengl\3.2.0\953ac48def909b1c67fc54299f5c403479ef8ac7\lwjgl-opengl-3.2.0-natives-linux.jar;C:\Users\Dylan Curzon\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-glfw\3.2.0\9ff0ed06de0a1d83dd182f2ead48ac4c90865c44\lwjgl-glfw-3.2.0.jar;C:\Users\Dylan Curzon\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-glfw\3.2.0\986cd6b09807ad2d67b5002b6d9dc089e3fc88f8\lwjgl-glfw-3.2.0-natives-windows.jar;C:\Users\Dylan Curzon\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl-glfw\3.2.0\2d270a9146ae47e929f5b6295eeb4e51a5ff577b\lwjgl-glfw-3.2.0-natives-linux.jar;C:\Users\Dylan Curzon\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.2.0\7723544dc3fc740f0ee59cce9a3a0cecc8681747\lwjgl-3.2.0.jar;C:\Users\Dylan Curzon\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.2.0\86c90ce2abe6129bfd5052a8b82f3dc2394c8dd1\lwjgl-3.2.0-natives-windows.jar;C:\Users\Dylan Curzon\.gradle\caches\modules-2\files-2.1\org.lwjgl\lwjgl\3.2.0\4c23e3f9ae657a52bddfa1c92d1b0ba770259eed\lwjgl-3.2.0-natives-linux.jar;C:\Users\Dylan Curzon\.gradle\caches\modules-2\files-2.1\org.jetbrains\annotations\17.0.0\8ceead41f4e71821919dbdb7a9847608f1a938cb\annotatio
 Launcher Type: SUN_STANDARD
 

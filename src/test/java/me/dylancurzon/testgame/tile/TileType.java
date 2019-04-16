@@ -1,4 +1,4 @@
-package me.dylancurzon.dontdie.tile;
+package me.dylancurzon.testgame.tile;
 
 import me.dylancurzon.dontdie.sprite.Sprite;
 import me.dylancurzon.dontdie.sprite.Sprites;

@@ -1,4 +1,4 @@
-package me.dylancurzon.dontdie.tile;
+package me.dylancurzon.testgame.tile;
 
 import me.dylancurzon.dontdie.util.ByteBuf;
 import me.dylancurzon.pages.util.Vector2i;

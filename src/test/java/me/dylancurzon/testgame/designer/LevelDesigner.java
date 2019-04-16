@@ -1,19 +1,10 @@
-package me.dylancurzon.dontdie.designer;
+package me.dylancurzon.testgame.designer;
 
 import me.dylancurzon.dontdie.Tickable;
-import me.dylancurzon.dontdie.designer.button.ImmutableButtonElement;
-import me.dylancurzon.dontdie.designer.button.MutableButtonElement;
-import me.dylancurzon.dontdie.designer.tool.PaintTool;
-import me.dylancurzon.dontdie.designer.tool.SelectTool;
-import me.dylancurzon.dontdie.designer.tool.Tool;
-import me.dylancurzon.dontdie.gfx.Camera;
 import me.dylancurzon.dontdie.gfx.GameWindow;
 import me.dylancurzon.dontdie.gfx.Renderer;
-import me.dylancurzon.dontdie.gfx.TileRenderer;
 import me.dylancurzon.dontdie.gfx.page.PageRenderer;
 import me.dylancurzon.dontdie.sprite.Sprites;
-import me.dylancurzon.dontdie.tile.Level;
-import me.dylancurzon.dontdie.tile.TileType;
 import me.dylancurzon.pages.Page;
 import me.dylancurzon.pages.PageTemplate;
 import me.dylancurzon.pages.element.ElementDecoration;
@@ -24,6 +15,15 @@ import me.dylancurzon.pages.util.MouseButton;
 import me.dylancurzon.pages.util.Spacing;
 import me.dylancurzon.pages.util.Vector2d;
 import me.dylancurzon.pages.util.Vector2i;
+import me.dylancurzon.testgame.designer.button.ImmutableButtonElement;
+import me.dylancurzon.testgame.designer.button.MutableButtonElement;
+import me.dylancurzon.testgame.designer.tool.PaintTool;
+import me.dylancurzon.testgame.designer.tool.SelectTool;
+import me.dylancurzon.testgame.designer.tool.Tool;
+import me.dylancurzon.testgame.gfx.Camera;
+import me.dylancurzon.testgame.gfx.TileRenderer;
+import me.dylancurzon.testgame.tile.Level;
+import me.dylancurzon.testgame.tile.TileType;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;

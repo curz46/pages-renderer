@@ -5,7 +5,6 @@ import me.dylancurzon.dontdie.gfx.opengl.Texture;
 import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
 import me.dylancurzon.dontdie.sprite.Sprite;
 import me.dylancurzon.dontdie.sprite.SpritePacker;
-import me.dylancurzon.dontdie.sprite.TextSprite;
 import me.dylancurzon.dontdie.util.ShaderUtil;
 import me.dylancurzon.pages.Page;
 import me.dylancurzon.pages.element.MutableElement;
@@ -39,7 +38,7 @@ public class PageRenderer extends Renderer {
 
     // Delegate Text rendering to the TextRenderer
     // This way every mutableElement can be rendered a Sprite
-    private PageTextRenderer textRenderer;
+    private TextRenderer textRenderer;
 
     private int fillProgram;
 
@@ -80,7 +79,7 @@ public class PageRenderer extends Renderer {
         fillDepths = VertexBuffer.make();
         fillBounds = VertexBuffer.make();
 
-        textRenderer = new PageTextRenderer();
+        textRenderer = new TextRenderer();
         textRenderer.prepare();
 
         update();
