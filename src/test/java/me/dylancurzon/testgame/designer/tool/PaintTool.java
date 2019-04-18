@@ -1,7 +1,7 @@
 package me.dylancurzon.testgame.designer.tool;
 
 import me.dylancurzon.dontdie.gfx.GameWindow;
-import me.dylancurzon.dontdie.sprite.Sprites;
+import me.dylancurzon.testgame.gfx.Sprites;
 import me.dylancurzon.pages.Page;
 import me.dylancurzon.pages.element.MutableElement;
 import me.dylancurzon.pages.util.Vector2d;

@@ -7,77 +7,64 @@ import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.nio.ByteBuffer;
 
 public class Sprite implements me.dylancurzon.pages.util.Sprite {
 
-    protected final int width;
-    protected final int height;
-    protected final int frameCount;
-    protected final byte[][] frames;
+    final int width;
+    final int height;
+    final int frameCount;
+    final byte[][] frames;
 
-    public static Sprite loadSprite(String name) {
-        return Sprite.loadAnimatedSprite(name, 1);
+    public static Sprite loadSprite(URL source) throws IOException {
+        return Sprite.loadSprite(source, 1);
     }
 
-    public static Sprite loadAnimatedSprite(String name, int frameCount) {
-        // Assume that this texture is located at textures/<name>.png
-        try {
-            InputStream in = Sprite.class.getClassLoader()
-                .getResourceAsStream("textures/" + name + ".png");
+    public static Sprite loadSprite(URL source, int frameCount) throws IOException {
+        InputStream in = source.openStream();
 
-            PNGDecoder decoder = new PNGDecoder(in);
+        PNGDecoder decoder = new PNGDecoder(in);
 
-            int width = decoder.getWidth();
-            int imageHeight = decoder.getHeight();
+        int width = decoder.getWidth();
+        int imageHeight = decoder.getHeight();
 
-//            ByteBuffer pixelBuffer = ByteBuffer.wrap(new byte[4 * width * imageHeight]);
-            ByteBuffer spriteBuffer = BufferUtils.createByteBuffer(width * imageHeight * 4);
-            decoder.decode(spriteBuffer, width * 4, PNGDecoder.Format.RGBA);
-            spriteBuffer.flip();
+        ByteBuffer spriteBuffer = BufferUtils.createByteBuffer(width * imageHeight * 4);
+        decoder.decode(spriteBuffer, width * 4, PNGDecoder.Format.RGBA);
+        spriteBuffer.flip();
 
-            byte[] pixels = Buffers.asByteArray(spriteBuffer);
+        byte[] pixels = Buffers.asByteArray(spriteBuffer);
 
-            if (imageHeight % frameCount != 0) {
-                throw new RuntimeException("AnimatedSprite is malformed; not a multiple of frameCount");
-            }
-            int height = imageHeight / frameCount;
+        if (imageHeight % frameCount != 0) {
+            throw new IllegalArgumentException(String.format(
+                "Sprite URL is malformed; imageHeight, %d, is not a multiple of frameCount, %d",
+                imageHeight,
+                frameCount
+            ));
+        }
+        int height = imageHeight / frameCount;
 
-            byte[][] frames = new byte[frameCount][width * height * 4];
-            for (int frameNum = 0; frameNum < frameCount; frameNum++) {
-//                ByteBuffer buf = BufferUtils.createByteBuffer(4 * width * height);
-//                final ByteBuffer buf = ByteBuffer.wrap(new byte[4 * width * height]);
+        byte[][] frames = new byte[frameCount][width * height * 4];
+        for (int frameNum = 0; frameNum < frameCount; frameNum++) {
+            byte[] frame = new byte[width * height * 4];
 
-                byte[] frame = new byte[width * height * 4];
+            for (int dx = 0; dx < width; dx++) {
+                for (int dy = 0; dy < height; dy++) {
+                    int xp = dx;
+                    int yp = dy + frameNum * height;
 
-//                final int initialY = i * height;
-//                final int indexBegin = initialY * width * 4;
-//                final int indexEnd = indexBegin + (width * height * 4);
-
-//                for (int j = indexBegin; j < indexEnd; j++) {
-//                    buf.put(pixels[j]);
-//                }
-
-                for (int dx = 0; dx < width; dx++) {
-                    for (int dy = 0; dy < height; dy++) {
-                        int xp = dx;
-                        int yp = dy + frameNum * height;
-
-                        for (int b = 0; b < 4; b++) {
-                            frame[(dx + dy * width) * 4 + b] = pixels[(xp + yp * width) * 4 + b];
-                        }
+                    for (int b = 0; b < 4; b++) {
+                        frame[(dx + dy * width) * 4 + b] = pixels[(xp + yp * width) * 4 + b];
                     }
                 }
+            }
 
 //                buf.flip();
 //                frames[i] = buf;
-                frames[frameNum] = frame;
-            }
-
-            return new Sprite(width, height, frameCount, frames);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            frames[frameNum] = frame;
         }
+
+        return new Sprite(width, height, frameCount, frames);
     }
 
     public Sprite(int width, int height, int frameCount, byte[][] frames) {
@@ -85,6 +72,10 @@ public class Sprite implements me.dylancurzon.pages.util.Sprite {
         this.height = height;
         this.frameCount = frameCount;
         this.frames = frames;
+    }
+
+    public TickableSprite createTickable() {
+        return new TickableSprite();
     }
 
     public int getWidth() {

@@ -62,7 +62,7 @@ public class GameWindow implements Tickable {
         if (id == NULL) throw new RuntimeException("Failed to create window");
 
         glfwMakeContextCurrent(id);
-        GL.createCapabilities(true);
+        GL.createCapabilities(false);
 //        GLUtil.setupDebugMessageCallback();
 
         glfwSetKeyCallback(id, (window, key, scancode, action, mods) -> {
@@ -98,6 +98,7 @@ public class GameWindow implements Tickable {
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//        glDisable(GL_ALPHA_TEST);
 
         if (doShow) glfwShowWindow(id);
 

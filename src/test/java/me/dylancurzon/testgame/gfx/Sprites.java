@@ -1,14 +1,16 @@
-package me.dylancurzon.dontdie.sprite;
+package me.dylancurzon.testgame.gfx;
 
 import com.google.common.collect.Sets;
+import me.dylancurzon.dontdie.sprite.Sprite;
 
+import java.io.IOException;
 import java.util.Set;
 
 public interface Sprites {
 
-    Sprite DESIGNER_ACTION_BAR = Sprite.loadSprite("designer_action_bar");
-    Sprite DESIGNER_TILE_BAR = Sprite.loadSprite("designer_tile_bar");
-    Sprite DESIGNER_METADATA_WINDOW = Sprite.loadSprite("designer_metadata_window");
+    Sprite DESIGNER_ACTION_BAR = loadSpriteFromJAR("designer_action_bar");
+    Sprite DESIGNER_TILE_BAR = loadSpriteFromJAR("designer_tile_bar");
+    Sprite DESIGNER_METADATA_WINDOW = loadSpriteFromJAR("designer_metadata_window");
 
     Sprite OVERLAY_SELECT_HOVER = SpriteSheets.GUI.getSprite(3, 0, 16);
     Sprite OVERLAY_SELECT_SELECTED = SpriteSheets.GUI.getSprite(2, 0, 16);
@@ -21,10 +23,10 @@ public interface Sprites {
     Sprite GUI_PAINTBRUSH_HOVER = SpriteSheets.GUI.getSprite(1, 1, 16);
     Sprite GUI_PAINTBRUSH_SELECTED = SpriteSheets.GUI.getSprite(1, 2, 16);
 
-    Sprite BLACK = Sprite.loadSprite("black");
-    Sprite UNDEFINED = Sprite.loadSprite("undefined");
+    Sprite BLACK = loadSpriteFromJAR("black");
+    Sprite UNDEFINED = loadSpriteFromJAR("undefined");
 
-    Sprite STONEBRICKS = Sprite.loadSprite("stonebricks");
+    Sprite STONEBRICKS = loadSpriteFromJAR("stonebricks");
 
     // TODO: Sprites should be registered in categories, like Tiles, GUI, Text, which can be picked up by globally
     //       shared SpritePackers.
@@ -43,6 +45,17 @@ public interface Sprites {
             UNDEFINED,
             STONEBRICKS
         );
+    }
+
+    String JAR_PATH = "textures/%s.png";
+
+    private static Sprite loadSpriteFromJAR(String name) {
+        ClassLoader loader = Sprite.class.getClassLoader();
+        try {
+            return Sprite.loadSprite(loader.getResource(String.format(JAR_PATH, name)));
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Argument 'name' does not correspond to a Sprite in textures/<name>.png");
+        }
     }
 
 }

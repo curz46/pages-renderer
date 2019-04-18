@@ -2,7 +2,14 @@ package me.dylancurzon.dontdie.sprite;
 
 import me.dylancurzon.pages.util.Vector2i;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 // A Java implementation of the following algorithm:
@@ -180,6 +187,22 @@ public class SpritePacker {
                 }
             }
         }
+
+//        final SpritePacker packer = new SpritePacker(Sprites.getSprites());
+//        ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+
+//        DataBuffer dataBuffer = new DataBufferByte(pixels, pixels.length);
+//
+////3 bytes per pixel: red, green, blue
+//        WritableRaster raster = Raster.createInterleavedRaster(dataBuffer, WIDTH, HEIGHT, 4 * WIDTH, 4, new int[] {0, 1, 2, 3}, (Point)null);
+//        ColorModel cm = new ComponentColorModel(ColorModel.getRGBdefault().getColorSpace(), true, false, Transparency.BITMASK, DataBuffer.TYPE_BYTE);
+//        BufferedImage image = new BufferedImage(cm, raster, true, null);
+//
+//        try {
+//            ImageIO.write(image, "png", new File(ThreadLocalRandom.current().nextInt(1000) + "output.png"));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     class Image {

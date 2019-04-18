@@ -3,9 +3,6 @@ package me.dylancurzon.testgame.gfx;
 import me.dylancurzon.dontdie.gfx.Renderer;
 import me.dylancurzon.dontdie.gfx.opengl.Texture;
 import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
-import me.dylancurzon.dontdie.sprite.Sprite;
-import me.dylancurzon.dontdie.sprite.SpriteSheets;
-import me.dylancurzon.dontdie.sprite.TextSprite;
 import me.dylancurzon.dontdie.util.ShaderUtil;
 import org.lwjgl.opengl.ARBShaderObjects;
 
@@ -41,7 +38,7 @@ public class ConsoleRenderer extends Renderer {
         basicShader = ShaderUtil.createShaderProgram("loading");
 
         // TODO: load AnimatedSprite
-//        final Sprite sprite = Sprite.loadAnimatedSprite("loading", 20);
+//        final Sprite sprite = Sprite.loadSprite("loading", 20);
 //        final Sprite sprite = TextSprite.of("HelloWorld", 4);
 //        this.loadingTexture = Texture.make(sprite);
 //

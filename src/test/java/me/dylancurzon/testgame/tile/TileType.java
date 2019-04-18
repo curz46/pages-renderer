@@ -1,7 +1,7 @@
 package me.dylancurzon.testgame.tile;
 
 import me.dylancurzon.dontdie.sprite.Sprite;
-import me.dylancurzon.dontdie.sprite.Sprites;
+import me.dylancurzon.testgame.gfx.Sprites;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;

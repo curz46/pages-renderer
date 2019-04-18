@@ -5,6 +5,7 @@ import me.dylancurzon.dontdie.gfx.opengl.Texture;
 import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
 import me.dylancurzon.dontdie.sprite.Sprite;
 import me.dylancurzon.dontdie.sprite.SpritePacker;
+import me.dylancurzon.dontdie.sprite.TextSpriteProvider;
 import me.dylancurzon.dontdie.util.ShaderUtil;
 import me.dylancurzon.pages.Page;
 import me.dylancurzon.pages.element.MutableElement;
@@ -25,6 +26,7 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 public class PageRenderer extends Renderer {
 
     private final Page page;
+    private final TextSpriteProvider[] supportedProviders;
 
     private int spriteProgram;
     private SpritePacker packer;
@@ -36,9 +38,9 @@ public class PageRenderer extends Renderer {
     private VertexBuffer spriteDepths;
     private VertexBuffer spriteBounds;
 
-    // Delegate Text rendering to the TextRenderer
+    // Delegate Text rendering to the TextElementRenderer
     // This way every mutableElement can be rendered a Sprite
-    private TextRenderer textRenderer;
+    private TextElementRenderer textRenderer;
 
     private int fillProgram;
 
@@ -54,8 +56,9 @@ public class PageRenderer extends Renderer {
     private VertexBuffer fillBounds;
     private int fillVertices = 0;
 
-    public PageRenderer(Page page) {
+    public PageRenderer(Page page, TextSpriteProvider... supportedProviders) {
         this.page = page;
+        this.supportedProviders = supportedProviders;
     }
 
     @Override
@@ -79,7 +82,7 @@ public class PageRenderer extends Renderer {
         fillDepths = VertexBuffer.make();
         fillBounds = VertexBuffer.make();
 
-        textRenderer = new TextRenderer();
+        textRenderer = new TextElementRenderer(supportedProviders);
         textRenderer.prepare();
 
         update();
@@ -125,8 +128,13 @@ public class PageRenderer extends Renderer {
         glClearDepth(0.0f);
         glClear(GL_DEPTH_BUFFER_BIT);
 
+//        glEnable(GL_DEPTH_TEST);
+//        glDepthFunc(GL_GEQUAL);
+
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_ALPHA_TEST);
         glDepthFunc(GL_GEQUAL);
+        glAlphaFunc(GL_GREATER, 0);
 
         textRenderer.render();
 
@@ -188,7 +196,10 @@ public class PageRenderer extends Renderer {
 
         ARBShaderObjects.glUseProgramObjectARB(0);
 
+//        glDisable(GL_DEPTH_TEST);
+
         glDisable(GL_DEPTH_TEST);
+        glDisable(GL_ALPHA_TEST);
     }
 
     @Override
@@ -334,8 +345,8 @@ public class PageRenderer extends Renderer {
     }
 
     private void updateText(List<FlattenedElement> elements) {
-        textRenderer.clearTextElements();
-        elements.forEach(textRenderer::addTextElement);
+        textRenderer.clearElements();
+        elements.forEach(textRenderer::addElement);
         textRenderer.update();
     }
 

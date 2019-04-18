@@ -5,7 +5,7 @@ import me.dylancurzon.dontdie.gfx.opengl.Texture;
 import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
 import me.dylancurzon.dontdie.sprite.Sprite;
 import me.dylancurzon.dontdie.sprite.SpritePacker;
-import me.dylancurzon.dontdie.sprite.Sprites;
+import me.dylancurzon.testgame.gfx.Sprites;
 import me.dylancurzon.dontdie.util.ShaderUtil;
 import me.dylancurzon.pages.util.Vector2d;
 import me.dylancurzon.pages.util.Vector2i;
