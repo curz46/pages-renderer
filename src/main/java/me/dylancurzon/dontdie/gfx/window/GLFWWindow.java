@@ -7,7 +7,6 @@ import me.dylancurzon.pages.util.Vector2d;
 import me.dylancurzon.pages.util.Vector2i;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.DoubleBuffer;
@@ -27,46 +26,47 @@ public class GLFWWindow extends SimpleEventBus implements Window {
     private final boolean[] keys = new boolean[GLFW_KEY_LAST];
     private final Map<MouseButton, Boolean> buttonPressedMap = new HashMap<>();
 
-    private boolean initialized;
+    private final GLFWWindowOptions options;
 
-    @NotNull
     private Vector2i dimensions;
-    @NotNull
     private String title;
 
-    private boolean vSync;
-
+    private boolean initialized;
     private Vector2d lastMousePosition;
     private boolean focused;
 
-    public GLFWWindow(Vector2i dimensions) {
-        this(dimensions, "GLFW Window");
+    /**
+     * Sets whether or not the current context window is vsync.
+     */
+    public static void setVsync(boolean vsync) {
+        glfwSwapInterval(vsync ? 1 : 0);
     }
 
-    public GLFWWindow(Vector2i dimensions, String title) {
-        this.dimensions = Objects.requireNonNull(dimensions);
-        this.title = Objects.requireNonNull(title);
+    public GLFWWindow(GLFWWindowOptions options) {
+        this.options = options;
+        dimensions = options.getDimensions();
+        title = options.getTitle();
     }
 
     /**
      * Initialize this window:
      * - Setup error callback
-     * - Create window of configured dimensions and title
-     * - Subscribe listeners
-     * - Focus the
+     * - Create GLFW window of configured properties
+     * - Link current and future subscribers of events to the underlying GLFW window events
      */
     public void initialize() {
         // Make errors print to stderr
-        GLFWErrorCallback errorCallback;
-        glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
+        if (options.getErrorCallback() != null) {
+            glfwSetErrorCallback(options.getErrorCallback());
+        }
         // Initialise GLFW
         if (!glfwInit()) {
             throw new IllegalStateException("Unable to initialize GLFW");
         }
 
         glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
-        glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+        glfwWindowHint(GLFW_VISIBLE, options.isVisible() ? GL_TRUE : GL_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, options.isResizable() ? GL_TRUE : GL_FALSE);
 
         id = glfwCreateWindow(dimensions.getX(), dimensions.getY(), title, NULL, NULL); //Does the actual window creation
         if (id == NULL) throw new RuntimeException("Failed to create window");
@@ -139,7 +139,7 @@ public class GLFWWindow extends SimpleEventBus implements Window {
             post(event);
         });
 
-        glfwSwapInterval(0);
+        glfwSwapInterval(options.isVsync() ? 1 : 0);
 
         glfwMakeContextCurrent(0);
         initialized = true;
@@ -161,6 +161,10 @@ public class GLFWWindow extends SimpleEventBus implements Window {
         focused = true;
     }
 
+    public void makeCurrentContext() {
+        glfwMakeContextCurrent(id);
+    }
+
     /**
      * Destroy the window.
      */
@@ -168,6 +172,18 @@ public class GLFWWindow extends SimpleEventBus implements Window {
         glfwDestroyWindow(id);
         initialized = false;
         id = -1;
+    }
+
+    public void setDimensions(Vector2i newDimensions) {
+        Objects.requireNonNull(newDimensions);
+        glfwSetWindowSize(id, newDimensions.getX(), newDimensions.getY());
+        dimensions = newDimensions;
+    }
+
+    public void setTitle(String newTitle) {
+        Objects.requireNonNull(newTitle);
+        glfwSetWindowTitle(id, newTitle);
+        title = newTitle;
     }
 
     /**

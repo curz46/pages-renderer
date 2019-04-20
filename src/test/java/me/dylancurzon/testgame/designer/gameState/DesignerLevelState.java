@@ -3,6 +3,7 @@ package me.dylancurzon.testgame.designer.gameState;
 import me.dylancurzon.dontdie.GameState;
 import me.dylancurzon.dontdie.gfx.opengl.FrameBuffer;
 import me.dylancurzon.dontdie.gfx.window.GLFWWindow;
+import me.dylancurzon.dontdie.gfx.window.GLFWWindowOptions;
 import me.dylancurzon.pages.util.Vector2i;
 import me.dylancurzon.testgame.designer.DesignerGame;
 import me.dylancurzon.testgame.designer.LevelDesigner;
@@ -42,7 +43,11 @@ public class DesignerLevelState implements GameState {
 
         // Setup rendering
         renderingThread = (new Thread(() -> {
-            window = new GLFWWindow(Vector2i.of(1024, 768));
+            window = new GLFWWindow(GLFWWindowOptions.builder()
+                .setDimensions(Vector2i.of(1024, 768))
+                .setTitle("Level Designer")
+                .setVisible(true)
+                .build());
             window.initialize();
             window.focus();
 

@@ -2,6 +2,7 @@ package me.dylancurzon.testgame;
 
 import me.dylancurzon.dontdie.gfx.page.PageRenderer;
 import me.dylancurzon.dontdie.gfx.window.GLFWWindow;
+import me.dylancurzon.dontdie.gfx.window.GLFWWindowOptions;
 import me.dylancurzon.pages.Page;
 import me.dylancurzon.pages.PageTemplate;
 import me.dylancurzon.pages.element.ElementDecoration;
@@ -22,7 +23,11 @@ public class ExampleGame {
         int WIDTH = 1920;
         int HEIGHT = 1080;
 
-        GLFWWindow window = new GLFWWindow(Vector2i.of(WIDTH, HEIGHT));
+        GLFWWindow window = new GLFWWindow(GLFWWindowOptions.builder()
+            .setDimensions(Vector2i.of(WIDTH, HEIGHT))
+            .setTitle("Example Game")
+            .setVisible(true)
+            .build());
         window.initialize();
         window.focus();
 
