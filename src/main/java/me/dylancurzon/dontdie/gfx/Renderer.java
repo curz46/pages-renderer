@@ -7,8 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class Renderer implements Renderable {
 
     /**
-     * A dirty renderer is one which needs to update its buffers to reflect changed game state. This field is an
-     * {@link AtomicBoolean} such that {@link this#setDirty(boolean)} can be called from different Threads.
+     * A dirty renderer is one which needs to update its buffers to reflect changed state.
      */
     private boolean dirty;
 

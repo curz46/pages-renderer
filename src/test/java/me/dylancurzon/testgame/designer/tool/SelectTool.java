@@ -1,11 +1,11 @@
 package me.dylancurzon.testgame.designer.tool;
 
-import me.dylancurzon.dontdie.gfx.GameWindow;
-import me.dylancurzon.testgame.gfx.Sprites;
+import me.dylancurzon.dontdie.gfx.window.Window;
 import me.dylancurzon.pages.util.Vector2d;
 import me.dylancurzon.pages.util.Vector2i;
 import me.dylancurzon.testgame.designer.TileOverlayRenderer;
 import me.dylancurzon.testgame.gfx.Camera;
+import me.dylancurzon.testgame.gfx.Sprites;
 import me.dylancurzon.testgame.tile.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,7 +13,7 @@ import java.util.Objects;
 
 public class SelectTool extends Tool {
 
-    private final GameWindow window;
+    private final Window window;
     private final Level level;
     private final Camera camera;
 
@@ -24,7 +24,7 @@ public class SelectTool extends Tool {
     @Nullable
     private Vector2i hoverPosition;
 
-    public SelectTool(GameWindow window, Level level, Camera camera) {
+    public SelectTool(Window window, Level level, Camera camera) {
         this.window = window;
         this.level = level;
         this.camera = camera;
@@ -75,11 +75,7 @@ public class SelectTool extends Tool {
     public void tick() {
         if (window.getMousePosition() == null) return;
 
-        Vector2d screenPosition = window.getMousePosition();
-        // TODO: Hardcoding resolution, bad
-        Vector2i virtualPosition = screenPosition.div(4).toInt();
-        Vector2i tilePosition = camera.getTileForMousePosition(virtualPosition);
-
+        Vector2i tilePosition = camera.getTileForMousePosition(window.getMousePosition().toInt());
         if (!Objects.equals(hoverPosition, tilePosition)) {
             hoverPosition = tilePosition;
             setDirty(true);

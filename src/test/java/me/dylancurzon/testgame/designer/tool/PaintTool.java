@@ -1,13 +1,14 @@
 package me.dylancurzon.testgame.designer.tool;
 
-import me.dylancurzon.dontdie.gfx.GameWindow;
-import me.dylancurzon.testgame.gfx.Sprites;
+import me.dylancurzon.dontdie.gfx.window.Window;
 import me.dylancurzon.pages.Page;
 import me.dylancurzon.pages.element.MutableElement;
+import me.dylancurzon.pages.util.MouseButton;
 import me.dylancurzon.pages.util.Vector2d;
 import me.dylancurzon.pages.util.Vector2i;
 import me.dylancurzon.testgame.designer.TileOverlayRenderer;
 import me.dylancurzon.testgame.gfx.Camera;
+import me.dylancurzon.testgame.gfx.Sprites;
 import me.dylancurzon.testgame.gfx.TileRenderer;
 import me.dylancurzon.testgame.tile.Level;
 import me.dylancurzon.testgame.tile.TileType;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class PaintTool extends Tool {
 
-    private final GameWindow window;
+    private final Window window;
     private final Level level;
     private final Camera camera;
 
@@ -30,7 +31,7 @@ public class PaintTool extends Tool {
     private Vector2i hoverPosition;
     private TileType paintType;
 
-    public PaintTool(GameWindow window, Level level, Camera camera, TileRenderer tileRenderer, Page page) {
+    public PaintTool(Window window, Level level, Camera camera, TileRenderer tileRenderer, Page page) {
         this.window = window;
         this.level = level;
         this.camera = camera;
@@ -83,15 +84,12 @@ public class PaintTool extends Tool {
     public void tick() {
         if (window.getMousePosition() == null) return;
 
-        Vector2d screenPosition = window.getMousePosition();
-        // TODO: Hardcoding resolution, bad
-        Vector2i virtualPosition = screenPosition.div(4).toInt();
-        Vector2i tilePosition = camera.getTileForMousePosition(virtualPosition);
+        Vector2i tilePosition = camera.getTileForMousePosition(window.getMousePosition().toInt());
 
         hoverPosition = tilePosition;
         setDirty(true);
 
-        if (window.isMousePressed()
+        if (window.isMousePressed(MouseButton.LEFT_MOUSE_BUTTON)
             && actionBarContainer.getMousePosition() == null
             && tileBar.getMousePosition() == null) {
             if (level.getTile(tilePosition).orElse(null) != paintType) {

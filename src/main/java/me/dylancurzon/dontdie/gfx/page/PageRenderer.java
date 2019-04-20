@@ -3,6 +3,7 @@ package me.dylancurzon.dontdie.gfx.page;
 import me.dylancurzon.dontdie.gfx.Renderer;
 import me.dylancurzon.dontdie.gfx.opengl.Texture;
 import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
+import me.dylancurzon.dontdie.gfx.window.Window;
 import me.dylancurzon.dontdie.sprite.Sprite;
 import me.dylancurzon.dontdie.sprite.SpritePacker;
 import me.dylancurzon.dontdie.sprite.TextSpriteProvider;
@@ -12,6 +13,7 @@ import me.dylancurzon.pages.element.MutableElement;
 import me.dylancurzon.pages.element.sprite.MutableSpriteElement;
 import me.dylancurzon.pages.element.text.MutableTextElement;
 import me.dylancurzon.pages.util.Vector2i;
+import org.lwjgl.glfw.GLFWCursorEnterCallback;
 import org.lwjgl.opengl.ARBShaderObjects;
 
 import java.awt.*;
@@ -25,6 +27,7 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 public class PageRenderer extends Renderer {
 
+    private final Window window;
     private final Page page;
     private final TextSpriteProvider[] supportedProviders;
 
@@ -56,7 +59,8 @@ public class PageRenderer extends Renderer {
     private VertexBuffer fillBounds;
     private int fillVertices = 0;
 
-    public PageRenderer(Page page, TextSpriteProvider... supportedProviders) {
+    public PageRenderer(Window window, Page page, TextSpriteProvider... supportedProviders) {
+        this.window = window;
         this.page = page;
         this.supportedProviders = supportedProviders;
     }
@@ -131,8 +135,10 @@ public class PageRenderer extends Renderer {
 //        glEnable(GL_DEPTH_TEST);
 //        glDepthFunc(GL_GEQUAL);
 
+        glEnable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_ALPHA_TEST);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDepthFunc(GL_GEQUAL);
         glAlphaFunc(GL_GREATER, 0);
 
@@ -198,6 +204,7 @@ public class PageRenderer extends Renderer {
 
 //        glDisable(GL_DEPTH_TEST);
 
+        glDisable(GL_BLEND);
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_ALPHA_TEST);
     }
@@ -264,10 +271,13 @@ public class PageRenderer extends Renderer {
 
             // TODO: Hardcoding virtual size!
             Vector2i boundA = flattenedElement.getBoundA().orElse(Vector2i.of(0, 0));
-            Vector2i boundB = flattenedElement.getBoundB().orElse(Vector2i.of(256, 192));
+            Vector2i boundB = flattenedElement.getBoundB().orElse(window.getDimensions());
 //            float[] bounds = toClipSpace(boundA, boundB);
-            // TODO: I have no idea why 192 - Y is necessary, but based on testing this is correct.
-            float[] bounds = {boundA.getX(), 192 - boundB.getY(), boundB.getX(), 192 - boundA.getY()};
+            Vector2i dimensions = window.getDimensions();
+            float[] bounds = {
+                boundA.getX(), dimensions.getY() - boundB.getY(),
+                boundB.getX(), dimensions.getY() - boundA.getY()
+            };
 
             if (mutableElement instanceof MutableSpriteElement) {
                 Sprite sprite = (Sprite) ((MutableSpriteElement) mutableElement).getSprite();
@@ -280,14 +290,6 @@ public class PageRenderer extends Renderer {
                     continue;
                 }
 
-                // TODO: I don't know why I'm multiplying these by 2, but I am.
-                // Subtract 1.0f because apparently this is -1 to 1 even though I'm pretty sure the other ones aren't.
-//                float[] spritePositions = {
-//                    (x + 0) / 256.0f * 2.0f - 1.0f, -((y + 0) / 192.0f * 2.0f - 1.0f),
-//                    (x + width) / 256.0f * 2.0f - 1.0f, -((y + 0) / 192.0f * 2.0f - 1.0f),
-//                    (x + width) / 256.0f * 2.0f - 1.0f, -((y + height) / 192.0f * 2.0f - 1.0f),
-//                    (x + 0) / 256.0f * 2.0f - 1.0f, -((y + height) / 192.0f * 2.0f - 1.0f)
-//                };
                 float[][] spritePositions = {
                     toClipSpace(Vector2i.of(x, y)),
                     toClipSpace(Vector2i.of(x + width, y)),
@@ -404,25 +406,14 @@ public class PageRenderer extends Renderer {
             int height = mutableElement.getSize().getY();
 
             Vector2i boundA = flattenedElement.getBoundA().orElse(Vector2i.of(0, 0));
-            Vector2i boundB = flattenedElement.getBoundB().orElse(Vector2i.of(256, 192));
-            // TODO: I have no idea why 192 - Y is necessary, but based on testing this is correct.
-            float[] bounds = {boundA.getX(), 192 - boundB.getY(), boundB.getX(), 192 - boundA.getY()};
-//            float[] bounds = toClipSpace(boundA, boundB);
+            Vector2i boundB = flattenedElement.getBoundB().orElse(window.getDimensions());
+            Vector2i dimensions = window.getDimensions();
+            float[] bounds = {
+                boundA.getX(), dimensions.getY() - boundB.getY(),
+                boundB.getX(), dimensions.getY() - boundA.getY()
+            };
 
             if (DEBUG_CONTAINERS || mutableElement.getDecoration().getLineColor().isPresent()) {
-//                float[] outlinePositions = {
-//                    (x + 0) / 256.0f * 2.0f - 1.0f, -((y + 0) / 192.0f * 2.0f - 1.0f),
-//                    (x - 1 + width) / 256.0f * 2.0f - 1.0f, -((y + 0) / 192.0f * 2.0f - 1.0f),
-//                    //
-//                    (x - 1 + width) / 256.0f * 2.0f - 1.0f, -((y + 0) / 192.0f * 2.0f - 1.0f),
-//                    (x - 1 + width) / 256.0f * 2.0f - 1.0f, -((y + height) / 192.0f * 2.0f - 1.0f),
-//                    //
-//                    (x - 1 + width) / 256.0f * 2.0f - 1.0f, -((y + height) / 192.0f * 2.0f - 1.0f),
-//                    (x + 0) / 256.0f * 2.0f - 1.0f, -((y + height) / 192.0f * 2.0f - 1.0f),
-//                    //
-//                    (x + 0) / 256.0f * 2.0f - 1.0f, -((y + height) / 192.0f * 2.0f - 1.0f),
-//                    (x + 0) / 256.0f * 2.0f - 1.0f, -((y + 0) / 192.0f * 2.0f - 1.0f)
-//                };
                 // TODO: Why are we taking away 1 here??
                 float[][] outlinePositions = {
                     // Line
@@ -440,9 +431,7 @@ public class PageRenderer extends Renderer {
                 };
                 for (int j = 0; j < outlinePositions.length; j++) {
                     for (int k = 0; k < 2; k++) {
-                        // TODO: Is this really necessary?
-                        float d = 0.5f / 256.0f * 2.0f;
-                        outlinePositionData[iOutlinePosition++] = outlinePositions[j][k] + d;
+                        outlinePositionData[iOutlinePosition++] = outlinePositions[j][k];
                     }
                 }
                 for (int j = 0; j < 4 * 2; j++) {
@@ -468,12 +457,6 @@ public class PageRenderer extends Renderer {
                 }
             }
             if (mutableElement.getDecoration().getFillColor().isPresent()) {
-//                float[] fillPositions = {
-//                    (x + 0) / 256.0f * 2.0f - 1.0f, -((y + 0) / 192.0f * 2.0f - 1.0f),
-//                    (x + width) / 256.0f * 2.0f - 1.0f, -((y + 0) / 192.0f * 2.0f - 1.0f),
-//                    (x + width) / 256.0f * 2.0f - 1.0f, -((y + height) / 192.0f * 2.0f - 1.0f),
-//                    (x + 0) / 256.0f * 2.0f - 1.0f, -((y + height) / 192.0f * 2.0f - 1.0f)
-//                };
                 float[][] fillPositions = {
                     toClipSpace(Vector2i.of(x, y)),
                     toClipSpace(Vector2i.of(x + width, y)),
@@ -531,20 +514,12 @@ public class PageRenderer extends Renderer {
         VertexBuffer.unbind();
     }
 
-    private float[] toClipSpace(Vector2i boundA, Vector2i boundB) {
-        float[] clipA = toClipSpace(boundA);
-        float[] clipB = toClipSpace(boundB);
-        return new float[] {
-            clipA[0], clipA[1],
-            clipB[0], clipB[1]
-        };
-    }
-
     private float[] toClipSpace(Vector2i virtualPosition) {
+        Vector2i size = window.getDimensions();
         int x = virtualPosition.getX();
         int y = virtualPosition.getY();
         return new float[]{
-            (x + 0) / 256.0f * 2.0f - 1.0f, -((y + 0) / 192.0f * 2.0f - 1.0f),
+            (x + 0) / ((float) size.getX()) * 2.0f - 1.0f, -((y + 0) / ((float) size.getY()) * 2.0f - 1.0f),
         };
     }
 

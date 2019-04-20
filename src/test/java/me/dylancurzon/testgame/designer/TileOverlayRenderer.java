@@ -74,6 +74,11 @@ public class TileOverlayRenderer extends Renderer {
         glBindTexture(GL_TEXTURE_2D, packerTexture.getId());
 //        this.tileTexture.bind();
 
+        glEnable(GL_BLEND);
+        glEnable(GL_ALPHA_TEST);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glAlphaFunc(GL_GREATER, 0);
+
         positionsBuffer.bind();
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0);
@@ -86,6 +91,9 @@ public class TileOverlayRenderer extends Renderer {
         glUniform2fv(5, new float[] { (float) delta.getX(), (float) delta.getY() });
 
         glDrawArrays(GL_QUADS, 0, vertexCount);
+
+        glDisable(GL_BLEND);
+        glDisable(GL_ALPHA_TEST);
 
         ARBShaderObjects.glUseProgramObjectARB(0);
     }

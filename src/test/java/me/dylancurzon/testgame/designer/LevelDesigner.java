@@ -1,26 +1,29 @@
 package me.dylancurzon.testgame.designer;
 
 import me.dylancurzon.dontdie.Tickable;
-import me.dylancurzon.dontdie.gfx.GameWindow;
 import me.dylancurzon.dontdie.gfx.Renderer;
 import me.dylancurzon.dontdie.gfx.page.PageRenderer;
+import me.dylancurzon.dontdie.gfx.window.Window;
 import me.dylancurzon.dontdie.sprite.TextSpriteProvider;
-import me.dylancurzon.pages.element.text.ImmutableTextElement;
-import me.dylancurzon.pages.util.*;
-import me.dylancurzon.testgame.gfx.SpriteSheets;
-import me.dylancurzon.testgame.gfx.Sprites;
 import me.dylancurzon.pages.Page;
 import me.dylancurzon.pages.PageTemplate;
 import me.dylancurzon.pages.element.ElementDecoration;
 import me.dylancurzon.pages.element.MutableElement;
 import me.dylancurzon.pages.element.container.*;
 import me.dylancurzon.pages.element.sprite.ImmutableSpriteElement;
+import me.dylancurzon.pages.element.text.ImmutableTextElement;
+import me.dylancurzon.pages.util.MouseButton;
+import me.dylancurzon.pages.util.Spacing;
+import me.dylancurzon.pages.util.Vector2d;
+import me.dylancurzon.pages.util.Vector2i;
 import me.dylancurzon.testgame.designer.button.ImmutableButtonElement;
 import me.dylancurzon.testgame.designer.button.MutableButtonElement;
 import me.dylancurzon.testgame.designer.tool.PaintTool;
 import me.dylancurzon.testgame.designer.tool.SelectTool;
 import me.dylancurzon.testgame.designer.tool.Tool;
 import me.dylancurzon.testgame.gfx.Camera;
+import me.dylancurzon.testgame.gfx.SpriteSheets;
+import me.dylancurzon.testgame.gfx.Sprites;
 import me.dylancurzon.testgame.gfx.TileRenderer;
 import me.dylancurzon.testgame.tile.Level;
 import me.dylancurzon.testgame.tile.TileType;
@@ -37,7 +40,7 @@ public class LevelDesigner extends Renderer implements Tickable {
 
     private final Map<TileType, MutableStackingContainer> tileBarSelectedElements = new HashMap<>();
 
-    private final GameWindow window;
+    private final Window window;
     private final Level level;
     private final Camera camera;
 
@@ -50,7 +53,7 @@ public class LevelDesigner extends Renderer implements Tickable {
 
     private final Map<Page, PageRenderer> pageRenderers = new HashMap<>();
 
-    public LevelDesigner(GameWindow window, Level level, Camera camera) {
+    public LevelDesigner(Window window, Level level, Camera camera) {
         this.window = window;
         this.level = level;
         this.camera = camera;
@@ -223,6 +226,7 @@ public class LevelDesigner extends Renderer implements Tickable {
             // Reset selected state
             tileBarSelectedElements.forEach((otherType, otherElement) ->
                 otherElement.setVisible(false));
+            tileBarSelectedElements.get(TileType.STONEBRICKS).setVisible(true);
 
             selectedTool.prepare();
 
@@ -244,7 +248,7 @@ public class LevelDesigner extends Renderer implements Tickable {
             element.propagateUpdate();
         }));
 
-        PageRenderer actionBarRenderer = new PageRenderer(page, textProvider);
+        PageRenderer actionBarRenderer = new PageRenderer(window, page, textProvider);
         page.doOnUpdate(() -> actionBarRenderer.setDirty(true));
 
         pageRenderers.put(page, actionBarRenderer);
@@ -335,11 +339,7 @@ public class LevelDesigner extends Renderer implements Tickable {
         if (window.getMousePosition() == null) {
             page.setMousePosition(null);
         } else {
-            Vector2d screenPosition = window.getMousePosition();
-            // TODO: Hardcoding resolution, bad
-            Vector2i virtualPosition = screenPosition.div(4).toInt();
-
-            page.setMousePosition(virtualPosition);
+            page.setMousePosition(window.getMousePosition().toInt());
         }
 
         page.tick();

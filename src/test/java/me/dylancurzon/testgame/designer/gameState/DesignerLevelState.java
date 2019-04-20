@@ -1,23 +1,27 @@
 package me.dylancurzon.testgame.designer.gameState;
 
 import me.dylancurzon.dontdie.GameState;
-import me.dylancurzon.dontdie.gfx.GameWindow;
-import me.dylancurzon.dontdie.gfx.Renderer;
-import me.dylancurzon.dontdie.gfx.RootRenderer;
+import me.dylancurzon.dontdie.gfx.opengl.FrameBuffer;
+import me.dylancurzon.dontdie.gfx.window.GLFWWindow;
 import me.dylancurzon.pages.util.Vector2i;
 import me.dylancurzon.testgame.designer.DesignerGame;
 import me.dylancurzon.testgame.designer.LevelDesigner;
 import me.dylancurzon.testgame.gfx.Camera;
+import me.dylancurzon.dontdie.gfx.window.VirtualWindow;
 import me.dylancurzon.testgame.tile.Level;
+import org.lwjgl.opengl.GL;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
 
 public class DesignerLevelState implements GameState {
 
     private final DesignerGame game;
     private final Level level;
 
-    private GameWindow window;
+    private GLFWWindow window;
     private Camera camera;
 
     private final AtomicBoolean shouldContinueRender = new AtomicBoolean();
@@ -25,7 +29,7 @@ public class DesignerLevelState implements GameState {
     private Thread renderingThread;
 
     private LevelDesigner designer;
-    private RootRenderer rootRenderer;
+//    private RootRenderer rootRenderer;
 
     public DesignerLevelState(DesignerGame game, Level level) {
         this.game = game;
@@ -34,37 +38,57 @@ public class DesignerLevelState implements GameState {
 
     @Override
     public void start() {
-        camera = new Camera();
-
         shouldContinueRender.set(true);
 
         // Setup rendering
         renderingThread = (new Thread(() -> {
-            window = new GameWindow();
-            window.initialize(true);
+            window = new GLFWWindow(Vector2i.of(1024, 768));
+            window.initialize();
+            window.focus();
 
-            designer = new LevelDesigner(window, level, camera);
+            Vector2i virtualDimensions = Vector2i.of(256, 192);
+            VirtualWindow virtualWindow = new VirtualWindow(window, virtualDimensions);
 
-            rootRenderer = new RootRenderer(
-                window,
-                new Renderer[] { designer }
-            );
-            rootRenderer.prepare();
+            glfwMakeContextCurrent(window.getId());
+            GL.createCapabilities(false);
 
-            window.registerClickListener(screenPosition -> {
-                Vector2i virtualPosition = screenPosition.div(4).toInt();
-                designer.click(virtualPosition);
-            });
+            camera = new Camera(virtualWindow.getDimensions());
 
-            window.registerScrollListener(offset -> {
-                designer.scroll(offset);
-            });
+            designer = new LevelDesigner(virtualWindow, level, camera);
+            designer.prepare();
+
+//            rootRenderer = new RootRenderer(
+//                window,
+//                new Renderer[] { designer }
+//            );
+//            rootRenderer.prepare();
+
+            window.doOnMousePress(event -> designer.click(virtualWindow.getMousePosition().toInt()));
+            window.doOnMouseScroll(event -> designer.scroll(event.getOffset()));
 
             renderThreadReady.set(true);
 
+            FrameBuffer fbo = FrameBuffer.make(virtualDimensions.getX(), virtualDimensions.getY());
+            glViewport(0, 0, virtualDimensions.getX(), virtualDimensions.getY());
+
             while (shouldContinueRender.get()) {
-                rootRenderer.update();
-                rootRenderer.render();
+//                rootRenderer.update();
+                designer.update();
+
+                fbo.bind();
+
+                glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+//                rootRenderer.render();
+
+                designer.render();
+
+                FrameBuffer.unbind();
+                fbo.copy(window);
+
+                glfwSwapBuffers(window.getId());
+                glfwPollEvents();
             }
 
             window.destroy();

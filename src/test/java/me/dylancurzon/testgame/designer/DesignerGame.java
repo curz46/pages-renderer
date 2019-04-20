@@ -3,55 +3,19 @@ package me.dylancurzon.testgame.designer;
 import me.dylancurzon.dontdie.Game;
 import me.dylancurzon.dontdie.GameState;
 import me.dylancurzon.dontdie.HasState;
-import me.dylancurzon.dontdie.gfx.GameWindow;
-import me.dylancurzon.dontdie.gfx.RootRenderer;
-import me.dylancurzon.pages.util.Vector2i;
 import me.dylancurzon.testgame.designer.gameState.DesignerMenuState;
-import me.dylancurzon.testgame.gfx.Camera;
-import me.dylancurzon.testgame.tile.Level;
-import me.dylancurzon.testgame.tile.TileType;
 
 public class DesignerGame implements Game, HasState {
-
-    private Camera camera;
-    private Level level;
-
-    private GameWindow window;
-
-    private RootRenderer menuRenderer;
-    private RootRenderer levelRenderer;
-
-    private boolean shouldRender;
-    private boolean killed;
 
     private GameState currentState;
 
     @Override
     public void launch() {
-        camera = new Camera();
-        level = new Level();
-        for (int x = -200; x < 200; x++) {
-            for (int y = -200; y < 200; y++) {
-//                this.level.setTile(Vector2i.of(x, y), (x + y) % 2 == 0 ? TileType.UNDEFINED : TileType.STONEBRICKS);
-                level.setTile(Vector2i.of(x, y), TileType.STONEBRICKS);
-            }
-        }
-
-//        this.window = new GameWindow();
-//        this.window.initialize(true);
-
         setGameState(new DesignerMenuState(this));
     }
 
     @Override
-    public void kill() {
-        shouldRender = false;
-        killed = true;
-        window.destroy();
-
-        levelRenderer = null;
-        window = null;
-    }
+    public void kill() {}
 
     @Override
     public void setGameState(GameState gameState) {
