@@ -1,6 +1,6 @@
 package me.dylancurzon.testgame.tile;
 
-import me.dylancurzon.dontdie.sprite.Sprite;
+import me.dylancurzon.openglrenderer.sprite.Sprite;
 import me.dylancurzon.testgame.gfx.Sprites;
 
 import java.util.*;

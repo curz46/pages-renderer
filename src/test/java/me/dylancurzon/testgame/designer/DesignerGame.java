@@ -1,8 +1,8 @@
 package me.dylancurzon.testgame.designer;
 
-import me.dylancurzon.dontdie.Game;
-import me.dylancurzon.dontdie.GameState;
-import me.dylancurzon.dontdie.HasState;
+import me.dylancurzon.testgame.Game;
+import me.dylancurzon.testgame.GameState;
+import me.dylancurzon.testgame.HasState;
 import me.dylancurzon.testgame.designer.gameState.DesignerMenuState;
 
 public class DesignerGame implements Game, HasState {

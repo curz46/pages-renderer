@@ -1,10 +1,10 @@
 package me.dylancurzon.testgame.designer;
 
-import me.dylancurzon.dontdie.Tickable;
-import me.dylancurzon.dontdie.gfx.Renderer;
-import me.dylancurzon.dontdie.gfx.page.PageRenderer;
-import me.dylancurzon.dontdie.gfx.window.Window;
-import me.dylancurzon.dontdie.sprite.TextSpriteProvider;
+import me.dylancurzon.openglrenderer.Tickable;
+import me.dylancurzon.openglrenderer.gfx.Renderer;
+import me.dylancurzon.openglrenderer.gfx.page.PageRenderer;
+import me.dylancurzon.openglrenderer.gfx.window.Window;
+import me.dylancurzon.openglrenderer.sprite.TextSpriteProvider;
 import me.dylancurzon.pages.Page;
 import me.dylancurzon.pages.PageTemplate;
 import me.dylancurzon.pages.element.ElementDecoration;

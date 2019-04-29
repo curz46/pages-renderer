@@ -1,6 +1,6 @@
 package me.dylancurzon.testgame.designer.button;
 
-import me.dylancurzon.dontdie.sprite.Sprite;
+import me.dylancurzon.openglrenderer.sprite.Sprite;
 import me.dylancurzon.pages.element.ElementDecoration;
 import me.dylancurzon.pages.element.container.MutableContainer;
 import me.dylancurzon.pages.element.sprite.MutableSpriteElement;

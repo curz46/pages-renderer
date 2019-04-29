@@ -1,7 +1,7 @@
 package me.dylancurzon.testgame.gfx;
 
-import me.dylancurzon.dontdie.sprite.Sprite;
-import me.dylancurzon.dontdie.sprite.SpriteSheet;
+import me.dylancurzon.openglrenderer.sprite.Sprite;
+import me.dylancurzon.openglrenderer.sprite.SpriteSheet;
 
 import java.io.IOException;
 import java.util.Objects;

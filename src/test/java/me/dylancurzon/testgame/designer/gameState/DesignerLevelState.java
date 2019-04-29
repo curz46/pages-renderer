@@ -1,14 +1,14 @@
 package me.dylancurzon.testgame.designer.gameState;
 
-import me.dylancurzon.dontdie.GameState;
-import me.dylancurzon.dontdie.gfx.opengl.FrameBuffer;
-import me.dylancurzon.dontdie.gfx.window.GLFWWindow;
-import me.dylancurzon.dontdie.gfx.window.GLFWWindowOptions;
+import me.dylancurzon.testgame.GameState;
+import me.dylancurzon.openglrenderer.gfx.opengl.FrameBuffer;
+import me.dylancurzon.openglrenderer.gfx.window.GLFWWindow;
+import me.dylancurzon.openglrenderer.gfx.window.GLFWWindowOptions;
 import me.dylancurzon.pages.util.Vector2i;
 import me.dylancurzon.testgame.designer.DesignerGame;
 import me.dylancurzon.testgame.designer.LevelDesigner;
 import me.dylancurzon.testgame.gfx.Camera;
-import me.dylancurzon.dontdie.gfx.window.VirtualWindow;
+import me.dylancurzon.openglrenderer.gfx.window.VirtualWindow;
 import me.dylancurzon.testgame.tile.Level;
 import org.lwjgl.opengl.GL;
 

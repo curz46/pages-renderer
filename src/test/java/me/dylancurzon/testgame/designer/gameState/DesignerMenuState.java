@@ -1,6 +1,6 @@
 package me.dylancurzon.testgame.designer.gameState;
 
-import me.dylancurzon.dontdie.GameState;
+import me.dylancurzon.testgame.GameState;
 import me.dylancurzon.testgame.designer.DesignerGame;
 import me.dylancurzon.testgame.tile.Level;
 

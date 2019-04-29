@@ -1,12 +1,12 @@
 package me.dylancurzon.testgame.designer;
 
-import me.dylancurzon.dontdie.gfx.Renderer;
-import me.dylancurzon.dontdie.gfx.opengl.Texture;
-import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
-import me.dylancurzon.dontdie.sprite.Sprite;
-import me.dylancurzon.dontdie.sprite.SpritePacker;
+import me.dylancurzon.openglrenderer.gfx.Renderer;
+import me.dylancurzon.openglrenderer.gfx.opengl.Texture;
+import me.dylancurzon.openglrenderer.gfx.opengl.VertexBuffer;
+import me.dylancurzon.openglrenderer.sprite.Sprite;
+import me.dylancurzon.openglrenderer.sprite.SpritePacker;
 import me.dylancurzon.testgame.gfx.Sprites;
-import me.dylancurzon.dontdie.util.ShaderUtil;
+import me.dylancurzon.openglrenderer.util.ShaderUtil;
 import me.dylancurzon.pages.util.Vector2d;
 import me.dylancurzon.pages.util.Vector2i;
 import me.dylancurzon.testgame.gfx.Camera;

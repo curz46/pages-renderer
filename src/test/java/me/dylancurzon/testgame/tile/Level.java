@@ -1,6 +1,6 @@
 package me.dylancurzon.testgame.tile;
 
-import me.dylancurzon.dontdie.util.ByteBuf;
+import me.dylancurzon.openglrenderer.util.ByteBuf;
 import me.dylancurzon.pages.util.Vector2i;
 
 import java.io.*;

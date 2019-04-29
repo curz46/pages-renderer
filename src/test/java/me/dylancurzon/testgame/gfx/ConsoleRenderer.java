@@ -1,9 +1,9 @@
 package me.dylancurzon.testgame.gfx;
 
-import me.dylancurzon.dontdie.gfx.Renderer;
-import me.dylancurzon.dontdie.gfx.opengl.Texture;
-import me.dylancurzon.dontdie.gfx.opengl.VertexBuffer;
-import me.dylancurzon.dontdie.util.ShaderUtil;
+import me.dylancurzon.openglrenderer.gfx.Renderer;
+import me.dylancurzon.openglrenderer.gfx.opengl.Texture;
+import me.dylancurzon.openglrenderer.gfx.opengl.VertexBuffer;
+import me.dylancurzon.openglrenderer.util.ShaderUtil;
 import org.lwjgl.opengl.ARBShaderObjects;
 
 import static org.lwjgl.opengl.GL11.*;

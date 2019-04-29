@@ -1,10 +1,9 @@
 package me.dylancurzon.testgame.designer.tool;
 
-import me.dylancurzon.dontdie.gfx.window.Window;
+import me.dylancurzon.openglrenderer.gfx.window.Window;
 import me.dylancurzon.pages.Page;
 import me.dylancurzon.pages.element.MutableElement;
 import me.dylancurzon.pages.util.MouseButton;
-import me.dylancurzon.pages.util.Vector2d;
 import me.dylancurzon.pages.util.Vector2i;
 import me.dylancurzon.testgame.designer.TileOverlayRenderer;
 import me.dylancurzon.testgame.gfx.Camera;
